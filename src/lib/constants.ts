@@ -6,6 +6,7 @@ export const API_TIMEOUT = 30000
 
 export const ROUTES = {
   HOME: '/',
+  LOGIN: '/login',
   DASHBOARD: '/dashboard',
   SETTINGS: '/settings',
   NOT_FOUND: '/not-found',

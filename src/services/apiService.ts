@@ -1,7 +1,6 @@
 import axios, { type AxiosInstance, AxiosError } from 'axios'
 import { API_BASE_URL, API_TIMEOUT } from '../lib/constants'
 import type { ApiResponse } from '../types'
-import { error } from 'console'
 
 class ApiService {
   private client: AxiosInstance

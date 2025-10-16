@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { Outlet } from "react-router-dom";
 import { initializeAuth } from "./store/slices/authSlice";
 import { MainLayout } from "@/components/layout";
+import ErrorBoundary from "./components/common/ErrorBoundary";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -13,8 +14,10 @@ export default function App() {
   }, [dispatch]);
 
   return (
-    <MainLayout>
-      <Outlet />
-    </MainLayout>
+    <ErrorBoundary>
+      <MainLayout>
+        <Outlet />
+      </MainLayout>
+    </ErrorBoundary>
   );
 }
