@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
 import { apiService } from "@/services/apiService";
 import { API_ENDPOINTS } from "@/lib/api";
-import type { User } from "@/types";
+import type { AuthResponse, User } from "@/types";
 
 /**
  * Trạng thái xác thực người dùng
@@ -23,6 +23,16 @@ const initialState: AuthState = {
     error: null,
 }
 
+function isTokenExpired(token: string): boolean{
+  try{
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const expirationTime = payload.exp * 1000; // Chuyển đổi sang milliseconds
+    return Date.now() > expirationTime;
+  } catch {
+    return true;
+  }
+}
+
 /**
  * Khởi tạo xác thực người dùng từ token lưu trong localStorage mỗi khi mở lại trang
  */
@@ -30,6 +40,20 @@ export const initializeAuth = createAsyncThunk(
   'auth/initialize',
   async (_, { rejectWithValue }) => {
     try {
+      const accessToken = localStorage.getItem('accessToken');
+
+      if(!accessToken) {
+        return null;
+      }
+
+      if(isTokenExpired(accessToken)) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('expiresIn');
+        localStorage.removeItem('user');
+        return rejectWithValue('Token đã hết hạn');
+      }
+
       const response = await apiService.get<User>(API_ENDPOINTS.AUTH.ME);
       return response.data;
     } catch (error) {
@@ -42,14 +66,21 @@ export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await apiService.post<{ user: User; token: string }>(
+      const response = await apiService.post<AuthResponse>(
         API_ENDPOINTS.AUTH.LOGIN,
         credentials
-      )
-      localStorage.setItem('authToken', response.data.token)
-      return response.data.user
+      );
+
+      const {user, accessToken, refreshToken, expiresIn} = response.data;
+
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('expiresIn', expiresIn.toString());
+      localStorage.setItem('user', JSON.stringify(user));
+
+      return user;
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Login failed')
+      return rejectWithValue(error instanceof Error ? error.message : 'Đăng nhập thất bại')
     }
   }
 )
@@ -60,9 +91,12 @@ export const logout = createAsyncThunk(
     try {
       await apiService.post(API_ENDPOINTS.AUTH.LOGOUT)
     } catch (error) {
-      console.error('Logout error:', error)
+      console.error('Lỗi khi đăng xuất:', error)
     } finally {
-      localStorage.removeItem('authToken')
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
+      localStorage.removeItem('expiresIn')
+      localStorage.removeItem('user')
       // eslint-disable-next-line no-unsafe-finally
       return null
     }
@@ -83,16 +117,22 @@ const authSlice = createSlice({
       .addCase(initializeAuth.pending, (state) => {
         state.isLoading = true
       })
-      .addCase(initializeAuth.fulfilled, (state, action: PayloadAction<User>) => {
+      .addCase(initializeAuth.fulfilled, (state, action: PayloadAction<User | null>) => {
         state.isLoading = false
-        state.user = action.payload
-        state.isAuthenticated = true
-        state.error = null
+        if (action.payload) {
+          state.user = action.payload
+          state.isAuthenticated = true
+          state.error = null
+        } else {
+          state.user = null
+          state.isAuthenticated = false
+        }
       })
       .addCase(initializeAuth.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.payload as string
         state.isAuthenticated = false
+        state.user = null
       })
       // Login
       .addCase(login.pending, (state) => {

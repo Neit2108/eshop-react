@@ -33,13 +33,11 @@ export function LoginForm({
 
     if (!formData.email || !formData.password) {
       setValidationError("Vui lòng điền đầy đủ thông tin");
-      alert(validationError);
       return;
     }
 
     if(!isValidEmail(formData.email)){
       setValidationError("Email không hợp lệ");
-      alert(validationError);
       return;
     }
 
