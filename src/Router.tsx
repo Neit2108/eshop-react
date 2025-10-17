@@ -3,11 +3,16 @@ import App from "./App";
 import { ROUTES } from "./lib/constants";
 import NotFound from './pages/NotFound';
 import LoginPage from './pages/login/Login';
+import SignupPage from './pages/signup/Signup';
 
 const router = createBrowserRouter([
   {
     path: ROUTES.LOGIN,
     element: <LoginPage />,
+  },
+  {
+    path: ROUTES.SIGNUP,
+    element: <SignupPage />,
   },
   {
     path: ROUTES.HOME,

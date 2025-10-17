@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
 import { apiService } from "@/services/apiService";
 import { API_ENDPOINTS } from "@/lib/api";
-import type { AuthResponse, User } from "@/types";
+import type { AuthResponse, SignupFormData, User } from "@/types";
 
 /**
  * Trạng thái xác thực người dùng
@@ -58,6 +58,32 @@ export const initializeAuth = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue('Loi khi khoi tao xac thuc : ' + error)
+    }
+  }
+)
+
+export const signup = createAsyncThunk(
+  'auth/signup',
+  async (data: SignupFormData, {rejectWithValue}) =>{
+    try{
+    const {confirmPassword, ...signupData} = data;
+
+    const response = await apiService.post<AuthResponse>(
+      API_ENDPOINTS.AUTH.SIGNUP,
+      signupData
+    );
+
+    const {user, accessToken, refreshToken, expiresIn} = response.data;
+
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('expiresIn', expiresIn.toString());
+    localStorage.setItem('user', JSON.stringify(user));
+
+    return user;
+  }
+    catch (error){
+      return rejectWithValue(error instanceof Error ? error.message : 'Đăng ký thất bại')
     }
   }
 )
@@ -133,6 +159,22 @@ const authSlice = createSlice({
         state.error = action.payload as string
         state.isAuthenticated = false
         state.user = null
+      })
+      // Signup
+      .addCase(signup.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(signup.fulfilled, (state, action: PayloadAction<User>) => {
+        state.isLoading = false
+        state.user = action.payload
+        state.isAuthenticated = true
+        state.error = null
+      })
+      .addCase(signup.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload as string
+        state.isAuthenticated = false
       })
       // Login
       .addCase(login.pending, (state) => {

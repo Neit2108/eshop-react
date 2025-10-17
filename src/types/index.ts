@@ -5,6 +5,14 @@ export interface User {
   email: string;
 }
 
+export interface SignupFormData{
+  email: string;
+  password: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
+}
+
 export interface AuthResponse {
   user: User;
   accessToken: string;
