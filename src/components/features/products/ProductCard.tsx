@@ -11,6 +11,9 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false)
 
+  // log product to debug
+  console.log("Product debug:", product)
+
   const renderStars = (count: number) => {
     return (
       <div className="flex gap-0.5">
@@ -60,9 +63,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Price */}
         <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
           <span className="text-xs text-muted-foreground line-through">
-            {formatPrice(product.price)} VNĐ
+            {formatPrice(product.price * 0.3)} VNĐ
           </span>
-          <span className="text-xs sm:text-sm font-bold text-red-500">{formatPrice(product.price - (product.price * product.discountPercentage) / 100)} VNĐ</span>
+          <span className="text-xs sm:text-sm font-bold text-red-500">{formatPrice(product.price)} VNĐ</span>
         </div>
 
         {/* Add to Cart Button */}

@@ -20,7 +20,7 @@ export default function ProductDetailPage() {
     }
 
     fetchProductById(productId)
-  }, [productId, fetchProductById, navigate])
+  }, [productId, navigate])
 
   if (isLoading || !selectedProduct) {
     return (
@@ -48,9 +48,9 @@ export default function ProductDetailPage() {
   const formattedProduct: any = {
     id: selectedProduct.id,
     title: selectedProduct.name,
-    brand: "Store",
+    brand: selectedProduct.shop.name,
     originalPrice: selectedProduct.price,
-    currentPrice: selectedProduct.price - (selectedProduct.price * selectedProduct.discountPercentage) / 100,
+    currentPrice: selectedProduct.price * 0.7,
     rating: Math.round(selectedProduct.averageRating),
     reviewCount: selectedProduct.reviewCount,
     stockQuantity: 100,

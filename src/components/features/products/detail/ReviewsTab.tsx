@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { mockReviews } from "../mock-data"
 import ReviewItem from "../../reviews/ReviewItem"
 import AddReviewForm from "../../reviews/AddReviewForm"
+import { mockReviews } from "@/pages/product/mock-data"
 
 interface ReviewsTabProps {
   productId: number

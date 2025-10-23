@@ -4,14 +4,79 @@ export interface Product {
   id: string;
   name: string;
   shopId: string;
-  status: string;
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED" | "OUT_OF_STOCK" | "DISCONTINUED"; // hoặc string nếu chưa enum
   averageRating: number;
   reviewCount: number;
-  createdAt: Date;
+  createdAt: string; // trả về dạng ISO string, không phải Date object
+  imageUrl: string;
   price: number;
-  discountPercentage: number;
-  imageUrl?: string;
+  discountPercentage?: number; // không có trong response, nên để optional
+  shop: Shop;
+  images: ProductImage[];
+  variants: ProductVariant[];
+  options?: ProductOption[]; // có thể rỗng
+  categories: ProductCategory[];
 }
+
+export interface ProductImage {
+  id: string;
+  imageUrl: string;
+  isPrimary: boolean;
+  sortOrder: number;
+}
+
+export interface ProductVariant {
+  id: string;
+  name: string;
+  value: string;
+  price: number;
+  currency: string;
+  sku: string;
+  stock: number;
+  status: "PUBLISHED" | "DRAFT" | "ARCHIVED"; // hoặc string
+  optionValues: VariantOptionValue[];
+  images: VariantImage[];
+}
+
+export interface VariantOptionValue {
+  id: string;
+  productOptionId?: string;
+  productOptionValueId?: string;
+  productOption?: {
+    name: string;
+  };
+  productOptionValue?: {
+    value: string;
+  };
+}
+
+export interface VariantImage {
+  id: string;
+  imageUrl: string;
+  isPrimary: boolean;
+  sortOrder: number;
+}
+
+export interface ProductCategory {
+  id: string;
+  name: string;
+  parentCategoryId?: string;
+}
+
+export interface Shop {
+  id: string;
+  name: string;
+}
+
+export interface ProductOption {
+  id: string;
+  name: string;
+  values: {
+    id: string;
+    value: string;
+  }[];
+}
+
 
 export interface ProductFilters {
   status?: "DRAFT" | "PUBLISHED" | "ARCHIVED" | "OUT_OF_STOCK" | "DISCONTINUED";
