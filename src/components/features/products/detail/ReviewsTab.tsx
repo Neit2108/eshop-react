@@ -4,7 +4,7 @@ import AddReviewForm from "../../reviews/AddReviewForm"
 import { mockReviews } from "@/pages/product/mock-data"
 
 interface ReviewsTabProps {
-  productId: number
+  productId: string
 }
 
 export default function ReviewsTab({ productId }: ReviewsTabProps) {
@@ -16,7 +16,7 @@ export default function ReviewsTab({ productId }: ReviewsTabProps) {
     rating: number
   }) => {
     const review = {
-      id: reviews.length + 1,
+      id: (reviews.length + 1).toString(),
       ...newReview,
       date: new Date().toISOString().split("T")[0],
       avatar: "/diverse-user-avatars.png",

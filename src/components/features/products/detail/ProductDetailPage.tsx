@@ -10,7 +10,7 @@ export default function ProductDetailPage() {
   const { productId } = useParams<{ productId: string }>()
   const navigate = useNavigate()
   const { fetchProductById, selectedProduct, isLoading, error } = useProducts()
-  const [selectedSize, setSelectedSize] = useState<string>("")
+  const [selectedVariant, setSelectedVariant] = useState<string>("")
   const [quantity, setQuantity] = useState<number>(1)
 
   useEffect(() => {
@@ -44,38 +44,27 @@ export default function ProductDetailPage() {
     )
   }
 
-  // Format product data for display components
-  const formattedProduct: any = {
-    id: selectedProduct.id,
-    title: selectedProduct.name,
-    brand: selectedProduct.shop.name,
-    originalPrice: selectedProduct.price,
-    currentPrice: selectedProduct.price * 0.7,
-    rating: Math.round(selectedProduct.averageRating),
-    reviewCount: selectedProduct.reviewCount,
-    stockQuantity: 100,
-    description: "Sản phẩm chất lượng cao, được kiểm tra kỹ lưỡng trước khi gửi đến khách hàng.",
-    sizes: ["S", "M", "L", "XL"],
-    images: [selectedProduct.imageUrl || "/placeholder.svg"],
-    thumbnails: [selectedProduct.imageUrl || "/placeholder.svg"],
-  }
+  // Extract image URLs from product data
+  const allImages = selectedProduct.images && selectedProduct.images.length > 0
+    ? selectedProduct.images.map(img => img.imageUrl)
+    : [selectedProduct.imageUrl || "/placeholder.svg"]
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Product Main Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-        <ProductImageGallery images={formattedProduct.images} thumbnails={formattedProduct.thumbnails} />
+        <ProductImageGallery images={allImages} thumbnails={allImages} />
         <ProductInfo
-          product={formattedProduct}
-          selectedSize={selectedSize}
-          onSizeChange={setSelectedSize}
+          product={selectedProduct}
+          selectedVariant={selectedVariant}
+          onVariantChange={setSelectedVariant}
           quantity={quantity}
           onQuantityChange={setQuantity}
         />
       </div>
 
       {/* Product Tabs Section */}
-      <ProductTabs product={formattedProduct} />
+      <ProductTabs product={selectedProduct} />
     </div>
   )
 }

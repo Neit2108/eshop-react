@@ -1,19 +1,7 @@
 import { useState } from "react"
+import type { Product } from "@/types/product.types"
 import DescriptionTab from "./DescriptionTab"
 import ReviewsTab from "./ReviewsTab"
-
-interface Product {
-  id: number
-  title: string
-  brand: string
-  originalPrice: number
-  currentPrice: number
-  rating: number
-  reviewCount: number
-  stockQuantity: number
-  description: string
-  sizes: string[]
-}
 
 interface ProductTabsProps {
   product: Product
@@ -50,7 +38,13 @@ export default function ProductTabs({ product }: ProductTabsProps) {
 
       {/* Tab Content */}
       <div>
-        {activeTab === "description" && <DescriptionTab description={product.description} />}
+        {activeTab === "description" && (
+          <DescriptionTab 
+            categories={product.categories}
+            productOption={product.options}
+            status={product.status}
+          />
+        )}
         {activeTab === "reviews" && <ReviewsTab productId={product.id} />}
       </div>
     </div>
