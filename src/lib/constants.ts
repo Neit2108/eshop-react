@@ -11,6 +11,8 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   SETTINGS: '/settings',
   NOT_FOUND: '/not-found',
+  PRODUCT_LIST: '/products',
+  PRODUCT_DETAIL: '/products/:productId',
 } as const
 
 export const ROLE_PERMISSIONS = {

@@ -38,10 +38,21 @@ export interface ApiError {
   status: number;
 }
 
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
 export interface PaginatedResponse<T> {
-  items: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
+  data: T[];
+  pagination: {
+    total: number;
+    totalPages: number;
+    currentPage: number;
+    limit: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
 }

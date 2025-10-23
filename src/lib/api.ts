@@ -13,6 +13,13 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `/users/${id}`,
     DELETE: (id: string) => `/users/${id}`,
   },
+  PRODUCTS: {
+    LIST: '/products',
+    GET: (id: string) => `/products/${id}`,
+    CREATE: '/products',
+    UPDATE: (id: string) => `/products/${id}`,
+    DELETE: (id: string) => `/products/${id}`,
+  },
   DASHBOARD: {
     STATS: '/dashboard/stats',
     ANALYTICS: '/dashboard/analytics',

@@ -4,6 +4,9 @@ import { ROUTES } from "./lib/constants";
 import NotFound from './pages/NotFound';
 import LoginPage from './pages/login/Login';
 import SignupPage from './pages/signup/Signup';
+import HomePage from './pages/home/Home';
+import ProductListPage from '@/pages/product/ProductListPage';
+import ProductDetailPage from '@/pages/product/detail/ProductDetailPage';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +22,18 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <NotFound />,
     children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: ROUTES.PRODUCT_LIST,
+        element: <ProductListPage />,
+      },
+      {
+        path: ROUTES.PRODUCT_DETAIL,
+        element: <ProductDetailPage />,
+      },
       // {
       //   path: ROUTES.DASHBOARD,
       //   element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
