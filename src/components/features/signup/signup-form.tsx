@@ -63,7 +63,7 @@ export function SignupForm({
             id="last-name"
             name="lastName"
             type="text"
-            placeholder="John Doe"
+            placeholder="Nguyen van"
             value={formData.lastName}
             onChange={handleChange}
             disabled={isLoading}
@@ -76,7 +76,7 @@ export function SignupForm({
             id="name"
             name="firstName"
             type="text"
-            placeholder="John"
+            placeholder="Anh"
             value={formData.firstName}
             onChange={handleChange}
             disabled={isLoading}

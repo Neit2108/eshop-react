@@ -82,7 +82,7 @@ export default function ProductInfo({
       {variantNames.length > 0 && (
         <div>
           <label className="text-sm font-semibold text-foreground mb-3 block">
-            VARIANT:
+            LỰA CHỌN:
           </label>
           <div className="flex gap-3 flex-wrap">
             {product.variants?.map((variant) => (
@@ -96,7 +96,7 @@ export default function ProductInfo({
                 }`}
                 disabled={variant.stock === 0}
               >
-                {variant.name} {variant.stock === 0 ? "(Out of Stock)" : ""}
+                {variant.name} {variant.stock === 0 ? "(Hết hàng)" : ""}
               </button>
             ))}
           </div>
