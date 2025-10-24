@@ -15,6 +15,7 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!productId) {
+      console.error("Product ID is missing in URL parameters.")
       navigate('/products')
       return
     }

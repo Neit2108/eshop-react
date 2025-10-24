@@ -129,3 +129,31 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+/* Toast custom styles */
+.toast-custom {
+  font-size: 16px !important;
+  padding: 20px !important;
+  min-width: 380px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Toast title */
+[data-sonner-toast] [data-title] {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+/* Toast description */
+[data-sonner-toast] [data-description] {
+  font-size: 14px !important;
+  margin-top: 4px !important;
+}
+
+/* Action button */
+[data-sonner-toast] [data-button] {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 8px 16px !important;
+}

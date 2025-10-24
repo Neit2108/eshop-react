@@ -8,6 +8,7 @@ import {
 } from "@reduxjs/toolkit";
 
 const initialState: CartState = {
+  cartId: undefined,
   items: [],
   itemsCount: 0,
   totalAmount: 0,
@@ -52,10 +53,11 @@ export const addItemToCart = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await apiService.post<Cart>(
+      const response = await apiService.post<CartItem>(
         API_ENDPOINTS.CART.ADD(cartId),
         { variantId, quantity },
       );
+
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -70,11 +72,18 @@ export const addItemToCart = createAsyncThunk(
 export const updateItemInCart = createAsyncThunk(
   "cart/updateItemInCart",
   async (
-    { cartId, itemId, quantity }: { cartId: string; itemId: string; quantity: number },
+    {
+      cartId,
+      itemId,
+      quantity,
+    }: { cartId: string; itemId: string; quantity: number },
     { rejectWithValue },
   ) => {
     try {
-      const response = await apiService.put<CartItem>(API_ENDPOINTS.CART.UPDATE(cartId, itemId), { quantity });
+      const response = await apiService.put<CartItem>(
+        API_ENDPOINTS.CART.UPDATE(cartId, itemId),
+        { quantity },
+      );
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -93,7 +102,9 @@ export const deleteItemFromCart = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await apiService.delete<CartItem>(API_ENDPOINTS.CART.DELETE(cartId, itemId));
+      const response = await apiService.delete<CartItem>(
+        API_ENDPOINTS.CART.DELETE(cartId, itemId),
+      );
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -149,12 +160,24 @@ const cartSlice = createSlice({
       })
       .addCase(
         addItemToCart.fulfilled,
-        (state, action: PayloadAction<Cart>) => {
+        (state, action: PayloadAction<CartItem>) => {
           state.isLoading = false;
-          // API trả về toàn bộ cart mới
-          state.items = action.payload.items;
-          state.itemsCount = action.payload.items.length;
-          state.totalAmount = action.payload.items.reduce(
+          // ✅ Kiểm tra xem item đã tồn tại chưa
+          const existingItemIndex = state.items.findIndex(
+            (item) => item.id === action.payload.id,
+          );
+
+          if (existingItemIndex !== -1) {
+            // Item đã tồn tại -> Update
+            state.items[existingItemIndex] = action.payload;
+          } else {
+            // Item mới -> Thêm vào array
+            state.items.push(action.payload);
+          }
+
+          // Tính lại totals
+          state.itemsCount = state.items.length;
+          state.totalAmount = state.items.reduce(
             (sum, item) => sum + item.totalPrice,
             0,
           );
@@ -170,20 +193,25 @@ const cartSlice = createSlice({
         state.isLoading = false;
         state.error = null;
       })
-      .addCase(updateItemInCart.fulfilled, (state, action: PayloadAction<CartItem>) => {
-        // Tìm item trong array và update nó
-        const updatedItem = action.payload;
-        const itemIndex = state.items.findIndex((item) => item.id === updatedItem.id);
-        if (itemIndex !== -1) {
-          state.items[itemIndex] = updatedItem;
-        }
-        // Tính lại totals
-        state.itemsCount = state.items.length;
-        state.totalAmount = state.items.reduce(
-          (sum, item) => sum + item.totalPrice,
-          0,
-        );
-      })
+      .addCase(
+        updateItemInCart.fulfilled,
+        (state, action: PayloadAction<CartItem>) => {
+          // Tìm item trong array và update nó
+          const updatedItem = action.payload;
+          const itemIndex = state.items.findIndex(
+            (item) => item.id === updatedItem.id,
+          );
+          if (itemIndex !== -1) {
+            state.items[itemIndex] = updatedItem;
+          }
+          // Tính lại totals
+          state.itemsCount = state.items.length;
+          state.totalAmount = state.items.reduce(
+            (sum, item) => sum + item.totalPrice,
+            0,
+          );
+        },
+      )
       .addCase(updateItemInCart.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
@@ -193,19 +221,24 @@ const cartSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(deleteItemFromCart.fulfilled, (state, action: PayloadAction<CartItem>) => {
-        state.isLoading = false;
-        state.items = state.items.filter((item) => item.id !== action.payload.id);
-        state.itemsCount = state.items.length;
-        state.totalAmount = state.items.reduce(
-          (sum, item) => sum + item.totalPrice,
-          0,
-        );
-      })
+      .addCase(
+        deleteItemFromCart.fulfilled,
+        (state, action: PayloadAction<CartItem>) => {
+          state.isLoading = false;
+          state.items = state.items.filter(
+            (item) => item.id !== action.payload.id,
+          );
+          state.itemsCount = state.items.length;
+          state.totalAmount = state.items.reduce(
+            (sum, item) => sum + item.totalPrice,
+            0,
+          );
+        },
+      )
       .addCase(deleteItemFromCart.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
-      })
+      });
   },
 });
 

@@ -41,9 +41,7 @@ export const fetchProducts = createAsyncThunk(
       const response = await apiService.get<PaginatedResponse<Product>>(
         `${API_ENDPOINTS.PRODUCTS.LIST}?${queryString}`,
       );
-
-      console.log("Fetched Products:", response.data);
-
+      
       return response.data;
     } catch (error: any) {
       const message =

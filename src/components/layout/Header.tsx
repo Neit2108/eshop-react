@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ROUTES } from "@/lib/constants";
 import { useNavigate } from "react-router-dom";
+import { API_ENDPOINTS } from "@/lib/api";
 
 interface CategoryItem {
   id: string;
@@ -153,6 +154,11 @@ const Header: React.FC = () => {
     navigate(ROUTES.CART);
   }
 
+  const handleSearch = () => {
+    // redirect to products page with search query
+    navigate(`${API_ENDPOINTS.PRODUCTS.LIST}?searchTerm=${encodeURIComponent(searchQuery)}`);
+  }
+
   return (
     <header className="fixed top-0 left-0 z-50 w-full bg-white shadow-sm lg:sticky lg:-top-[47px]">
       {/* Top Strip */}
@@ -197,7 +203,7 @@ const Header: React.FC = () => {
             <div className="relative w-full">
               <Input
                 type="text"
-                placeholder="Search for products..."
+                placeholder="Tìm kiếm sản phẩm..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full border-none bg-gray-100 pr-10 text-sm focus:ring-2 focus:ring-blue-500"
@@ -206,6 +212,7 @@ const Header: React.FC = () => {
                 size="icon"
                 variant="ghost"
                 className="absolute top-1/2 right-1 -translate-y-1/2 hover:text-blue-600 cursor-pointer"
+                onClick={handleSearch}
               >
                 <Search className="h-4 w-4" />
               </Button>

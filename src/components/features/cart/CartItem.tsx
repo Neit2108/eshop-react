@@ -1,62 +1,69 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Trash2, Plus, Minus } from "lucide-react"
-import type { CartItem as CartItemType } from "@/types/cart.types"
-import { Link } from "react-router-dom"
-import { ROUTES } from "@/lib/constants"
-import { formatPrice } from "@/lib/utils"
-import { API_ENDPOINTS } from "@/lib/api"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Trash2, Plus, Minus } from "lucide-react";
+import type { CartItem as CartItemType } from "@/types/cart.types";
+import { Link } from "react-router-dom";
+import { formatPrice } from "@/lib/utils";
+import { API_ENDPOINTS } from "@/lib/api";
+import { Badge } from "@/components/ui/badge";
 
 interface CartItemProps {
-  item: CartItemType
-  onQuantityChange: (id: string, quantity: number) => void
-  onRemove: (id: string) => void
+  item: CartItemType;
+  onQuantityChange: (id: string, quantity: number) => void;
+  onRemove: (id: string) => void;
 }
 
 export function CartItem({ item, onQuantityChange, onRemove }: CartItemProps) {
-  const [quantity, setQuantity] = useState(item.quantity)
+  const [quantity, setQuantity] = useState(item.quantity);
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity > 0) {
-      setQuantity(newQuantity)
-      onQuantityChange(item.id, newQuantity)
+      setQuantity(newQuantity);
+      onQuantityChange(item.id, newQuantity);
     }
-  }
+  };
 
-  const subtotal = item.totalPrice
+  const subtotal = item.totalPrice;
 
   return (
-    <div className="flex gap-4 py-4 border-b border-border last:border-b-0 items-center">
+    <div className="border-border flex items-center gap-4 border-b py-4 last:border-b-0">
       {/* Product Image - Fixed width */}
-      <div className="flex-shrink-0 w-20 h-20">
+      <div className="h-20 w-20 flex-shrink-0">
         {item.productImage ? (
-          <img 
-            src={item.productImage} 
-            alt={item.productName} 
-            className="w-full h-full rounded-lg object-cover" 
+          <img
+            src={item.productImage}
+            alt={item.productName}
+            className="h-full w-full rounded-lg object-cover"
           />
         ) : (
-          <div className="w-full h-full rounded-lg bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-400 text-xs">Không có ảnh sản phẩm</span>
+          <div className="flex h-full w-full items-center justify-center rounded-lg bg-gray-200">
+            <span className="text-xs text-gray-400">Không có ảnh sản phẩm</span>
           </div>
         )}
       </div>
 
       {/* Product Details - Flexible width */}
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <Link
           to={`${API_ENDPOINTS.PRODUCTS.GET(item.productId)}`}
-          className="text-lg font-semibold text-foreground hover:text-orange-600 transition-colors truncate block"
+          className="text-foreground block truncate text-lg font-semibold transition-colors hover:text-orange-600"
         >
           {item.productName}
         </Link>
-        <p className="text-sm text-muted-foreground mt-1">{item.productCategory}</p>
-        <p className="text-sm font-medium text-foreground mt-2">{formatPrice(item.unitPrice)}</p>
+
+        <Badge variant={'outline'} className="mt-1 border-2">{item.variantName || "Mặc định"}</Badge>
+
+        <p className="text-muted-foreground mt-1 text-sm">
+          {item.productCategory}
+        </p>
+        <p className="text-foreground mt-2 text-sm font-medium">
+          {formatPrice(item.unitPrice)}
+        </p>
       </div>
 
       {/* Quantity Selector - Fixed width */}
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="flex flex-shrink-0 items-center gap-2">
         <Button
           variant="outline"
           size="icon"
@@ -69,8 +76,12 @@ export function CartItem({ item, onQuantityChange, onRemove }: CartItemProps) {
           type="number"
           min="1"
           value={quantity}
-          onChange={(e) => handleQuantityChange(Math.max(1, Number.parseInt(e.target.value) || 1))}
-          className="w-12 text-center h-8"
+          onChange={(e) =>
+            handleQuantityChange(
+              Math.max(1, Number.parseInt(e.target.value) || 1),
+            )
+          }
+          className="h-8 w-12 text-center"
         />
         <Button
           variant="outline"
@@ -83,15 +94,15 @@ export function CartItem({ item, onQuantityChange, onRemove }: CartItemProps) {
       </div>
 
       {/* Subtotal - Fixed width */}
-      <div className="flex flex-col items-end justify-center w-32 flex-shrink-0">
-        <p className="text-lg font-semibold text-foreground truncate w-full text-right">
+      <div className="flex w-32 flex-shrink-0 flex-col items-end justify-center">
+        <p className="text-foreground w-full truncate text-right text-lg font-semibold">
           {formatPrice(subtotal)}
         </p>
-        <p className="text-xs text-muted-foreground mt-1">Tổng tiền</p>
+        <p className="text-muted-foreground mt-1 text-xs">Tổng tiền</p>
       </div>
 
       {/* Delete Button - Fixed width */}
-      <div className="flex items-center flex-shrink-0">
+      <div className="flex flex-shrink-0 items-center">
         <Button
           variant="ghost"
           size="icon"
@@ -102,5 +113,5 @@ export function CartItem({ item, onQuantityChange, onRemove }: CartItemProps) {
         </Button>
       </div>
     </div>
-  )
+  );
 }

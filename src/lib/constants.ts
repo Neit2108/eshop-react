@@ -13,7 +13,7 @@ export const ROUTES = {
   SETTINGS: '/settings',
   NOT_FOUND: '/not-found',
   PRODUCT_LIST: '/products',
-  PRODUCT_DETAIL: '/products/:id',
+  PRODUCT_DETAIL: '/products/:productId',
   CHECKOUT: '/checkout',
 } as const
 

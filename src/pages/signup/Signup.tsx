@@ -1,6 +1,7 @@
 import { GalleryVerticalEnd } from "lucide-react"
 
 import { SignupForm } from "@/components/features/signup/signup-form"
+import ErrorBoundary from "@/components/common/ErrorBoundary"
 
 export default function SignupPage() {
   return (
@@ -16,7 +17,7 @@ export default function SignupPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <SignupForm />
+            <ErrorBoundary><SignupForm /></ErrorBoundary>
           </div>
         </div>
       </div>

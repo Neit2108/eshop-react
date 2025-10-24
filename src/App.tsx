@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { initializeAuth } from "./store/slices/authSlice";
 import { MainLayout } from "@/components/layout";
 import ErrorBoundary from "./components/common/ErrorBoundary";
+import { Toaster } from "sonner";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -14,10 +15,21 @@ export default function App() {
   }, [dispatch]);
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary fallback={'Có lỗi xảy ra. Vui lòng thử lại sau.'}>
       <MainLayout>
         <Outlet />
       </MainLayout>
+
+      <Toaster
+        position="top-right"
+        richColors
+        closeButton
+        expand={true}
+        toastOptions={{
+          className: "toast-custom",
+          duration: 4000,
+        }}
+      />
     </ErrorBoundary>
   );
 }
