@@ -20,8 +20,10 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `/products/${id}`,
     DELETE: (id: string) => `/products/${id}`,
   },
-  DASHBOARD: {
-    STATS: '/dashboard/stats',
-    ANALYTICS: '/dashboard/analytics',
+  CART: {
+    GET: '/cart/user',
+    ADD: (id: string) => `/cart/${id}/add`,
+    UPDATE: (id: string, itemId: string) => `/cart/${id}/items/${itemId}`,
+    DELETE: (id: string, itemId: string) => `/cart/${id}/items/${itemId}`,
   },
 } as const

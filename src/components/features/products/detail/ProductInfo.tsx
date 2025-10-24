@@ -2,6 +2,7 @@ import { Heart, ArrowRightLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { Product } from "@/types/product.types"
 import RatingStars from "../../reviews/RatingStars"
+import { formatPrice } from '../../../../lib/utils';
 
 interface ProductInfoProps {
   product: Product
@@ -61,20 +62,20 @@ export default function ProductInfo({
       <div>
         <h1 className="text-3xl font-bold text-foreground mb-2">{product.name}</h1>
         <div className="flex items-center gap-3">
-          <span className="text-muted-foreground">Shop:</span>
+          {/* <span className="text-muted-foreground"></span> */}
           <span className="font-semibold text-foreground">{product.shop.name}</span>
           <RatingStars rating={Math.round(product.averageRating)} />
-          <span className="text-muted-foreground text-sm">Review ({product.reviewCount})</span>
+          <span className="text-muted-foreground text-sm">Đánh giá ({product.reviewCount})</span>
         </div>
       </div>
 
       {/* Price Section */}
       <div className="flex items-center gap-4">
         <span className="text-3xl font-bold text-[#FF6B6B]">
-          {displayPrice.toLocaleString()} {displayCurrency}
+          {formatPrice(displayPrice)}
         </span>
         <span className="text-sm text-green-600 font-semibold">
-          Available In Stock: {availableStock} items
+          Còn lại: {availableStock} 
         </span>
       </div>
 

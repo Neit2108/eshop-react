@@ -5,7 +5,7 @@ export default function Loading() {
         <div className="mb-4 inline-block">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
         </div>
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-gray-600">Vui lòng chờ...</p>
       </div>
     </div>
   )

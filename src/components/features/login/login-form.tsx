@@ -8,7 +8,7 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { isStrongPassword, isValidEmail } from "@/lib/helpers/validation";
@@ -19,6 +19,8 @@ export function LoginForm({
 }: React.ComponentProps<"form">) {
   const navigate = useNavigate();
   const { login, isLoading, error } = useAuth();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [validationError, setValidationError] = useState("");
 
@@ -51,7 +53,7 @@ export function LoginForm({
       const res = await login(formData.email, formData.password);
 
       if (res.payload) {
-        navigate("/");
+        navigate(from, { replace: true });
       }
     } catch {
       setValidationError(

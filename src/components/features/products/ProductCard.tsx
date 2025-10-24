@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart: (productId: string, variantId: string, quantity: number) => void;
+  // onAddToCart: (productId: string, variantId: string, quantity: number) => void;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
@@ -25,14 +25,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           const starValue = i + 1;
 
           if (rating >= starValue) {
-            // Sao đầy
             return (
               <span key={i} className="text-sm text-yellow-400">
                 ★
               </span>
             );
           } else if (rating >= starValue - 0.5) {
-            // Sao nửa
             return (
               <span key={i} className="relative text-sm">
                 <span className="text-gray-300">★</span>
@@ -42,7 +40,6 @@ export default function ProductCard({ product }: ProductCardProps) {
               </span>
             );
           } else {
-            // Sao rỗng
             return (
               <span key={i} className="text-sm text-gray-300">
                 ★
@@ -58,7 +55,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`overflow-hidden rounded-lg border bg-white transition-all duration-300 ${
+      className={`flex h-full flex-col overflow-hidden rounded-lg border bg-white transition-all duration-300 ${
         isHovered
           ? "scale-105 border-red-500 shadow-lg"
           : "border-gray-200 shadow-sm"
@@ -79,7 +76,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Content */}
-      <div className="space-y-1.5 p-2 sm:space-y-2 sm:p-2.5 md:p-3">
+      <div className="flex flex-1 flex-col space-y-1.5 p-2 sm:space-y-2 sm:p-2.5 md:p-3">
         {/* Brand */}
         <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase sm:text-xs md:text-xs"></p>
 
@@ -96,30 +93,32 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
-        {/* Price */}
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-          <span className="text-muted-foreground text-xs line-through">
-            {formatPrice(product.price * 0.3)} VNĐ
+        {/* Price - Fixed to prevent wrapping */}
+        <div className="flex flex-col gap-1">
+          <span className="text-muted-foreground truncate text-xs line-through">
+            {formatPrice(product.price * 0.3)}
           </span>
-          <span className="text-xs font-bold text-red-500 sm:text-sm">
-            {formatPrice(product.price)} VNĐ
+          <span className="truncate text-xs font-bold text-red-500 sm:text-sm">
+            {formatPrice(product.price)}
           </span>
         </div>
 
-        {/* Add to Cart Button */}
-        <Button
-          onClick={handleAddToCart}
-          className={`mt-2 w-full cursor-pointer py-1.5 text-xs transition-all duration-300 sm:py-2 sm:text-sm ${
-            isHovered
-              ? "bg-red-500 text-white hover:bg-red-600"
-              : "border border-red-500 bg-white text-red-500 hover:bg-red-50"
-          }`}
-          variant={isHovered ? "default" : "outline"}
-        >
-          <ShoppingCart size={14} className="mr-1 sm:mr-2" />
-          <span className="hidden sm:inline">THÊM VÀO GIỎ HÀNG</span>
-          <span className="sm:hidden">THÊM</span>
-        </Button>
+        {/* Add to Cart Button - Push to bottom */}
+        <div className="mt-auto pt-2">
+          <Button
+            onClick={handleAddToCart}
+            className={`w-full cursor-pointer py-1.5 text-xs transition-all duration-300 sm:py-2 sm:text-sm ${
+              isHovered
+                ? "bg-red-500 text-white hover:bg-red-600"
+                : "border border-red-500 bg-white text-red-500 hover:bg-red-50"
+            }`}
+            variant={isHovered ? "default" : "outline"}
+          >
+            <ShoppingCart size={14} className="mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">THÊM VÀO GIỎ HÀNG</span>
+            <span className="sm:hidden">THÊM</span>
+          </Button>
+        </div>
       </div>
     </div>
   );

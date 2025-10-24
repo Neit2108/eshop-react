@@ -82,7 +82,7 @@ class ApiService {
   }
 
   private async refreshToken(): Promise<RefreshTokenResponse> {
-    const response = await this.client.post<ApiResponse<RefreshTokenResponse>>('/auth/refresh')
+    const response = await this.client.post<ApiResponse<RefreshTokenResponse>>('/auth/refresh-token')
     return response.data.data
   }
 

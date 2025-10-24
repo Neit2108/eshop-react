@@ -6,13 +6,15 @@ export const API_TIMEOUT = 30000
 
 export const ROUTES = {
   HOME: '/',
+  CART: '/cart',
   LOGIN: '/login',
   SIGNUP: '/signup',
   DASHBOARD: '/dashboard',
   SETTINGS: '/settings',
   NOT_FOUND: '/not-found',
   PRODUCT_LIST: '/products',
-  PRODUCT_DETAIL: '/products/:productId',
+  PRODUCT_DETAIL: '/products/:id',
+  CHECKOUT: '/checkout',
 } as const
 
 export const ROLE_PERMISSIONS = {

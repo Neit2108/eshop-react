@@ -7,6 +7,8 @@ import SignupPage from './pages/signup/Signup';
 import HomePage from './pages/home/Home';
 import ProductListPage from '@/pages/product/ProductListPage';
 import ProductDetailPage from '@/components/features/products/detail/ProductDetailPage';
+import ProtectedRoute from './components/common/ProtectedRoute';
+import CartPage from './pages/cart/CartPage';
 
 const router = createBrowserRouter([
   {
@@ -32,7 +34,12 @@ const router = createBrowserRouter([
       },
       {
         path: ROUTES.PRODUCT_DETAIL,
-        element: <ProductDetailPage />,
+        // element: <ProductDetailPage />
+        element: <ProtectedRoute><ProductDetailPage /></ProtectedRoute>,
+      },
+      {
+        path: ROUTES.CART,
+        element: <ProtectedRoute><CartPage /></ProtectedRoute>,
       },
       // {
       //   path: ROUTES.DASHBOARD,

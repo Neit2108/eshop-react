@@ -37,6 +37,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ROUTES } from "@/lib/constants";
+import { useNavigate } from "react-router-dom";
 
 interface CategoryItem {
   id: string;
@@ -50,6 +52,7 @@ const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount, setCartCount] = useState(3);
   const [wishlistCount, setWishlistCount] = useState(3);
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCategorySheetOpen, setIsCategorySheetOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
@@ -145,6 +148,10 @@ const Header: React.FC = () => {
         : [...prev, categoryId],
     );
   };
+
+  const handleCartClick = () => {
+    navigate(ROUTES.CART);
+  }
 
   return (
     <header className="fixed top-0 left-0 z-50 w-full bg-white shadow-sm lg:sticky lg:-top-[47px]">
@@ -297,7 +304,7 @@ const Header: React.FC = () => {
             </a>
 
             {/* Cart */}
-            <Button size="icon" variant="ghost" className="relative h-9 w-9 sm:h-10 sm:w-10">
+            <Button size="icon" variant="ghost" className="relative h-9 w-9 sm:h-10 sm:w-10" onClick={handleCartClick}>
               <ShoppingCart size={32} className="sm:w-8 sm:h-8" />
               {cartCount > 0 && (
                 <Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center bg-red-500 p-0 text-xs">
