@@ -9,6 +9,7 @@ import ProductListPage from '@/pages/product/ProductListPage';
 import ProductDetailPage from '@/components/features/products/detail/ProductDetailPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import CartPage from './pages/cart/CartPage';
+import CheckoutPage from './pages/checkout/Checkout';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         path: ROUTES.CART,
         element: <ProtectedRoute><CartPage /></ProtectedRoute>,
+      },
+      {
+        path: ROUTES.CHECKOUT,
+        element: <ProtectedRoute><CheckoutPage/></ProtectedRoute>
       },
       // {
       //   path: ROUTES.DASHBOARD,

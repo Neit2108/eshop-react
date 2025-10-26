@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
+import { useCart } from "@/hooks/useCart";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -50,13 +51,18 @@ interface CategoryItem {
 
 const Header: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
+  const { itemsCount, fetchCart } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
-  const [cartCount, setCartCount] = useState(3);
   const [wishlistCount, setWishlistCount] = useState(3);
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCategorySheetOpen, setIsCategorySheetOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+
+  // Fetch cart khi component mount
+  React.useEffect(() => {
+    fetchCart();
+  }, []);
 
   const categories: CategoryItem[] = [
     {
@@ -158,6 +164,9 @@ const Header: React.FC = () => {
     // redirect to products page with search query
     navigate(`${API_ENDPOINTS.PRODUCTS.LIST}?searchTerm=${encodeURIComponent(searchQuery)}`);
   }
+
+  // Tính toán cartCount để hiển thị, nếu > 99 thì hiện "99+"
+  const displayCartCount = itemsCount > 99 ? "99+" : itemsCount;
 
   return (
     <header className="fixed top-0 left-0 z-50 w-full bg-white shadow-sm lg:sticky lg:-top-[47px]">
@@ -313,9 +322,9 @@ const Header: React.FC = () => {
             {/* Cart */}
             <Button size="icon" variant="ghost" className="relative h-9 w-9 sm:h-10 sm:w-10" onClick={handleCartClick}>
               <ShoppingCart size={32} className="sm:w-8 sm:h-8" />
-              {cartCount > 0 && (
+              {itemsCount > 0 && (
                 <Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center bg-red-500 p-0 text-xs">
-                  {cartCount}
+                  {displayCartCount}
                 </Badge>
               )}
             </Button>

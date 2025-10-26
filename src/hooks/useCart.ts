@@ -23,7 +23,7 @@ export function useCart() {
         error,
         selectedCartItem,
         fetchCart: () => dispatch(fetchCart()),
-        addItemToCart: (cartId: string, variantId: string, quantity: number) => dispatch(addItemToCart({ cartId, variantId, quantity })),
+        addItemToCart: ({ variantId, quantity }: { variantId: string; quantity: number }) => dispatch(addItemToCart({ variantId, quantity })),
         updateItemInCart: (cartId: string, itemId: string, quantity: number) => dispatch(updateItemInCart({ cartId, itemId, quantity })),
         deleteItemFromCart: (cartId: string, itemId: string) => dispatch(deleteItemFromCart({ cartId, itemId })),
     }

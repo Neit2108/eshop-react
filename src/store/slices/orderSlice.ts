@@ -1,0 +1,213 @@
+import { API_ENDPOINTS } from "@/lib/api";
+import { apiService } from "@/services/apiService";
+import type { CreateOrderInput, Order, OrderState } from "@/types/order.types";
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
+
+const initialState: OrderState = {
+  orders: [],
+  currentOrder: null,
+  isLoading: false,
+  error: null,
+  successMessage: null,
+};
+
+/**
+ * Tạo đơn hàng mới
+ */
+export const createOrder = createAsyncThunk(
+  "order/createOrder",
+  async (orderData: CreateOrderInput, { rejectWithValue }) => {
+    try {
+      const response = await apiService.post<Order>(
+        API_ENDPOINTS.ORDERS.CREATE,
+        orderData,
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Lỗi khi tạo đơn hàng",
+      );
+    }
+  },
+);
+
+/**
+ * Lấy thông tin đơn hàng theo ID
+ */
+export const fetchOrderById = createAsyncThunk(
+  "order/fetchOrderById",
+  async (orderId: string, { rejectWithValue }) => {
+    try {
+      const response = await apiService.get<Order>(
+        API_ENDPOINTS.ORDERS.GET(orderId),
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Lỗi khi lấy thông tin đơn hàng",
+      );
+    }
+  },
+);
+
+/**
+ * Cập nhật đơn hàng
+ */
+export const updateOrder = createAsyncThunk(
+  "order/updateOrder",
+  async (
+    { orderId, orderData }: { orderId: string; orderData: Partial<Order> },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await apiService.put<Order>(
+        API_ENDPOINTS.ORDERS.UPDATE(orderId),
+        orderData,
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Lỗi khi cập nhật đơn hàng",
+      );
+    }
+  },
+);
+
+/**
+ * Hủy đơn hàng
+ */
+export const cancelOrder = createAsyncThunk(
+  "order/cancelOrder",
+  async (orderId: string, { rejectWithValue }) => {
+    try {
+      const response = await apiService.delete<Order>(
+        API_ENDPOINTS.ORDERS.DELETE(orderId),
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Lỗi khi hủy đơn hàng",
+      );
+    }
+  },
+);
+
+const orderSlice = createSlice({
+  name: "order",
+  initialState,
+  reducers: {
+    clearCurrentOrder: (state) => {
+      state.currentOrder = null;
+    },
+    clearError: (state) => {
+      state.error = null;
+    },
+    clearSuccessMessage: (state) => {
+      state.successMessage = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Create Order
+      .addCase(createOrder.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.successMessage = null;
+      })
+      .addCase(createOrder.fulfilled, (state, action: PayloadAction<Order>) => {
+        state.isLoading = false;
+        state.currentOrder = action.payload;
+        state.orders.push(action.payload);
+        state.successMessage = "Tạo đơn hàng thành công!";
+      })
+      .addCase(createOrder.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      // Fetch Order by ID
+      .addCase(fetchOrderById.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchOrderById.fulfilled,
+        (state, action: PayloadAction<Order>) => {
+          state.isLoading = false;
+          state.currentOrder = action.payload;
+          // Cập nhật trong danh sách nếu đã tồn tại
+          const existingIndex = state.orders.findIndex(
+            (order) => order.id === action.payload.id,
+          );
+          if (existingIndex !== -1) {
+            state.orders[existingIndex] = action.payload;
+          } else {
+            state.orders.push(action.payload);
+          }
+        },
+      )
+      .addCase(fetchOrderById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      // Update Order
+      .addCase(updateOrder.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateOrder.fulfilled, (state, action: PayloadAction<Order>) => {
+        state.isLoading = false;
+        state.currentOrder = action.payload;
+        // Cập nhật trong danh sách
+        const index = state.orders.findIndex(
+          (order) => order.id === action.payload.id,
+        );
+        if (index !== -1) {
+          state.orders[index] = action.payload;
+        }
+        state.successMessage = "Cập nhật đơn hàng thành công!";
+      })
+      .addCase(updateOrder.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      // Cancel Order
+      .addCase(cancelOrder.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(cancelOrder.fulfilled, (state, action: PayloadAction<Order>) => {
+        state.isLoading = false;
+        // Cập nhật trạng thái trong danh sách
+        const index = state.orders.findIndex(
+          (order) => order.id === action.payload.id,
+        );
+        if (index !== -1) {
+          state.orders[index] = action.payload;
+        }
+        if (state.currentOrder?.id === action.payload.id) {
+          state.currentOrder = action.payload;
+        }
+        state.successMessage = "Hủy đơn hàng thành công!";
+      })
+      .addCase(cancelOrder.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+  },
+});
+
+export const { clearCurrentOrder, clearError, clearSuccessMessage } =
+  orderSlice.actions;
+export default orderSlice.reducer;

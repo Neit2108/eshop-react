@@ -23,7 +23,7 @@ export default function ProductInfo({
   quantity,
   onQuantityChange,
 }: ProductInfoProps) {
-  const { cartId, addItemToCart } = useCart();
+  const { addItemToCart } = useCart();
   const navigate = useNavigate();
 
   const variantNames = product.variants?.map((v) => v.name) || [];
@@ -38,13 +38,12 @@ export default function ProductInfo({
   const displayPrice = currentVariant?.price ?? product.price;
 
   const handleAddToCart = () => {
-    console.log("cart id:", cartId);
     console.log("selected variant:", selectedVariant);
-    if (!cartId || !selectedVariant) {
+    if (!selectedVariant) {
       toast.error("Vui lòng chọn sản phẩm trước khi thêm vào giỏ hàng.");
       return;
     }
-    addItemToCart(cartId, selectedVariant, quantity);
+    addItemToCart({ variantId: selectedVariant, quantity });
     toast.success("Thêm sản phẩm vào giỏ hàng thành công!", {
       action: {
         label: "Xem giỏ hàng",

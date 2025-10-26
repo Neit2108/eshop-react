@@ -6,6 +6,7 @@ import {
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
+import type { RootState } from "../store";
 
 const initialState: CartState = {
   cartId: undefined,
@@ -46,13 +47,22 @@ export const addItemToCart = createAsyncThunk(
   "cart/addItemToCart",
   async (
     {
-      cartId,
       variantId,
       quantity,
-    }: { cartId: string; variantId: string; quantity: number },
-    { rejectWithValue },
+    }: { variantId: string; quantity: number },
+    { rejectWithValue, getState },
   ) => {
     try {
+      const state = getState() as RootState
+      let cartId = state.cart.cartId
+      if (!cartId) {
+        // gọi api lấy / tạo giỏ mới
+        const response = await apiService.post<Cart>(API_ENDPOINTS.CART.GET)
+        const data = response.data
+        cartId = data.id
+        localStorage.setItem("cartId", cartId)
+      }
+      
       const response = await apiService.post<CartItem>(
         API_ENDPOINTS.CART.ADD(cartId),
         { variantId, quantity },

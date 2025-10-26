@@ -71,7 +71,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Discount Badge */}
         <div className="absolute top-3 left-3 rounded-md bg-red-500 px-2 py-1 text-sm font-bold text-white">
-          {product.discountPercentage}%
+          30%
         </div>
       </div>
 
