@@ -30,6 +30,7 @@ export interface ApiResponse<T> {
   data: T;
   message?: string;
   error?: string;
+  code?: string;
 }
 
 export interface ApiError {

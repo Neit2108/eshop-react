@@ -3,30 +3,23 @@ import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { OrderItem } from "./OrderItem"
 import { formatPrice } from "@/lib/utils"
+import type { CartItem } from "@/types/cart.types"
 
 interface OrderSummaryProps {
-  items: Array<{
-    id: string
-    name: string
-    image: string
-    quantity: number
-    price: number
-  }>
-  subtotal: number
+  items: CartItem[]
+  totalAmount: number
   shippingFee?: number
   onPlaceOrder: () => void
 }
 
-export function OrderSummary({ items, subtotal, shippingFee = 0, onPlaceOrder }: OrderSummaryProps) {
-  const total = subtotal + shippingFee
-
+export function OrderSummary({ items, totalAmount, shippingFee = 0, onPlaceOrder }: OrderSummaryProps) {
   return (
     <Card className="h-fit sticky top-4 p-6">
       <h2 className="text-xl font-semibold text-foreground mb-4">Tóm tắt đơn hàng</h2>
 
       <div className="space-y-4 mb-6">
         {items.map((item) => (
-          <OrderItem key={item.id} {...item} />
+          <OrderItem key={item.id} item={item} />
         ))}
       </div>
 
@@ -35,7 +28,7 @@ export function OrderSummary({ items, subtotal, shippingFee = 0, onPlaceOrder }:
       <div className="space-y-3 mb-6">
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Giá tiền</span>
-          <span className="font-medium text-foreground">{formatPrice(subtotal)}</span>
+          <span className="font-medium text-foreground">{formatPrice(totalAmount)}</span>
         </div>
         {shippingFee > 0 && (
           <div className="flex justify-between text-sm">
@@ -45,7 +38,7 @@ export function OrderSummary({ items, subtotal, shippingFee = 0, onPlaceOrder }:
         )}
         <div className="flex justify-between text-lg font-semibold pt-2 border-t border-border">
           <span className="text-foreground">Tổng</span>
-          <span className="text-primary">{formatPrice(total)}</span>
+          <span className="text-primary">{formatPrice(totalAmount + shippingFee)}</span>
         </div>
       </div>
 

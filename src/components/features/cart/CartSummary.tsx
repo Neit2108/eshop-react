@@ -25,7 +25,7 @@ export function CartSummary({ totalItems, subtotal, shippingFee, total }: CartSu
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Phí vận chuyển</span>
-          <span className="font-medium text-foreground">Miễn phí</span>
+          <span className="font-medium text-foreground">{shippingFee > 0 ? formatPrice(shippingFee) : "Miễn phí"}</span>
         </div>
       </div>
 

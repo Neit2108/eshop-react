@@ -22,14 +22,16 @@ export const createOrder = createAsyncThunk(
   "order/createOrder",
   async (orderData: CreateOrderInput, { rejectWithValue }) => {
     try {
+      console.log("Creating order with data:", orderData);
       const response = await apiService.post<Order>(
         API_ENDPOINTS.ORDERS.CREATE,
         orderData,
       );
-      return response.data;
+      console.log("Response data:", response.data);
+      return response;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message ||
+        error.response?.data?.error ||
           error.message ||
           "Lỗi khi tạo đơn hàng",
       );

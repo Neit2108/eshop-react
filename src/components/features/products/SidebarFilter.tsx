@@ -49,7 +49,7 @@ export default function SidebarFilter({
 
   return (
     <div className="space-y-4 sm:space-y-5 md:space-y-6">
-      {/* Active Filters Indicator and Clear Button */}
+      {/* Active Filters Indicator and Clear Button 
       {hasActiveFilters && (
         <div className="flex items-center justify-between gap-2 p-3 bg-red-50 rounded-lg border border-red-200">
           <span className="text-xs sm:text-sm text-red-700 font-medium">Bộ lọc đang hoạt động</span>
@@ -61,7 +61,7 @@ export default function SidebarFilter({
             <X size={16} />
           </button>
         </div>
-      )}
+      )}*/}
 
       {/* Category Filter */}
       <div className="border-b pb-3 sm:pb-4">
