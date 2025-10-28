@@ -6,9 +6,15 @@ import type { SignupFormData } from '@/types'
 export function useAuth() {
   const dispatch = useDispatch<AppDispatch>()
   const { user, isLoading, isAuthenticated, error } = useSelector((state: RootState) => state.auth)
+  const hasRoles = (roles: string | string[]) => {
+    if (!user?.roles) return false
+    const requiredRoles = Array.isArray(roles) ? roles : [roles]
+    return requiredRoles.every(role => user.roles?.includes(role))
+  }
 
   return {
     user,
+    roles: user?.roles,
     isLoading,
     isAuthenticated,
     error,
@@ -16,6 +22,7 @@ export function useAuth() {
     login: (email: string, password: string) =>
       dispatch(login({ email, password })),
     logout: () => dispatch(logout()),
+    hasRoles,
     clearError: () => dispatch(clearError()),
   }
 }

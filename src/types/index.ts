@@ -3,9 +3,10 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
+  roles?: string[];
 }
 
-export interface SignupFormData{
+export interface SignupFormData {
   email: string;
   password: string;
   confirmPassword: string;

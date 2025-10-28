@@ -10,6 +10,7 @@ import ProductDetailPage from '@/components/features/products/detail/ProductDeta
 import ProtectedRoute from './components/common/ProtectedRoute';
 import CartPage from './pages/cart/CartPage';
 import CheckoutPage from './pages/checkout/Checkout';
+import AdminApp from './AdminApp';
 
 const router = createBrowserRouter([
   {
@@ -46,20 +47,20 @@ const router = createBrowserRouter([
         path: ROUTES.CHECKOUT,
         element: <ProtectedRoute><CheckoutPage/></ProtectedRoute>
       },
-      // {
-      //   path: ROUTES.DASHBOARD,
-      //   element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
-      // },
-      // {
-      //   path: ROUTES.SETTINGS,
-      //   element: <ProtectedRoute><Settings /></ProtectedRoute>,
-      // },
       {
         path: "*",
         element: <NotFound />,
       },
     ],
   },
+  {
+    path: "/admin",
+    element: <ProtectedRoute roles={['SYSTEM_ADMIN']}><AdminApp /></ProtectedRoute>,
+    children: [
+      {index: true, element: <div>Admin Home</div>},
+      {path: "users", element: <div>User Management</div>},
+    ]
+  }
 ]);
 
 export function Router(){
