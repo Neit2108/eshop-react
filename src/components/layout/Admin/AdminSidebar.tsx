@@ -8,6 +8,7 @@ import {
   Command,
   Frame,
   GalleryVerticalEnd,
+  LayoutDashboard,
   Map,
   PieChart,
   Settings2,
@@ -51,7 +52,12 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Dashboard",
+      url: "#",
+      icon: LayoutDashboard,
+    },
+    {
+      title: "Sản phẩm",
       url: "#",
       icon: SquareTerminal,
       isActive: true,

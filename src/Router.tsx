@@ -11,6 +11,7 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 import CartPage from './pages/cart/CartPage';
 import CheckoutPage from './pages/checkout/Checkout';
 import AdminApp from './AdminApp';
+import { DashboardPage } from './pages/admin/DashboardPage';
 
 const router = createBrowserRouter([
   {
@@ -57,7 +58,7 @@ const router = createBrowserRouter([
     path: "/admin",
     element: <ProtectedRoute roles={['SYSTEM_ADMIN']}><AdminApp /></ProtectedRoute>,
     children: [
-      {index: true, element: <div>Admin Home</div>},
+      {index: true, element: <DashboardPage />},
       {path: "users", element: <div>User Management</div>},
     ]
   }
