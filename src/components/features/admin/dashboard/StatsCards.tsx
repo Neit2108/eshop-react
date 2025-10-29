@@ -4,52 +4,22 @@ import { motion } from "framer-motion"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown, Users, ShoppingCart, DollarSign, Activity } from "lucide-react"
-
-interface StatCard {
-  title: string
-  value: string
-  change: number
-  icon: React.ReactNode
-  description: string
-  trend: string
-}
-
-const stats: StatCard[] = [
-  {
-    title: "New Customers",
-    value: "1,234",
-    change: 20,
-    icon: <Users className="w-5 h-5" />,
-    description: "Compared to last month",
-    trend: "Slight increase over the past week",
-  },
-  {
-    title: "Total Revenue",
-    value: "$12,500",
-    change: 12.5,
-    icon: <DollarSign className="w-5 h-5" />,
-    description: "Compared to last month",
-    trend: "Trending up this month",
-  },
-  {
-    title: "Total Orders",
-    value: "456",
-    change: -5,
-    icon: <ShoppingCart className="w-5 h-5" />,
-    description: "Compared to last month",
-    trend: "Slight decrease from last week",
-  },
-  {
-    title: "Active Users",
-    value: "892",
-    change: 8.3,
-    icon: <Activity className="w-5 h-5" />,
-    description: "Compared to last month",
-    trend: "Steady growth this month",
-  },
-]
+import { useAdmin } from "@/hooks/useAdmin"
+import { useEffect } from "react"
+import Loading from "@/components/common/Loading"
+import { formatNumber } from "@/lib/utils"
 
 export function StatsCards() {
+  const { summaryStats, loading, error, fetchSummaryStats } = useAdmin();
+
+  useEffect(() => {
+    fetchSummaryStats();
+  }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -76,7 +46,7 @@ export function StatsCards() {
       initial="hidden"
       animate="visible"
     >
-      {stats.map((stat, index) => (
+      {summaryStats.map((stat, index) => (
         <motion.div key={index} variants={itemVariants}>
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -85,14 +55,14 @@ export function StatsCards() {
                 <span className="flex items-center gap-1">
                   {stat.change >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                   {stat.change >= 0 ? "+" : ""}
-                  {stat.change}%
+                  {formatNumber(stat.change)}%
                 </span>
               </Badge>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-3xl font-bold text-foreground">{stat.value}</div>
-                <div className="text-muted-foreground opacity-50">{stat.icon}</div>
+                <div className="text-3xl font-bold text-foreground">{formatNumber(stat.value)}</div>
+                {/* <div className="text-muted-foreground opacity-50">{stat.icon}</div> */}
               </div>
             </CardContent>
             <CardFooter className="flex flex-col items-start gap-1 pt-2">

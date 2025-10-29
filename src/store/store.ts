@@ -4,9 +4,11 @@ import uiReducer from './slices/uiSlice'
 import productReducer from './slices/productSlice'
 import cartReducer from './slices/cartSlice'
 import orderReducer from './slices/orderSlice'
+import adminReducer from './slices/adminSlice'
 
 export const store = configureStore({
   reducer: {
+    admin: adminReducer,
     auth: authReducer,
     ui: uiReducer,
     products: productReducer,
@@ -17,3 +19,4 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
+

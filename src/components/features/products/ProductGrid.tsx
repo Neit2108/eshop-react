@@ -3,6 +3,7 @@
 import ProductCard from "./ProductCard"
 import { Loader2 } from "lucide-react"
 import type { Product } from "@/types/product.types"
+import Loading from "@/components/common/Loading"
 
 interface ProductGridProps {
   products: Product[]
@@ -28,9 +29,7 @@ export default function ProductGrid({ products, isLoading, sortBy }: ProductGrid
 
   if (isLoading && products.length === 0) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-red-500" />
-      </div>
+      <Loading />
     )
   }
 

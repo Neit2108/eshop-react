@@ -104,3 +104,77 @@ export interface ProductState {
 export interface ProductQuery extends PaginationParams {
   filters?: ProductFilters;
 }
+
+
+// add product
+// Product creation wizard types
+export interface CreateDraftProductInput {
+  name: string;
+  shopId: string;
+  description?: string;
+}
+
+export interface AddProductCategoriesInput {
+  categoryIds: string[];
+}
+
+export interface CreateProductOptionValueInput {
+  value: string;
+  sortOrder?: number;
+}
+
+export interface CreateProductOptionInput {
+  name: string;
+  values: CreateProductOptionValueInput[];
+}
+
+export interface AddProductOptionsInput {
+  options: CreateProductOptionInput[];
+}
+
+export interface CreateProductVariantInput {
+  name: string;
+  value: string;
+  price: number;
+  currency?: string;
+  description?: string;
+  optionCombination?: Record<string, string>;
+}
+
+export interface AddProductVariantsInput {
+  variants: CreateProductVariantInput[];
+}
+
+export interface AddProductImageInput {
+  imageUrl: string;
+  isPrimary?: boolean;
+  sortOrder?: number;
+  description?: string;
+}
+
+export interface AddProductImagesInput {
+  images: AddProductImageInput[];
+}
+
+export interface ProductWizardState {
+  productId: string | null;
+  step: number;
+  draft: CreateDraftProductInput;
+  categories: AddProductCategoriesInput;
+  options: AddProductOptionsInput;
+  variants: AddProductVariantsInput;
+  images: AddProductImagesInput;
+  status: 'draft' | 'published' | 'archived';
+  loading: boolean;
+  error: string | null;
+}
+
+export interface Shop {
+  id: string;
+  name: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+}

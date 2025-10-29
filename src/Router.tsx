@@ -12,6 +12,8 @@ import CartPage from './pages/cart/CartPage';
 import CheckoutPage from './pages/checkout/Checkout';
 import AdminApp from './AdminApp';
 import { DashboardPage } from './pages/admin/DashboardPage';
+import CreateProductPage from './pages/product/CreateProductPage';
+import CreateProductPage2 from './components/features/products/steps-2/CreateProductPage';
 
 const router = createBrowserRouter([
   {
@@ -59,7 +61,8 @@ const router = createBrowserRouter([
     element: <ProtectedRoute roles={['SYSTEM_ADMIN']}><AdminApp /></ProtectedRoute>,
     children: [
       {index: true, element: <DashboardPage />},
-      {path: "users", element: <div>User Management</div>},
+      {path: "products", element: <CreateProductPage />},
+      {path: "products/2", element: <CreateProductPage2 />},
     ]
   }
 ]);
