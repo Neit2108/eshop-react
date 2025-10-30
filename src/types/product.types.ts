@@ -156,6 +156,83 @@ export interface AddProductImagesInput {
   images: AddProductImageInput[];
 }
 
+export interface UpdateProductStatusInput {
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED' | 'OUT_OF_STOCK' | 'DISCONTINUED';
+}
+
+export interface ProductStatusResponse {
+  id: string;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED' | 'OUT_OF_STOCK' | 'DISCONTINUED';
+  updatedAt: Date;
+}
+
+
+// response types for each step
+export interface DraftProductResponse {
+  id: string;
+  name: string;
+  shopId: string;
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED" | "OUT_OF_STOCK" | "DISCONTINUED";
+  description?: string;
+  createdAt: Date;
+}
+
+export interface ProductCategoriesResponse {
+  productId: string;
+  categories: {
+    id: string;
+    name: string;
+    description?: string;
+  }[];
+}
+
+export interface ProductOptionsResponse {
+  productId: string;
+  options: {
+    id: string;
+    name: string;
+    values: {
+      id: string;
+      value: string;
+      sortOrder: number;
+    }[];
+  }[];
+}
+
+export interface ProductVariantsResponse {
+  productId: string;
+  variants: {
+    id: string;
+    name: string;
+    value: string;
+    price: number;
+    currency: string;
+    sku: string;
+    optionValues?: {
+      optionName: string;
+      optionValue: string;
+    }[];
+  }[];
+}
+
+export interface ProductImagesResponse {
+  productId: string;
+  images: {
+    id: string;
+    imageUrl: string;
+    isPrimary: boolean;
+    sortOrder: number;
+    description?: string;
+  }[];
+}
+
+export interface ProductStatusResponse {
+  id: string;
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED" | "OUT_OF_STOCK" | "DISCONTINUED";
+  updatedAt: Date;
+}
+
+
 export interface ProductWizardState {
   productId: string | null;
   step: number;
@@ -169,12 +246,33 @@ export interface ProductWizardState {
   error: string | null;
 }
 
+export interface ProductCreationState{
+  productId: string | null;
+  currentStep: number;
+  isLoading: boolean;
+  error: string | null;
+  draft: DraftProductResponse;
+  categoriesData: ProductCategoriesResponse;
+  options: ProductOptionsResponse;
+  variants: ProductVariantsResponse;
+  images: ProductImagesResponse;
+  status: ProductStatusResponse;
+}
+
 export interface Shop {
   id: string;
   name: string;
 }
 
+// catory
 export interface Category {
   id: string;
   name: string;
+  description?: string;
+}
+
+export interface CategoryState {
+  categories: Category[];
+  isLoading: boolean;
+  error: string | null;
 }
