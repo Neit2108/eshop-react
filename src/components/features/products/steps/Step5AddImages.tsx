@@ -103,20 +103,20 @@ export function Step5AddImages({ data, loading, onBack, onNext }: Step5Props) {
   return (
     <Card className="animate-in fade-in duration-300">
       <CardHeader>
-        <CardTitle>Add Product Images</CardTitle>
+        <CardTitle>Thêm hình ảnh sản phẩm</CardTitle>
         <CardDescription>
-          Upload images and select the primary image
+          Tải lên hình ảnh và chọn hình ảnh chính
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Add new image */}
         <div className="bg-muted/30 rounded-lg border p-4">
-          <h3 className="mb-4 font-semibold">Add New Image</h3>
+          <h3 className="mb-4 font-semibold">Thêm hình ảnh mới</h3>
           <div className="space-y-3">
             {/* File Upload Option */}
             <div>
               <Label htmlFor="image-file" className="text-sm mb-2 block">
-                Upload Image from Computer
+                Tải lên hình ảnh từ máy tính
               </Label>
               <div className="relative">
                 <input
@@ -134,7 +134,7 @@ export function Step5AddImages({ data, loading, onBack, onNext }: Step5Props) {
                   onClick={() => document.getElementById('image-file')?.click()}
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  Choose Image File
+                  Chọn tệp hình ảnh
                 </Button>
               </div>
             </div>
@@ -145,14 +145,14 @@ export function Step5AddImages({ data, loading, onBack, onNext }: Step5Props) {
                 <div className="w-full border-t border-gray-300"></div>
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-muted/30 px-2 text-gray-500">Or</span>
+                <span className="bg-muted/30 px-2 text-gray-500">Hoặc</span>
               </div>
             </div>
 
             {/* URL Input Option */}
             <div>
               <Label htmlFor="image-url" className="text-sm">
-                Image URL
+                URL hình ảnh
               </Label>
               <Input
                 id="image-url"
@@ -163,63 +163,21 @@ export function Step5AddImages({ data, loading, onBack, onNext }: Step5Props) {
             </div>
             <div>
               <Label htmlFor="image-description" className="text-sm">
-                Description (optional)
+                Mô tả (tùy chọn)
               </Label>
               <Input
                 id="image-description"
-                placeholder="Image description"
+                placeholder="Mô tả hình ảnh (tùy chọn)"
                 value={newImageDescription}
                 onChange={(e) => setNewImageDescription(e.target.value)}
               />
             </div>
             <Button onClick={addImage} size="sm" className="w-full">
               <Plus className="mr-2 h-4 w-4" />
-              Add Image
+              Thêm hình ảnh
             </Button>
           </div>
         </div>
-
-        {/* Display images 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {images.map((image, index) => (
-            <div key={index} className="border rounded-lg overflow-hidden bg-card">
-              <div className="aspect-square bg-muted flex items-center justify-center overflow-hidden">
-                <img
-                  src={image.imageUrl || "/placeholder.svg"}
-                  alt={image.description || `Product image ${index + 1}`}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/placeholder.svg?height=200&width=200';
-                  }}
-                />
-              </div>
-              <div className="p-3 space-y-2">
-                {image.description && (
-                  <p className="text-sm text-muted-foreground">{image.description}</p>
-                )}
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`primary-${index}`}
-                    checked={image.isPrimary || false}
-                    onCheckedChange={() => setPrimaryImage(index)}
-                  />
-                  <Label htmlFor={`primary-${index}`} className="text-sm cursor-pointer">
-                    Primary Image
-                  </Label>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeImage(index)}
-                  className="w-full"
-                >
-                  <X className="w-4 h-4 mr-2" />
-                  Remove
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>*/}
 
         {/* Images Grid */}
         {images.length > 0 && (
@@ -295,12 +253,12 @@ export function Step5AddImages({ data, loading, onBack, onNext }: Step5Props) {
           </div>
         )}
 
-        <div className="flex justify-between gap-3 pt-4">
-          <Button variant="outline" onClick={onBack} disabled={loading}>
-            Back
-          </Button>
-          <Button onClick={handleNext} disabled={loading}>
-            {loading ? "Saving..." : "Next"}
+        <div className="flex justify-end gap-3 pt-4">
+              {/* <Button variant="outline" onClick={onBack} disabled={loading}>
+                Back
+              </Button> */}
+          <Button className='cursor-pointer' onClick={handleNext} disabled={loading}>
+            {loading ? "Đang lưu..." : "Tiếp theo"}
           </Button>
         </div>
       </CardContent>

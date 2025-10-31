@@ -15,17 +15,16 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 interface Step6Props {
   productId: string;
   loading: boolean;
+  completed?: boolean;
   onBack: () => void;
   onFinish: (status: string) => void;
 }
 
-export function Step6Publish({ productId, loading, onBack, onFinish }: Step6Props) {
-  const [status, setStatus] = useState<'draft' | 'published' | 'archived'>('published');
-  const [completed, setCompleted] = useState(false);
+export function Step6Publish({ productId, loading, completed, onBack, onFinish }: Step6Props) {
+  const [status, setStatus] = useState<"DRAFT" | "PUBLISHED" | "ARCHIVED" | "OUT_OF_STOCK" | "DISCONTINUED">('PUBLISHED');
 
   const handleFinish = async () => {
     onFinish(status);
-    setCompleted(true);
   };
 
   if (completed) {
@@ -34,22 +33,22 @@ export function Step6Publish({ productId, loading, onBack, onFinish }: Step6Prop
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <CheckCircle className="w-6 h-6 text-green-600" />
-            Product Created Successfully
+            Sản phẩm đã được tạo thành công
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              Your product has been created and is now {status}.
+              Sản phẩm của bạn đã được tạo và hiện đang {status}.
             </AlertDescription>
           </Alert>
           <div className="bg-muted p-4 rounded-lg">
-            <p className="text-sm text-muted-foreground">Product ID</p>
+            <p className="text-sm text-muted-foreground">ID sản phẩm</p>
             <p className="font-mono font-semibold break-all">{productId}</p>
           </div>
           <Button className="w-full" onClick={() => window.location.href = '/products'}>
-            Go to Products
+            Đi đến Sản phẩm
           </Button>
         </CardContent>
       </Card>
@@ -59,22 +58,22 @@ export function Step6Publish({ productId, loading, onBack, onFinish }: Step6Prop
   return (
     <Card className="animate-in fade-in duration-300">
       <CardHeader>
-        <CardTitle>Publish Product</CardTitle>
+        <CardTitle>Đăng bán sản phẩm</CardTitle>
         <CardDescription>
-          Choose the status for your product
+          Chọn trạng thái cho sản phẩm của bạn
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="status">Product Status *</Label>
+          <Label htmlFor="status">Trạng thái sản phẩm *</Label>
           <Select value={status} onValueChange={(value: any) => setStatus(value)}>
             <SelectTrigger id="status">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
+              <SelectItem value="DRAFT">Nháp</SelectItem>
+              <SelectItem value="PUBLISHED">Công khai</SelectItem>
+              <SelectItem value="ARCHIVED">Lưu trữ</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -82,25 +81,25 @@ export function Step6Publish({ productId, loading, onBack, onFinish }: Step6Prop
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {status === 'published'
-              ? 'Your product will be visible to customers.'
-              : status === 'draft'
-              ? 'Your product will remain in draft mode.'
-              : 'Your product will be archived and hidden from customers.'}
+            {status === 'PUBLISHED'
+              ? 'Sản phẩm của bạn sẽ được hiển thị cho khách hàng.'
+              : status === 'DRAFT'
+              ? 'Sản phẩm của bạn sẽ vẫn ở chế độ nháp.'
+              : 'Sản phẩm của bạn sẽ được lưu trữ và ẩn khỏi khách hàng.'}
           </AlertDescription>
         </Alert>
 
         <div className="bg-muted p-4 rounded-lg">
-          <p className="text-sm text-muted-foreground">Product ID</p>
+          <p className="text-sm text-muted-foreground">ID sản phẩm</p>
           <p className="font-mono font-semibold break-all">{productId}</p>
         </div>
 
-        <div className="flex justify-between gap-3 pt-4">
-          <Button variant="outline" onClick={onBack} disabled={loading}>
+        <div className="flex justify-end gap-3 pt-4">
+          {/* <Button variant="outline" onClick={onBack} disabled={loading}>
             Back
-          </Button>
-          <Button onClick={handleFinish} disabled={loading}>
-            {loading ? 'Publishing...' : 'Finish'}
+          </Button> */}
+          <Button className='cursor-pointer' onClick={handleFinish} disabled={loading}>
+            {loading ? 'Đang đăng...' : 'Hoàn tất'}
           </Button>
         </div>
       </CardContent>

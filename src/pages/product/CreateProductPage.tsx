@@ -333,25 +333,19 @@
 //   );
 // }
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ProgressBar } from "@/components/features/products/steps/ProgressBar";
 import { Step1CreateDraft } from "@/components/features/products/steps/Step1CreateDraft";
 import { Step2AddCategories } from "@/components/features/products/steps/Step2AddCategories";
-import { Step3AddOptions } from "@/components/features/products/steps/Step3AddOptions";
 import { Step4AddVariants } from "@/components/features/products/steps/Step4AddVariants";
 import { Step5AddImages } from "@/components/features/products/steps/Step5AddImages";
 import { Step6Publish } from "@/components/features/products/steps/Step6Publish";
 import { motion, AnimatePresence } from "framer-motion";
 import { useProductCreation } from "@/hooks/useProductCreation";
 import { useCategory } from "@/hooks/useCategory";
+import { toast } from "sonner";
 
-const STEPS = [
-  "Create Draft",
-  "Categories",
-  "Variants",
-  "Images",
-  "Publish",
-];
+const STEPS = ["Create Draft", "Categories", "Variants", "Images", "Publish"];
 
 export default function CreateProductPage() {
   const {
@@ -376,12 +370,14 @@ export default function CreateProductPage() {
     publishProduct,
   } = useProductCreation();
   const { categories, fetchCategories } = useCategory();
+
+  const [completed, setCompleted] = useState(false);
+
   // Load mock data
   useEffect(() => {
     const loadData = async () => {
       try {
-        await fetchCategories('');
-        
+        await fetchCategories("");
       } catch {
         setError("Failed to load data");
       }
@@ -398,10 +394,6 @@ export default function CreateProductPage() {
     await addCategories(productId!, data);
   };
 
-  const handleStep3Next = async (data: any) => {
-    await addOptions(productId!, data);
-  };
-
   const handleStep4Next = async (data: any) => {
     await addVariants(productId!, data);
   };
@@ -412,6 +404,7 @@ export default function CreateProductPage() {
 
   const handleStep6Finish = async (status: any) => {
     await publishProduct(productId!, { status });
+    setCompleted(true);
   };
 
   const handleBack = () => {
@@ -461,6 +454,7 @@ export default function CreateProductPage() {
       case 4:
         return (
           <Step6Publish
+            completed={completed}
             productId={productId || ""}
             loading={isLoading}
             onBack={handleBack}
@@ -472,6 +466,10 @@ export default function CreateProductPage() {
     }
   };
 
+  if(error){
+    toast.error(error);
+  }
+
   return (
     <div className="mx-auto w-full max-w-4xl p-6">
       <ProgressBar
@@ -479,68 +477,7 @@ export default function CreateProductPage() {
         totalSteps={STEPS.length}
         steps={STEPS}
       />
-
-      {error && (
-        <div className="bg-destructive/10 border-destructive text-destructive mb-6 rounded-lg border p-4">
-          {error}
-        </div>
-      )}
-
-      {/* {currentStep === 0 && (
-          <Step1CreateDraft
-            data={state.draft}
-            shops={shops}
-            loading={state.loading}
-            onNext={handleStep1Next}
-          />
-        )}
-
-        {state.step === 1 && (
-          <Step2AddCategories
-            data={state.categories}
-            categories={categories}
-            loading={state.loading}
-            onBack={handleBack}
-            onNext={handleStep2Next}
-          />
-        )}
-
-        {state.step === 2 && (
-          <Step3AddOptions
-            data={state.options}
-            loading={state.loading}
-            onBack={handleBack}
-            onNext={handleStep3Next}
-          />
-        )}
-
-        {state.step === 3 && (
-          <Step4AddVariants
-            data={state.variants}
-            options={state.options.options}
-            loading={state.loading}
-            onBack={handleBack}
-            onNext={handleStep4Next}
-          />
-        )}
-
-        {state.step === 4 && (
-          <Step5AddImages
-            data={state.images}
-            loading={state.loading}
-            onBack={handleBack}
-            onNext={handleStep5Next}
-          />
-        )}
-
-        {state.step === 5 && (
-          <Step6Publish
-            productId={state.productId || ""}
-            loading={state.loading}
-            onBack={handleBack}
-            onFinish={handleStep6Finish}
-          />
-        )} */}
+      
       <AnimatePresence mode="wait">
         <motion.div
           key={currentStep}
