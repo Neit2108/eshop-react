@@ -107,7 +107,7 @@ export const publishProduct = createAsyncThunk(
     "productCreation/publishProduct",
     async ({productId, data}: {productId: string, data: UpdateProductStatusInput}, {rejectWithValue}) => {
         try{
-            const response = await apiService.patch<ProductStatusResponse>(`/products/${productId}/status`, data);
+            const response = await apiService.put<ProductStatusResponse>(`/products/${productId}/status`, data);
             return response.data;
         }
         catch{
@@ -194,7 +194,7 @@ const productCreationSlice = createSlice({
         .addCase(publishProduct.fulfilled, (state, action: PayloadAction<ProductStatusResponse>) => {
             state.isLoading = false;
             state.status = action.payload;
-            state.currentStep = 5;
+            // state.currentStep = 5;
         })
         .addCase(publishProduct.rejected, (state, action) => {
             state.isLoading = false;
