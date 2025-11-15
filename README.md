@@ -1,4 +1,4 @@
-# eShop React - Hướng Dẫn Toàn Bộ
+# Hướng Dẫn Toàn Bộ
 
 Một ứng dụng web thương mại điện tử hiện đại được xây dựng bằng **React**, **TypeScript**, **Tailwind CSS** và **Redux Toolkit**.
 
@@ -21,7 +21,7 @@ Một ứng dụng web thương mại điện tử hiện đại được xây d
 
 ## 🎯 Giới Thiệu
 
-**eShop React** là một nền tảng thương mại điện tử đầy đủ chức năng bao gồm:
+**Dự án này** là một nền tảng thương mại điện tử đầy đủ chức năng bao gồm:
 
 ✅ Trang chủ với sản phẩm nổi bật
 ✅ Danh mục sản phẩm và tìm kiếm
