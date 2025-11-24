@@ -11,6 +11,8 @@ import {
   ChevronRight,
   Settings,
   LogOut,
+  LucideMessagesSquare,
+  PackageCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -286,9 +288,9 @@ const Header: React.FC = () => {
                     </a>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <a href="/settings" className="cursor-pointer text-sm">
-                      <Settings className="mr-2 h-4 w-4" />
-                      Cài đặt
+                    <a href="/orders" className="cursor-pointer text-sm">
+                      <PackageCheck className="mr-2 h-4 w-4" />
+                      Đơn hàng
                     </a>
                   </DropdownMenuItem>
                   <DropdownMenuItem
@@ -308,12 +310,12 @@ const Header: React.FC = () => {
             </Button>
 
             {/* Wishlist */}
-            <a href="/wishlist" className="relative">
+            <a href="/chat" className="relative">
               <Button size="icon" variant="ghost" className="relative h-9 w-9 sm:h-10 sm:w-10">
-                <Heart size={32} className="sm:w-8 sm:h-8" />
+                <LucideMessagesSquare size={32} className="sm:w-8 sm:h-8" />
                 {wishlistCount > 0 && (
                   <Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center bg-red-500 p-0 text-xs">
-                    {wishlistCount}
+                    9+
                   </Badge>
                 )}
               </Button>

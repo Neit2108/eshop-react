@@ -57,6 +57,9 @@ export interface Order {
   items: OrderItem[];
 }
 
+export type OrderStatus = Order["status"]
+export type PaymentMethod = Order["paymentMethod"]
+export type ShippingMethod = Order["shippingMethod"]
 
 export type OrderState = {
   orders: Order[];
@@ -64,4 +67,12 @@ export type OrderState = {
   isLoading: boolean;
   error: string | null;
   successMessage: string | null;
+  pagination: {
+    total: number;
+    totalPages: number;
+    currentPage: number;
+    limit: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
 };

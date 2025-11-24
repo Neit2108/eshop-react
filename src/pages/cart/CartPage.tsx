@@ -4,7 +4,6 @@ import { CartEmptyState } from "@/components/features/cart/CartEmptyState"
 import { useCart } from "@/hooks/useCart"
 import { useEffect } from "react"
 import Loading from "@/components/common/Loading"
-import { useOrders } from "@/hooks/useOrders"
 
 const SHIPPING_FEE = 9.99
 

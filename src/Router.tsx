@@ -14,6 +14,9 @@ import AdminApp from './AdminApp';
 import { DashboardPage } from './pages/admin/DashboardPage';
 import CreateProductPage from './pages/product/CreateProductPage';
 import CreateProductPage2 from './components/features/products/steps-2/CreateProductPage';
+import { ChatPage } from './pages/chat/ChatPage';
+import ChatApp from './components/features/chat/Chat';
+import OrdersPage from './pages/order/OrderPage';
 
 const router = createBrowserRouter([
   {
@@ -51,6 +54,10 @@ const router = createBrowserRouter([
         element: <ProtectedRoute><CheckoutPage/></ProtectedRoute>
       },
       {
+        path: ROUTES.ORDERS,
+        element: <ProtectedRoute><OrdersPage /></ProtectedRoute>
+      },
+      {
         path: "*",
         element: <NotFound />,
       },
@@ -64,6 +71,10 @@ const router = createBrowserRouter([
       {path: "products", element: <CreateProductPage />},
       {path: "products/2", element: <CreateProductPage2 />},
     ]
+  },
+  {
+    path: "/chat",
+    element: <ChatApp />
   }
 ]);
 

@@ -1,6 +1,7 @@
 import { API_ENDPOINTS } from "@/lib/api";
 import { apiService } from "@/services/apiService";
 import type { CreateOrderInput, Order, OrderState } from "@/types/order.types";
+import type { PaginatedResponse } from '../../types/index';
 import {
   createAsyncThunk,
   createSlice,
@@ -13,7 +14,37 @@ const initialState: OrderState = {
   isLoading: false,
   error: null,
   successMessage: null,
+  pagination: {
+    total: 0,
+    totalPages: 0,
+    currentPage: 0,
+    limit: 10,
+    hasNext: false,
+    hasPrev: false,
+  },
 };
+
+/**
+ * Lấy danh sách đơn hàng của người dùng hiện tại
+ */
+export const myOrders = createAsyncThunk(
+  "order/myOrders",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiService.get<PaginatedResponse<Order>>(
+        API_ENDPOINTS.ORDERS.MY_ORDERS,
+      );
+      console.log("Fetched orders in myOrders:", response.data);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Lỗi khi lấy danh sách đơn hàng",
+      );
+    }
+  },
+);
 
 /**
  * Tạo đơn hàng mới
@@ -28,7 +59,7 @@ export const createOrder = createAsyncThunk(
         orderData,
       );
       console.log("Response data:", response.data);
-      return response;
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.error ||
@@ -122,6 +153,22 @@ const orderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // My Orders
+      .addCase(myOrders.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.successMessage = null;
+      })
+      .addCase(myOrders.fulfilled, (state, action: PayloadAction<PaginatedResponse<Order>>) => {
+        state.isLoading = false;
+        console.log("Fetched orders:", action.payload);
+        state.orders = action.payload.data;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(myOrders.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
       // Create Order
       .addCase(createOrder.pending, (state) => {
         state.isLoading = true;

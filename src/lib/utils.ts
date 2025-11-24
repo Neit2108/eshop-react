@@ -1,3 +1,4 @@
+import type { OrderStatus } from "@/types/order.types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -10,6 +11,13 @@ export function formatDate(date: Date): string {
     year: "numeric",
     month: "long",
     day: "numeric",
+  }).format(date);
+}
+
+export function formatTime(date: Date): string {
+  return new Intl.DateTimeFormat("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(date);
 }
 
@@ -42,4 +50,24 @@ export function formatNumber(value: number): string {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
+}
+
+export function getStatusColor(status: OrderStatus): string {
+  switch (status) {
+    case "PENDING":
+      return "bg-yellow-200 text-yellow-900"
+    case "CONFIRMED":
+    case "PROCESSING":
+      return "bg-blue-200 text-blue-900"
+    case "SHIPPING":
+      return "bg-indigo-200 text-indigo-900"
+    case "DELIVERED":
+    case "COMPLETED":
+      return "bg-green-200 text-green-900"
+    case "CANCELLED":
+    case "REFUNDED":
+      return "bg-red-200 text-red-900"
+    default:
+      return "bg-gray-200 text-gray-900"
+  }
 }

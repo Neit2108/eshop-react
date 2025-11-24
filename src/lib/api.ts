@@ -27,9 +27,20 @@ export const API_ENDPOINTS = {
     DELETE: (id: string, itemId: string) => `/cart/${id}/items/${itemId}`,
   },
   ORDERS: {
+    MY_ORDERS: '/orders',
     CREATE: '/orders',
     GET: (id: string) => `/orders/${id}`,
     UPDATE: (id: string) => `/orders/${id}`,
     DELETE: (id: string) => `/orders/${id}`,
+  },
+  CHAT: {
+    CONVERSATIONS: '/chat/conversations',
+    CONVERSATION_DETAIL: (id: string) => `/chat/conversations/${id}`,
+    CONVERSATION_MESSAGES: (id: string) => `/chat/conversations/${id}/messages`,
+    MARK_AS_READ: (id: string) => `/chat/conversations/${id}/read`,
+    CLOSE: (id: string) => `/chat/conversations/${id}/close`,
+    RESOLVE: (id: string) => `/chat/conversations/${id}/resolve`,
+    SHOP_CONVERSATIONS: (shopId: string) => `/chat/shop/${shopId}/conversations`,
+    MESSAGE: (id: string) => `/chat/messages/${id}`,
   },
 } as const
