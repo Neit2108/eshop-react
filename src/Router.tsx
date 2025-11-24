@@ -1,22 +1,22 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import { ROUTES } from "./lib/constants";
-import NotFound from './pages/NotFound';
-import LoginPage from './pages/login/Login';
-import SignupPage from './pages/signup/Signup';
-import HomePage from './pages/home/Home';
-import ProductListPage from '@/pages/product/ProductListPage';
-import ProductDetailPage from '@/components/features/products/detail/ProductDetailPage';
-import ProtectedRoute from './components/common/ProtectedRoute';
-import CartPage from './pages/cart/CartPage';
-import CheckoutPage from './pages/checkout/Checkout';
-import AdminApp from './AdminApp';
-import { DashboardPage } from './pages/admin/DashboardPage';
-import CreateProductPage from './pages/product/CreateProductPage';
-import CreateProductPage2 from './components/features/products/steps-2/CreateProductPage';
-import { ChatPage } from './pages/chat/ChatPage';
-import ChatApp from './components/features/chat/Chat';
-import OrdersPage from './pages/order/OrderPage';
+import NotFound from "./pages/NotFound";
+import LoginPage from "./pages/login/Login";
+import SignupPage from "./pages/signup/Signup";
+import HomePage from "./pages/home/Home";
+import ProductListPage from "@/pages/product/ProductListPage";
+import ProductDetailPage from "@/components/features/products/detail/ProductDetailPage";
+import ProtectedRoute from "./components/common/ProtectedRoute";
+import CartPage from "./pages/cart/CartPage";
+import CheckoutPage from "./pages/checkout/Checkout";
+import AdminApp from "./AdminApp";
+import { DashboardPage } from "./pages/admin/DashboardPage";
+import CreateProductPage from "./pages/product/CreateProductPage";
+import CreateProductPage2 from "./components/features/products/steps-2/CreateProductPage";
+import ChatApp from "./components/features/chat/Chat";
+import OrdersPage from "./pages/order/OrderPage";
+import PaymentPage from "./pages/payment/PaymentPage";
 
 const router = createBrowserRouter([
   {
@@ -43,19 +43,35 @@ const router = createBrowserRouter([
       {
         path: ROUTES.PRODUCT_DETAIL,
         // element: <ProductDetailPage />
-        element: <ProtectedRoute><ProductDetailPage /></ProtectedRoute>,
+        element: (
+          <ProtectedRoute>
+            <ProductDetailPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: ROUTES.CART,
-        element: <ProtectedRoute><CartPage /></ProtectedRoute>,
+        element: (
+          <ProtectedRoute>
+            <CartPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: ROUTES.CHECKOUT,
-        element: <ProtectedRoute><CheckoutPage/></ProtectedRoute>
+        element: (
+          <ProtectedRoute>
+            <CheckoutPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: ROUTES.ORDERS,
-        element: <ProtectedRoute><OrdersPage /></ProtectedRoute>
+        element: (
+          <ProtectedRoute>
+            <OrdersPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "*",
@@ -65,19 +81,32 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <ProtectedRoute roles={['SYSTEM_ADMIN']}><AdminApp /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute roles={["SYSTEM_ADMIN"]}>
+        <AdminApp />
+      </ProtectedRoute>
+    ),
     children: [
-      {index: true, element: <DashboardPage />},
-      {path: "products", element: <CreateProductPage />},
-      {path: "products/2", element: <CreateProductPage2 />},
-    ]
+      { index: true, element: <DashboardPage /> },
+      { path: "products", element: <CreateProductPage /> },
+      { path: "products/2", element: <CreateProductPage2 /> },
+    ],
   },
   {
     path: "/chat",
-    element: <ChatApp />
-  }
+    element: <ChatApp />,
+  },
+  {
+    path: "/payment",
+    element: (
+      <ProtectedRoute>
+        <PaymentPage />
+      </ProtectedRoute>
+    ),
+    children: [{ path: "result", element: <PaymentPage /> }],
+  },
 ]);
 
-export function Router(){
-    return <RouterProvider router={router} />
+export function Router() {
+  return <RouterProvider router={router} />;
 }
