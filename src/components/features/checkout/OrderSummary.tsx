@@ -13,98 +13,8 @@ interface OrderSummaryProps {
   shippingFee?: number;
   vouchers?: Voucher[] | null;
   onPlaceOrder: () => void;
+  onVoucherSelect?: (voucher: Voucher) => void;
 }
-
-const SAMPLE_VOUCHERS: Voucher[] = [
-  {
-    id: "id-test-1",
-    code: "SAVE10",
-    name: "Save 10%",
-    description: "Get 10% off on all items",
-    type: "PERCENTAGE",
-    discountValue: "10",
-    maxDiscount: "90",
-    minOrderValue: "100",
-    scope: "ALL",
-    shopId: null,
-    totalLimit: 1000,
-    usedCount: 150,
-    limitPerUser: 1,
-    startDate: "2025-10-05T09:02:20.000Z",
-    endDate: "2025-12-30T09:02:26.000Z",
-    status: "ACTIVE",
-    isPublic: true,
-    createdAt: "2025-11-25T09:02:39.000Z",
-    updatedAt: "2025-11-25T02:10:34.521Z",
-    deletedAt: null,
-  },
-  {
-    id: "id-test-2",
-    code: "FIXED20",
-    name: "$20 Off",
-    description: "Save $20 on orders over $150",
-    type: "FIXED_AMOUNT",
-    discountValue: "20",
-    maxDiscount: "20",
-    minOrderValue: "150",
-    scope: "ALL",
-    shopId: null,
-    totalLimit: 500,
-    usedCount: 250,
-    limitPerUser: 2,
-    startDate: "2025-11-01T09:02:20.000Z",
-    endDate: "2025-12-20T09:02:26.000Z",
-    status: "ACTIVE",
-    isPublic: true,
-    createdAt: "2025-11-25T09:02:39.000Z",
-    updatedAt: "2025-11-25T02:10:34.521Z",
-    deletedAt: null,
-  },
-  {
-    id: "id-test-3",
-    code: "FREESHIP",
-    name: "Free Shipping",
-    description: "Get free shipping on all orders",
-    type: "FREE_SHIPPING",
-    discountValue: "0",
-    maxDiscount: "0",
-    minOrderValue: "50",
-    scope: "ALL",
-    shopId: null,
-    totalLimit: 2000,
-    usedCount: 800,
-    limitPerUser: 3,
-    startDate: "2025-10-01T09:02:20.000Z",
-    endDate: "2025-12-31T09:02:26.000Z",
-    status: "ACTIVE",
-    isPublic: true,
-    createdAt: "2025-11-25T09:02:39.000Z",
-    updatedAt: "2025-11-25T02:10:34.521Z",
-    deletedAt: null,
-  },
-  {
-    id: "id-test-4",
-    code: "EXPIRED",
-    name: "Expired Deal",
-    description: "This voucher is no longer valid",
-    type: "PERCENTAGE",
-    discountValue: "25",
-    maxDiscount: "100",
-    minOrderValue: "200",
-    scope: "ALL",
-    shopId: null,
-    totalLimit: 100,
-    usedCount: 100,
-    limitPerUser: 1,
-    startDate: "2025-10-01T09:02:20.000Z",
-    endDate: "2025-11-01T09:02:26.000Z",
-    status: "ACTIVE",
-    isPublic: true,
-    createdAt: "2025-11-25T09:02:39.000Z",
-    updatedAt: "2025-11-25T02:10:34.521Z",
-    deletedAt: null,
-  },
-];
 
 export function OrderSummary({
   items,
@@ -112,14 +22,15 @@ export function OrderSummary({
   shippingFee = 0,
   vouchers = null,
   onPlaceOrder,
+  onVoucherSelect,
 }: OrderSummaryProps) {
-  const effectiveVouchers = vouchers || SAMPLE_VOUCHERS;
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
 
   const handleSelectVoucher = (voucher: Voucher) => {
     setSelectedVoucher(voucher);
     setModalOpen(false);
+    onVoucherSelect?.(voucher);
   };
 
   return (
@@ -193,7 +104,7 @@ export function OrderSummary({
       <VoucherModal
         open={modalOpen}
         onOpenChange={setModalOpen}
-        vouchers={effectiveVouchers}
+        vouchers={vouchers || []}
         onSelect={handleSelectVoucher}
       />
     </>

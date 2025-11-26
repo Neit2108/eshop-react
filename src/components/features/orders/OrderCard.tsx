@@ -29,7 +29,7 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
         <div className="flex justify-between items-center pt-2 border-t">
           <span className="font-semibold text-sm">{formatCurrency(order.totalAmount, order.currency)}</span>
           <Button size="sm" variant="outline" onClick={() => onViewDetails(order)}>
-            Details
+            Chi tiết
           </Button>
         </div>
       </div>

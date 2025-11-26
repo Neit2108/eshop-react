@@ -3,10 +3,11 @@ export type CreateOrderInput = {
   shippingAddress: string;
   recipientName: string;
   recipientPhone: string;
-  paymentMethod: 'COD'; // sẽ thêm sau
+  paymentMethod: "COD" | "BANK_TRANSFER" | "E_WALLET" | "CREDIT_CARD"; // sẽ thêm sau
   customerNote?: string;
   shippingFee?: number;
   discount?: number;
+  voucherCode?: string;
 };
 
 export interface OrderItem {
@@ -23,6 +24,36 @@ export interface OrderItem {
   sku: string;
 }
 
+export const orderStatusMap: Record<Order["status"], string> = {
+  PENDING: "Chờ xử lý",
+  CONFIRMED: "Đã xác nhận",
+  PROCESSING: "Đang xử lý",
+  SHIPPING: "Đang giao hàng",
+  DELIVERED: "Đã giao",
+  COMPLETED: "Hoàn thành",
+  CANCELLED: "Đã hủy",
+  REFUNDED: "Đã hoàn tiền",
+};
+
+export const paymentMethodMap: Record<Order["paymentMethod"], string> = {
+  COD: "Thanh toán khi nhận hàng",
+  BANK_TRANSFER: "Chuyển khoản ngân hàng",
+  E_WALLET: "Ví điện tử",
+  CREDIT_CARD: "Thẻ tín dụng/Ghi nợ",
+};
+
+export const shippingMethodMap: Record<Order["shippingMethod"], string> = {
+  STANDARD: "Tiêu chuẩn",
+  EXPRESS: "Hỏa tốc",
+  SAME_DAY: "Trong ngày",
+};
+
+export const paymentStatusMap: Record<Order["paymentStatus"], string> = {
+  PENDING: "Chưa thanh toán",
+  PAID: "Đã thanh toán",
+  FAILED: "Thanh toán thất bại",
+  REFUNDED: "Đã hoàn tiền",
+};
 
 export interface Order {
   id: string;
@@ -30,7 +61,7 @@ export interface Order {
   userId: string;
   shopId: string;
   status: "PENDING" | "CONFIRMED" | "PROCESSING" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED" | "REFUNDED";
-  paymentStatus: string;
+  paymentStatus: "PENDING" | "PAID" | "FAILED" | "REFUNDED";
   subtotal: number;
   shippingFee: number;
   discount: number;

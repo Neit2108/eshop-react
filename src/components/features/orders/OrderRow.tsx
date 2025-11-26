@@ -2,7 +2,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import type { Order } from "@/types/order.types"
+import { orderStatusMap, paymentStatusMap, type Order } from "@/types/order.types"
 import { formatDate, formatCurrency, getStatusColor } from "@/lib/utils"
 
 interface OrderRowProps {
@@ -32,9 +32,9 @@ export function OrderRow({ order, isSelected, onSelect, onViewDetails }: OrderRo
         </div>
       </td>
       <td className="p-4 text-sm">{formatDate(new Date(order.createdAt))}</td>
-      <td className="p-4 text-sm">{order.paymentStatus}</td>
+      <td className="p-4 text-sm">{paymentStatusMap[order.paymentStatus]}</td>
       <td className="p-4">
-        <Badge className={getStatusColor(order.status)}>{order.status}</Badge>
+        <Badge className={getStatusColor(order.status)}>{orderStatusMap[order.status]}</Badge>
       </td>
       <td className="p-4 font-semibold">{formatCurrency(order.totalAmount, order.currency)}</td>
       <td className="p-4">
