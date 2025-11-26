@@ -1,28 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ProductCard from './ProductCard';
-import CountdownTimer from './CountDownTimer';
+import CountdownTimer from './CountdownTimer';
 import { mockFlashSaleProducts } from '@/pages/home/mockData';
 
 const FlashSaleSection: React.FC = () => {
-  const [scrollPosition, setScrollPosition] = useState(0);
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
-
-  const handleScroll = (direction: 'left' | 'right') => {
-    if (!scrollContainerRef.current) return;
-
-    const scrollAmount = 320;
-    const container = scrollContainerRef.current;
-
-    if (direction === 'left') {
-      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    } else {
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-
-    setScrollPosition(container.scrollLeft);
-  };
 
   const handleAddToCart = (productId: string) => {
     console.log('Added to cart:', productId);
@@ -87,13 +71,11 @@ const FlashSaleSection: React.FC = () => {
             {/* Mobile Scroll Buttons */}
             <div className="flex justify-center gap-2 mt-2">
               <button
-                onClick={() => handleScroll('left')}
                 className="p-2 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
-                onClick={() => handleScroll('right')}
                 className="p-2 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -104,13 +86,11 @@ const FlashSaleSection: React.FC = () => {
           {/* Desktop Scroll Buttons */}
           <div className="hidden sm:flex absolute left-0 right-0 top-1/2 transform -translate-y-1/2 justify-between pointer-events-none">
             <button
-              onClick={() => handleScroll('left')}
               className="pointer-events-auto -left-2 lg:-left-4 relative p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all"
             >
               <ChevronLeft className="w-5 h-5 lg:w-6 lg:h-6" />
             </button>
             <button
-              onClick={() => handleScroll('right')}
               className="pointer-events-auto -right-2 lg:-right-4 relative p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all"
             >
               <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6" />

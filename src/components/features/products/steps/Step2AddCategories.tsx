@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import type { AddProductCategoriesInput, Category, ProductCategoriesResponse } from '@/types/product.types';
-import { toast } from 'sonner';
 
 interface Step2Props {
   data: ProductCategoriesResponse;
@@ -28,6 +27,10 @@ export function Step2AddCategories({ data, categories, loading, onBack, onNext }
   const handleNext = () => {
     onNext({ categoryIds: selectedCategories });
   };
+
+  const handleBack = () => {
+    onBack();
+  }
 
   return (
     <Card className="animate-in fade-in duration-300">
@@ -91,9 +94,9 @@ export function Step2AddCategories({ data, categories, loading, onBack, onNext }
           )}
 
         <div className="flex justify-end gap-3 pt-4">
-          {/* <Button variant="outline" onClick={onBack} disabled={loading}>
+          <Button variant="outline" hidden={true} onClick={handleBack} disabled={loading}>
             Back
-          </Button> */}
+          </Button>
           <Button className='cursor-pointer' onClick={handleNext} disabled={loading}>
             {loading ? 'Đang lưu...' : 'Tiếp theo'}
           </Button>

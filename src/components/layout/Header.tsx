@@ -2,14 +2,12 @@ import React, { useState } from "react";
 import {
   Search,
   ShoppingCart,
-  Heart,
   Menu,
   ChevronDown,
   Rocket,
   User,
   X,
   ChevronRight,
-  Settings,
   LogOut,
   LucideMessagesSquare,
   PackageCheck,
@@ -63,6 +61,7 @@ const Header: React.FC = () => {
 
   // Fetch cart khi component mount
   React.useEffect(() => {
+    setWishlistCount(9);
     fetchCart();
   }, []);
 

@@ -23,6 +23,10 @@ interface Step6Props {
 export function Step6Publish({ productId, loading, completed, onBack, onFinish }: Step6Props) {
   const [status, setStatus] = useState<"DRAFT" | "PUBLISHED" | "ARCHIVED" | "OUT_OF_STOCK" | "DISCONTINUED">('PUBLISHED');
 
+  const handleBack = () => {
+    onBack();
+  };
+
   const handleFinish = async () => {
     onFinish(status);
   };
@@ -95,9 +99,9 @@ export function Step6Publish({ productId, loading, completed, onBack, onFinish }
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
-          {/* <Button variant="outline" onClick={onBack} disabled={loading}>
+          <Button variant="outline" hidden={true} onClick={handleBack} disabled={loading}>
             Back
-          </Button> */}
+          </Button>
           <Button className='cursor-pointer' onClick={handleFinish} disabled={loading}>
             {loading ? 'Đang đăng...' : 'Hoàn tất'}
           </Button>

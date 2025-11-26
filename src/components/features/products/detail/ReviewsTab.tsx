@@ -15,8 +15,9 @@ export default function ReviewsTab({ productId }: ReviewsTabProps) {
     comment: string
     rating: number
   }) => {
+    console.log(productId);
     const review = {
-      id: (reviews.length + 1).toString(),
+      id: (reviews.length + 1),
       ...newReview,
       date: new Date().toISOString().split("T")[0],
       avatar: "/diverse-user-avatars.png",

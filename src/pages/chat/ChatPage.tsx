@@ -3,6 +3,8 @@ import type { Conversation } from '../../types/chat.types';
 import { ConversationList } from '../../components/features/chat/ConversationList';
 import { ChatWindow } from '../../components/features/chat/ChatWindow';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import Loading from '@/components/common/Loading';
+import { toast } from 'sonner';
 
 interface ChatPageProps {
   token: string;
@@ -62,6 +64,15 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       setSelectedConversation(null);
     }
   };
+
+  if (loading){
+    return <Loading />;
+  }
+
+  if (error){
+    toast.error(error);
+    return;
+  }
 
   return (
     <div className="flex h-screen bg-gray-100">

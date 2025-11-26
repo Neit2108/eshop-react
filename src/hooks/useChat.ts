@@ -13,7 +13,7 @@ export const useChat = (options: UseChatOptions) => {
   const { isConnected, on, emit } = useSocket({ token, apiUrl });
 
   const [messages, setMessages] = useState<Message[]>([]);
-  const [conversation, setConversation] = useState<Conversation | null>(null);
+  const [conversation] = useState<Conversation | null>(null);
   const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

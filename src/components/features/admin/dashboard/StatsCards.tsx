@@ -1,16 +1,14 @@
-import type React from "react"
-
 import { motion } from "framer-motion"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { TrendingUp, TrendingDown, Users, ShoppingCart, DollarSign, Activity } from "lucide-react"
+import { TrendingUp, TrendingDown} from "lucide-react"
 import { useAdmin } from "@/hooks/useAdmin"
 import { useEffect } from "react"
 import Loading from "@/components/common/Loading"
 import { formatNumber } from "@/lib/utils"
 
 export function StatsCards() {
-  const { summaryStats, loading, error, fetchSummaryStats } = useAdmin();
+  const { summaryStats, loading, fetchSummaryStats } = useAdmin();
 
   useEffect(() => {
     fetchSummaryStats();

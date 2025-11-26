@@ -28,6 +28,10 @@ export function Step5AddImages({ data, loading, onBack, onNext }: Step5Props) {
   const [newImageUrl, setNewImageUrl] = useState("");
   const [newImageDescription, setNewImageDescription] = useState("");
 
+  const handleBack = () => {
+    onBack();
+  }
+
   const addImage = () => {
     if (newImageUrl.trim()) {
       const isPrimary = images.length === 0; // First image is primary by default
@@ -254,9 +258,9 @@ export function Step5AddImages({ data, loading, onBack, onNext }: Step5Props) {
         )}
 
         <div className="flex justify-end gap-3 pt-4">
-              {/* <Button variant="outline" onClick={onBack} disabled={loading}>
+              <Button variant="outline" hidden={true} onClick={handleBack} disabled={loading}>
                 Back
-              </Button> */}
+              </Button>
           <Button className='cursor-pointer' onClick={handleNext} disabled={loading}>
             {loading ? "Đang lưu..." : "Tiếp theo"}
           </Button>

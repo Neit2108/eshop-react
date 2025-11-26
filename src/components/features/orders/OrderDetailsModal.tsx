@@ -89,7 +89,8 @@ export function OrderDetailsModal({
             locale: "vn",
           },
         );
-
+        console.log(selectedPayment);
+        console.log(message);
         setSelectedPayment(method);
         setMessage({
           type: "success",
@@ -115,15 +116,15 @@ export function OrderDetailsModal({
     }
   };
 
-  const getMethodLabel = (method: string) => {
-    const labels: Record<string, string> = {
-      COD: "Cash on Delivery",
-      BANK_TRANSFER: "Bank Transfer",
-      CREDIT_CARD: "Credit Card",
-      E_WALLET: "E-Wallet",
-    };
-    return labels[method] || "None";
-  };
+  // const getMethodLabel = (method: string) => {
+  //   const labels: Record<string, string> = {
+  //     COD: "Cash on Delivery",
+  //     BANK_TRANSFER: "Bank Transfer",
+  //     CREDIT_CARD: "Credit Card",
+  //     E_WALLET: "E-Wallet",
+  //   };
+  //   return labels[method] || "None";
+  // };
 
   const isPaymentPending = order.paymentStatus !== "PAID";
 

@@ -37,7 +37,7 @@ export const useProductCreation = () => {
             dispatch(goBack());
         },
         setError: (error: string | null) => {
-            // dispatch(setError(error));
+            console.warn("setError is not implemented yet", error);        
         },
         createDraftProduct: (data: CreateDraftProductInput) => {
             dispatch(createDraftProduct(data));

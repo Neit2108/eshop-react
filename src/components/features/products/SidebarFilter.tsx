@@ -1,8 +1,9 @@
 import { useState } from "react"
-import { ChevronUp, X } from "lucide-react"
+import { ChevronUp } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
 import type { ProductFilters } from "@/types/product.types"
+import { Button } from "@/components/ui"
 
 interface SidebarFilterProps {
   filters: ProductFilters
@@ -33,19 +34,19 @@ export default function SidebarFilter({
   const priceMax = filters.priceRange?.max ?? 100000000
   const selectedCategoryId = filters.categoryId
 
-  const renderStars = (count: number) => {
-    return (
-      <div className="flex gap-1">
-        {[...Array(5)].map((_, i) => (
-          <span key={i} className={`text-lg ${i < count ? "text-yellow-400" : "text-gray-300"}`}>
-            ★
-          </span>
-        ))}
-      </div>
-    )
-  }
+  // const renderStars = (count: number) => {
+  //   return (
+  //     <div className="flex gap-1">
+  //       {[...Array(5)].map((_, i) => (
+  //         <span key={i} className={`text-lg ${i < count ? "text-yellow-400" : "text-gray-300"}`}>
+  //           ★
+  //         </span>
+  //       ))}
+  //     </div>
+  //   )
+  // }
 
-  const hasActiveFilters = selectedCategoryId || filters.priceRange || filters.searchTerm
+  // const hasActiveFilters = selectedCategoryId || filters.priceRange || filters.searchTerm
 
   return (
     <div className="space-y-4 sm:space-y-5 md:space-y-6">
@@ -125,6 +126,9 @@ export default function SidebarFilter({
           <p>💰 Giá: {priceMin.toLocaleString()} - {priceMax.toLocaleString()} VNĐ</p>
         )}
         {filters.searchTerm && <p>🔍 Tìm kiếm: {filters.searchTerm}</p>}
+        <Button variant="link" size="sm" onClick={onClearFilters} className="p-0">
+          Xóa tất cả bộ lọc
+        </Button>
       </div>
     </div>
   )

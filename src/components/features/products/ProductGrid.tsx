@@ -1,7 +1,4 @@
-"use client"
-
 import ProductCard from "./ProductCard"
-import { Loader2 } from "lucide-react"
 import type { Product } from "@/types/product.types"
 import Loading from "@/components/common/Loading"
 

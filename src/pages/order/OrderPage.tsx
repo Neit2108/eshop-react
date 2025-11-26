@@ -5,23 +5,12 @@ import { OrderCard } from "@/components/features/orders/OrderCard";
 import { OrderDetailsModal } from "@/components/features/orders/OrderDetailsModal";
 import { useOrders } from "@/hooks/useOrders";
 import { useIsMobile } from "@/hooks/use-mobile";
-import type { Order, OrderStatus, PaymentMethod } from "@/types/order.types";
+import type { Order } from "@/types/order.types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui";
 import Loading from "@/components/common/Loading";
 
 export default function OrdersPage() {
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<OrderStatus[]>([]);
-  const [paymentMethodFilter, setPaymentMethodFilter] = useState<
-    PaymentMethod[]
-  >([]);
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
-    null,
-    null,
-  ]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -61,10 +50,10 @@ export default function OrdersPage() {
 
       {/* Filters */}
       <OrderFilters
-        onSearch={setSearchQuery}
-        onStatusFilterChange={setStatusFilter}
-        onPaymentMethodFilterChange={setPaymentMethodFilter}
-        onDateRangeChange={setDateRange}
+        onSearch={() => {}}
+        onStatusFilterChange={() => {}}
+        onPaymentMethodFilterChange={() => {}}
+        onDateRangeChange={() => {}}
       />
 
       {/* Results Info */}
@@ -109,7 +98,7 @@ export default function OrdersPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              onClick={() => {}}
               disabled={pagination.currentPage === 1}
               aria-label="Previous page"
             >
@@ -119,7 +108,7 @@ export default function OrdersPage() {
               variant="outline"
               size="sm"
               onClick={() =>
-                setPage((p) => Math.min(pagination.totalPages, p + 1))
+              {}
               }
               disabled={pagination.currentPage === pagination.totalPages}
               aria-label="Next page"

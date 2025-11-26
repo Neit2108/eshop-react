@@ -18,7 +18,6 @@ export function Step3AddOptions({ data, loading, onBack, onNext }: Step3Props) {
   const [options, setOptions] = useState<CreateProductOptionInput[]>(data.options);
   const [newOptionName, setNewOptionName] = useState('');
   const [newOptionValue, setNewOptionValue] = useState('');
-  const [editingOptionIndex, setEditingOptionIndex] = useState<number | null>(null);
 
   const addOption = () => {
     if (newOptionName.trim()) {

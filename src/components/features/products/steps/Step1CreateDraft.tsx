@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { CreateDraftProductInput, DraftProductResponse, Shop } from '@/types/product.types';
-import { toast } from 'sonner';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Step1Props {
   data: DraftProductResponse;
@@ -67,9 +67,9 @@ export function Step1CreateDraft({ data, shops, loading, onNext }: Step1Props) {
           {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
         </div>
 
-        {/* <div className="space-y-2">
+        <div className="space-y-2">
           <Label htmlFor="shop">Select Shop *</Label>
-          <Select value={formData.shopId} onValueChange={(value) => setFormData({ ...formData, shopId: 'b059c23f-c595-4167-b9de-71aece84ad6b' })}>
+          <Select value={formData.shopId} onValueChange={(value) => setFormData({ ...formData, shopId: value })}>
             <SelectTrigger id="shop" className={errors.shopId ? 'border-destructive' : ''}>
               <SelectValue placeholder="Choose a shop" />
             </SelectTrigger>
@@ -82,7 +82,7 @@ export function Step1CreateDraft({ data, shops, loading, onNext }: Step1Props) {
             </SelectContent>
           </Select>
           {errors.shopId && <p className="text-sm text-destructive">{errors.shopId}</p>}
-        </div> */}
+        </div>
 
         <div className="space-y-2">
           <Label htmlFor="description">Mô tả</Label>

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import type { Conversation } from '../../../types/chat.types';
 import { useChat } from '@/hooks/useChat';
 import { ConversationHeader } from './ConversationHeader';
