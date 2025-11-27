@@ -90,11 +90,11 @@ export function PaymentMethodModal({
       >
         <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle className="text-2xl font-bold">
-            Select Payment Method
+            Lựa chọn phương thức thanh toán
           </DialogTitle>
           <DialogClose className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:pointer-events-none">
             <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">Đóng</span>
           </DialogClose>
         </DialogHeader>
 
@@ -158,7 +158,7 @@ export function PaymentMethodModal({
                         className="text-white"
                         size="sm"
                       >
-                        {isLoading ? "Processing..." : "Continue"}
+                        {isLoading ? "Đang xử lý..." : "Tiếp tục"}
                       </Button>
                     </motion.div>
                   )}
@@ -169,7 +169,7 @@ export function PaymentMethodModal({
         </div>
 
         <p className="text-muted-foreground text-center text-xs">
-          Select a payment method and click continue
+          Chọn một phương thức thanh toán để tiếp tục với đơn hàng của bạn.
         </p>
       </DialogContent>
     </Dialog>
