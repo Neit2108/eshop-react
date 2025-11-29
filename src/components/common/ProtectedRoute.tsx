@@ -27,6 +27,10 @@ export default function ProtectedRoute({
 
   if (roles && !hasRoles(roles)) {
     console.warn('Access denied. User lacks required roles:', roles);
+    setTimeout(() => {
+      console.log('Redirecting to unauthorized page...');
+      return fallback;
+    })
     return <UnauthorizedPage />;
   }
 
