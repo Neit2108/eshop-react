@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, Heart } from "lucide-react"
+import { formatCurrency } from '../../../lib/utils';
 
 interface Product {
   id: number
@@ -52,8 +53,8 @@ export default function FeaturedProducts() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">Featured Collection</h2>
-          <p className="text-lg text-muted-foreground">Discover our carefully curated selection of premium products</p>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">Sản phẩm nổi bật</h2>
+          <p className="text-lg text-muted-foreground">Khám phá bộ sưu tập sản phẩm cao cấp được tuyển chọn kỹ lưỡng của chúng tôi</p>
         </div>
 
         {/* Products Grid */}
@@ -101,7 +102,7 @@ export default function FeaturedProducts() {
 
                   {/* Price and CTA */}
                   <div className="flex items-center justify-between">
-                    <span className="text-xl font-bold text-foreground">${product.price}</span>
+                    <span className="text-xl font-bold text-foreground">{formatCurrency(product.price)}</span>
                     <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
                       <ShoppingCart className="w-4 h-4" />
                     </Button>
@@ -118,8 +119,9 @@ export default function FeaturedProducts() {
             size="lg"
             variant="outline"
             className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
+            
           >
-            View All Products
+            Xem tất cả sản phẩm
           </Button>
         </div>
       </div>

@@ -104,12 +104,12 @@ const Header: React.FC = () => {
   const categories: CategoryItem[] = [
     {
       id: "1",
-      name: "Fashion",
+      name: "Thời trang",
       link: "/fashion",
       subcategories: [
         {
           id: "1-1",
-          name: "Women",
+          name: "Phụ nữ",
           link: "/fashion/women",
           subcategories: [
             { id: "1-1-1", name: "Tops", link: "/fashion/women/tops" },
@@ -118,7 +118,7 @@ const Header: React.FC = () => {
         },
         {
           id: "1-2",
-          name: "Girls",
+          name: "Trẻ em gái",
           link: "/fashion/girls",
           subcategories: [
             {
@@ -132,19 +132,19 @@ const Header: React.FC = () => {
         },
         {
           id: "1-3",
-          name: "Men",
+          name: "Nam",
           link: "/fashion/men",
         },
       ],
     },
     {
       id: "2",
-      name: "Electronics",
+      name: "Điện tử",
       link: "/electronics",
       subcategories: [
         {
           id: "2-1",
-          name: "Mobile",
+          name: "Di động",
           link: "/electronics/mobile",
           subcategories: [
             { id: "2-1-1", name: "Apple", link: "/electronics/mobile/apple" },
@@ -157,32 +157,32 @@ const Header: React.FC = () => {
             { id: "2-1-4", name: "Vivo", link: "/electronics/mobile/vivo" },
           ],
         },
-        { id: "2-2", name: "Laptops", link: "/electronics/laptops" },
-        { id: "2-3", name: "Smart Watch", link: "/electronics/smartwatch" },
+        { id: "2-2", name: "Máy tính xách tay", link: "/electronics/laptops" },
+        { id: "2-3", name: "Đồng hồ thông minh", link: "/electronics/smartwatch" },
       ],
     },
     {
       id: "3",
-      name: "Bags",
+      name: "Túi xách",
       link: "/bags",
       subcategories: [
-        { id: "3-1", name: "Men Bags", link: "/bags/men" },
-        { id: "3-2", name: "Women Bags", link: "/bags/women" },
+        { id: "3-1", name: "Túi nam", link: "/bags/men" },
+        { id: "3-2", name: "Túi nữ", link: "/bags/women" },
       ],
     },
     {
       id: "4",
-      name: "Footwear",
+      name: "Giày dép",
       link: "/footwear",
       subcategories: [
-        { id: "4-1", name: "Men Footwear", link: "/footwear/men" },
-        { id: "4-2", name: "Women Footwear", link: "/footwear/women" },
+        { id: "4-1", name: "Giày nam", link: "/footwear/men" },
+        { id: "4-2", name: "Giày nữ", link: "/footwear/women" },
       ],
     },
-    { id: "5", name: "Groceries", link: "/groceries" },
-    { id: "6", name: "Beauty", link: "/beauty" },
-    { id: "7", name: "Wellness", link: "/wellness" },
-    { id: "8", name: "Jewellery", link: "/jewellery" },
+    { id: "5", name: "Tạp hóa", link: "/groceries" },
+    { id: "6", name: "Làm đẹp", link: "/beauty" },
+    { id: "7", name: "Sức khỏe", link: "/wellness" },
+    { id: "8", name: "Trang sức", link: "/jewellery" },
   ];
 
   const toggleCategoryExpand = (categoryId: string) => {

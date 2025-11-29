@@ -13,24 +13,24 @@ interface Slide {
 const slides: Slide[] = [
   {
     id: 1,
-    title: "Optimal Organization",
-    subtitle: "Meets Exquisite Design",
+    title: "Phong cách thời thượng",
+    subtitle: "Nhìn ngắm các thiết kế tinh tế",
     image: "/luxury-interior-design-organization.jpg",
-    cta: "Shop Now",
+    cta: "Mua ngay",
   },
   {
     id: 2,
-    title: "Transform Your Space",
-    subtitle: "With Innovative Solutions",
+    title: "Phù phép không gian của bạn",
+    subtitle: "Với các giải pháp sáng tạo",
     image: "/modern-home-decor-showcase.jpg",
-    cta: "Explore",
+    cta: "Khám phá",
   },
   {
     id: 3,
-    title: "Elevate Your Lifestyle",
-    subtitle: "Premium Quality Products",
+    title: "Nâng tầm phong cách sống",
+    subtitle: "Sản phẩm chất lượng cao cấp",
     image: "/luxury-product-display.png",
-    cta: "Discover",
+    cta: "Khám phá ngay",
   },
 ]
 

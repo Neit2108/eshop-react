@@ -30,28 +30,28 @@ export default function Newsletter() {
           </div>
 
           {/* Content */}
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-3">Stay Updated</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-3">Cập nhật thông tin mới</h2>
           <p className="text-muted-foreground mb-8">
-            Subscribe to our newsletter for exclusive deals, new collections, and design inspiration.
+            Đăng ký nhận bản tin của chúng tôi để nhận các ưu đãi độc quyền, bộ sưu tập mới và cảm hứng thiết kế.
           </p>
 
           {/* Form */}
           <form onSubmit={handleSubscribe} className="flex gap-2 max-w-md mx-auto">
             <Input
               type="email"
-              placeholder="Enter your email"
+              placeholder="Nhập email của bạn"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               className="flex-1"
             />
             <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground whitespace-nowrap">
-              {subscribed ? "Subscribed!" : "Subscribe"}
+              {subscribed ? "Đã đăng ký!" : "Đăng ký"}
             </Button>
           </form>
 
           {/* Success Message */}
-          {subscribed && <p className="text-primary mt-4 text-sm font-medium">Thank you for subscribing!</p>}
+          {subscribed && <p className="text-primary mt-4 text-sm font-medium">Cảm ơn bạn đã đăng ký!</p>}
         </div>
       </div>
     </section>

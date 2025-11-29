@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, Flame } from "lucide-react"
+import { formatCurrency } from '../../../lib/utils';
 
 interface FlashProduct {
   id: number
@@ -21,33 +22,33 @@ interface CountdownTime {
 const flashProducts: FlashProduct[] = [
   {
     id: 1,
-    name: "Designer Lamp",
-    price: 45.99,
-    originalPrice: 89.99,
+    name: "Đèn trang trí",
+    price: 399000,
+    originalPrice: 899000,
     image: "/designer-lamp.png",
     discount: 49,
   },
   {
     id: 2,
-    name: "Premium Pillow Set",
-    price: 34.99,
-    originalPrice: 79.99,
+    name: "Bộ gối cao cấp",
+    price: 349000,
+    originalPrice: 799000,
     image: "/premium-pillow.jpg",
     discount: 56,
   },
   {
     id: 3,
-    name: "Modern Bookshelf",
-    price: 99.99,
-    originalPrice: 199.99,
+    name: "Kệ sách hiện đại",
+    price: 990000,
+    originalPrice: 1990000,
     image: "/modern-bookshelf.png",
     discount: 50,
   },
   {
     id: 4,
-    name: "Decorative Mirror",
-    price: 59.99,
-    originalPrice: 119.99,
+    name: "Gương trang trí",
+    price: 590000,
+    originalPrice: 1190000,
     image: "/decorative-mirror.jpg",
     discount: 50,
   },
@@ -103,17 +104,17 @@ export default function FlashSale() {
                 <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground">Flash Sale</h2>
               </div>
               <p className="text-lg text-muted-foreground max-w-md">
-                Limited time offers on our best-selling products. Don't miss out!
+                Ưu đãi có thời hạn trên các sản phẩm bán chạy nhất của chúng tôi. Đừng bỏ lỡ!
               </p>
             </div>
 
             {/* Countdown Timer */}
             <div className="flex gap-4 items-center">
-              <CountdownUnit value={countdown.hours} label="Hours" />
+              <CountdownUnit value={countdown.hours} label="Giờ" />
               <span className="text-4xl font-bold text-muted-foreground">:</span>
-              <CountdownUnit value={countdown.minutes} label="Minutes" />
+              <CountdownUnit value={countdown.minutes} label="Phút" />
               <span className="text-4xl font-bold text-muted-foreground">:</span>
-              <CountdownUnit value={countdown.seconds} label="Seconds" />
+              <CountdownUnit value={countdown.seconds} label="Giây" />
             </div>
           </div>
         </div>
@@ -146,14 +147,14 @@ export default function FlashSale() {
 
                   {/* Pricing */}
                   <div className="flex items-center gap-2 mb-4">
-                    <span className="text-2xl font-bold text-foreground">${product.price}</span>
-                    <span className="text-lg text-muted-foreground line-through">${product.originalPrice}</span>
+                    <span className="text-2xl font-bold text-foreground">{formatCurrency(product.price)}</span>
+                    <span className="text-lg text-muted-foreground line-through">{formatCurrency(product.originalPrice)}</span>
                   </div>
 
                   {/* CTA */}
                   <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
                     <ShoppingCart className="w-4 h-4 mr-2" />
-                    Add to Cart
+                    Thêm vào giỏ
                   </Button>
                 </div>
               </CardContent>
