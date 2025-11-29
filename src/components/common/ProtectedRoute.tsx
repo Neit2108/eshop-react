@@ -1,6 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Navigate, useLocation } from "react-router-dom";
 import Loading from "./Loading";
+import UnauthorizedPage from "@/pages/common/Unauthorized";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -26,7 +27,7 @@ export default function ProtectedRoute({
 
   if (roles && !hasRoles(roles)) {
     console.warn('Access denied. User lacks required roles:', roles);
-    return <>{fallback}</>;
+    return <UnauthorizedPage />;
   }
 
   return <>{children}</>;

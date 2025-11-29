@@ -4,7 +4,6 @@ import { ROUTES } from "./lib/constants";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/login/Login";
 import SignupPage from "./pages/signup/Signup";
-import HomePage from "./pages/home/Home";
 import ProductListPage from "@/pages/product/ProductListPage";
 import ProductDetailPage from "@/components/features/products/detail/ProductDetailPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
@@ -17,6 +16,7 @@ import CreateProductPage2 from "./components/features/products/steps-2/CreatePro
 import ChatApp from "./components/features/chat/Chat";
 import OrdersPage from "./pages/order/OrderPage";
 import PaymentPage from "./pages/payment/PaymentPage";
+import HomePage from "./pages/home/Home";
 
 const router = createBrowserRouter([
   {
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <HomePage />,
+        element: < HomePage/>,
       },
       {
         path: ROUTES.PRODUCT_LIST,
