@@ -73,6 +73,9 @@ export const chatService = {
     type?: "TEXT" | "IMAGE" | "FILE";
     attachments?: any[];
     replyToId?: string;
+    orderId?: string;
+    productId?: string;
+    metadata?: Record<string, any>;
   }): Promise<Message> {
     return socketService.emit("chat:send_message", payload);
   },

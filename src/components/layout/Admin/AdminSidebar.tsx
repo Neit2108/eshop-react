@@ -10,8 +10,11 @@ import {
   GalleryVerticalEnd,
   LayoutDashboard,
   Map,
+  Package,
+  Percent,
   PieChart,
   Settings2,
+  ShoppingCart,
   SquareTerminal,
 } from "lucide-react"
 
@@ -25,6 +28,7 @@ import {
 import { NavMain } from "./NavMain"
 import { NavUser } from "./NavUser"
 import { UserInformation } from "./UserInformation"
+import { useAuth } from "@/hooks/useAuth"
 
 // This is sample data.
 const data = {
@@ -52,38 +56,34 @@ const data = {
   ],
   navMain: [
     {
-      title: "Dashboard",
-      url: "#",
+      title: "Tổng quan",
+      url: "/admin",
       icon: LayoutDashboard,
     },
     {
       title: "Sản phẩm",
       url: "#",
-      icon: SquareTerminal,
+      icon: Package,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Tạo mới sản phẩm",
+          url: "/admin/products/create",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "Danh sách sản phẩm",
+          url: "/admin/products/list",
         },
       ],
     },
     {
-      title: "Models",
+      title: "Đơn hàng",
       url: "#",
-      icon: Bot,
+      icon: ShoppingCart,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "Danh sách đơn hàng",
+          url: "/admin/orders/list",
         },
         {
           title: "Explorer",
@@ -96,24 +96,24 @@ const data = {
       ],
     },
     {
-      title: "Documentation",
+      title: "Khuyến mãi",
       url: "#",
-      icon: BookOpen,
+      icon: Percent,
       items: [
         {
-          title: "Introduction",
+          title: "Danh sách khuyến mãi",
           url: "#",
         },
         {
-          title: "Get Started",
+          title: "Tạo khuyến mãi",
           url: "#",
         },
         {
-          title: "Tutorials",
+          title: "Chi tiết khuyến mãi",
           url: "#",
         },
         {
-          title: "Changelog",
+          title: "Xóa khuyến mãi",
           url: "#",
         },
       ],
@@ -162,17 +162,20 @@ const data = {
 }
 
 export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+  const { user } = useAuth();
+  if (!user) return null;
   return (
     <Sidebar collapsible="icon" {...props} className="text-[16px]">
       <SidebarHeader>
-        <UserInformation user={{ name: "shadcn", role: "Administrator", avatar: Bot }} />
+        <UserInformation user={{ name: user?.firstName + " " + user?.lastName, role: user.roles?.[0] || "", avatar: Bot }} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{ name: user?.firstName + " " + user?.lastName, email: user?.email || "", avatar: "" }} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

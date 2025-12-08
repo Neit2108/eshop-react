@@ -20,13 +20,19 @@ export const MessageList: React.FC<MessageListProps> = ({
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const intersectionObserverRef = useRef<IntersectionObserver | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
+  // Scroll to bottom whenever messages change
   useEffect(() => {
-    scrollToBottom();
+    // Use requestAnimationFrame to ensure DOM is rendered
+    const scrollTimer = requestAnimationFrame(() => {
+      if (containerRef.current) {
+        // Scroll to the absolute bottom
+        containerRef.current.scrollTop = containerRef.current.scrollHeight;
+      }
+    });
+    
+    return () => cancelAnimationFrame(scrollTimer);
   }, [messages]);
 
   // Mark visible messages as read
@@ -67,7 +73,7 @@ export const MessageList: React.FC<MessageListProps> = ({
   }, [messages]);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-white p-4 space-y-4">
+    <div ref={containerRef} className="flex-1 overflow-y-auto bg-white p-4 space-y-4">
       {isLoading && (
         <div className="flex justify-center items-center h-full">
           <div className="text-gray-500">Loading messages...</div>

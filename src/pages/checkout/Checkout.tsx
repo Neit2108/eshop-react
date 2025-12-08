@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RecipientSection } from "@/components/features/checkout/RecipientSection";
 import { OrderSummary } from "@/components/features/checkout/OrderSummary";
 import { useOrders } from "@/hooks/useOrders";
@@ -6,11 +6,13 @@ import { toast } from "sonner";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useCart } from "@/hooks/useCart";
 import { CartEmptyState } from "@/components/features/cart/CartEmptyState";
-import type { Voucher } from "@/components/features/checkout/VoucherModal";
 import { PaymentMethodModal } from "@/components/features/orders/PaymentMethodModal";
 import { apiService } from "@/services/apiService";
+import type { Voucher } from "@/types/voucher.types";
+import { useVoucher } from "@/hooks/useVoucher";
 
 export default function CheckoutPage() {
+  const { publicVouchers, fetchPublicVouchers } = useVoucher();
   const [selectedAddress, setSelectedAddress] = useState<any>(null);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [isPaymentMethodOpen, setIsPaymentMethodOpen] = useState(false);
@@ -21,6 +23,10 @@ export default function CheckoutPage() {
   const { createOrder } = useOrders();
 
   const isEmpty = items.length === 0;
+
+  useEffect(() => {
+    fetchPublicVouchers();
+  }, []);
 
   if (isEmpty) {
     return <CartEmptyState />;
@@ -121,7 +127,7 @@ export default function CheckoutPage() {
             shippingFee={shippingFee}
             onPlaceOrder={handleSelectPaymentMethod}
             onVoucherSelect={setSelectedVoucher}
-            vouchers={null}
+            vouchers={publicVouchers}
           />
         </div>
       </div>

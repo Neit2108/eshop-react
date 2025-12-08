@@ -107,13 +107,13 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({
                 <Info className="w-4 h-4 mr-2" />
                 Thông tin cuộc hội thoại
               </DropdownMenuItem>
-              <DropdownMenuItem>Xóa cuộc hội thoại</DropdownMenuItem>
+              <DropdownMenuItem>Xem cửa hàng</DropdownMenuItem>
               <DropdownMenuItem>Báo cáo</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
           {onClose && (
-            <Button size="icon" variant="ghost" onClick={onClose}>
+            <Button hidden={true} size="icon" variant="ghost" onClick={onClose}>
               <X className="w-4 h-4" />
             </Button>
           )}

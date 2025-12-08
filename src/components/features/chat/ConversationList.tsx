@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Search, Plus, LogOut } from 'lucide-react';
+import { Search, Plus, LogOut, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import type { Conversation } from '../../../types/chat.types';
 import { cn } from '@/lib/utils';
 
@@ -13,6 +14,7 @@ interface ConversationListProps {
   onSelectConversation: (conversation: Conversation) => void;
   onCreateNew?: () => void;
   onLogout?: () => void;
+  onBackHome?: () => void;
 }
 
 export const ConversationList: React.FC<ConversationListProps> = ({
@@ -21,6 +23,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   onSelectConversation,
   onCreateNew,
   onLogout,
+  onBackHome,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -46,31 +49,70 @@ export const ConversationList: React.FC<ConversationListProps> = ({
     );
   };
 
+  const getAvatarInitials = (conversation: Conversation): string => {
+    const title = getConversationTitle(conversation);
+    return title
+      .split(' ')
+      .slice(0, 2)
+      .map((word) => word[0])
+      .join('')
+      .toUpperCase();
+  };
+
+  const getAvatarColor = (conversation: Conversation): string => {
+    const colors = [
+      'bg-blue-500',
+      'bg-purple-500',
+      'bg-pink-500',
+      'bg-green-500',
+      'bg-orange-500',
+      'bg-red-500',
+      'bg-cyan-500',
+      'bg-indigo-500',
+    ];
+    const index = conversation.id.charCodeAt(0) % colors.length;
+    return colors[index];
+  };
+
   const formatDate = (date: Date | string): string => {
     const d = new Date(date);
     const now = new Date();
     const diff = now.getTime() - d.getTime();
 
     if (diff < 60000) return 'Vừa xong';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)} phút trước`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)} giờ trước`;
-    if (diff < 604800000) return `${Math.floor(diff / 86400000)} ngày trước`;
+    if (diff < 3600000) return `${Math.floor(diff / 60000)}p`;
+    if (diff < 86400000) return `${Math.floor(diff / 3600000)}g`;
+    if (diff < 604800000) return `${Math.floor(diff / 86400000)}d`;
 
-    return d.toLocaleDateString();
+    return d.toLocaleDateString('vi-VN');
+  };
+
+  const getTotalUnreadCount = (conversation: Conversation): number => {
+    return conversation.participants?.reduce((sum, p) => sum + p.unreadCount, 0) || 0;
   };
 
   return (
     <div className="w-full h-full bg-white flex flex-col border-r">
       {/* Header */}
       <div className="border-b p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold">Tin nhắn</h1>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={onBackHome}
+              className="rounded-full hover:bg-gray-100"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+            <h1 className="text-xl font-bold">Tin nhắn</h1>
+          </div>
           <div className="flex gap-1">
             <Button
               size="icon"
               variant="ghost"
               onClick={onCreateNew}
-              className="rounded-full"
+              className="rounded-full hover:bg-gray-100"
             >
               <Plus className="w-4 h-4" />
             </Button>
@@ -78,7 +120,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
               size="icon"
               variant="ghost"
               onClick={onLogout}
-              className="rounded-full"
+              className="rounded-full hover:bg-gray-100"
             >
               <LogOut className="w-4 h-4" />
             </Button>
@@ -92,7 +134,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
             placeholder="Tìm cuộc hội thoại..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-9"
+            className="pl-10 h-9 bg-gray-50 border-gray-200"
           />
         </div>
       </div>
@@ -105,44 +147,69 @@ export const ConversationList: React.FC<ConversationListProps> = ({
               Không có cuộc hội thoại
             </div>
           ) : (
-            filteredConversations.map((conversation) => (
-              <button
-                key={conversation.id}
-                onClick={() => onSelectConversation(conversation)}
-                className={cn(
-                  'w-full text-left p-3 rounded-lg transition-colors space-y-1 hover:bg-gray-100',
-                  selectedConversation?.id === conversation.id && 'bg-blue-50'
-                )}
-              >
-                <div className="flex items-start justify-between">
-                  <h3 className="font-medium text-sm truncate flex-1">
-                    {getConversationTitle(conversation)}
-                  </h3>
-                  {conversation.lastMessageAt && (
-                    <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
-                      {formatDate(conversation.lastMessageAt)}
-                    </span>
+            filteredConversations.map((conversation) => {
+              const unreadCount = getTotalUnreadCount(conversation);
+              return (
+                <button
+                  key={conversation.id}
+                  onClick={() => onSelectConversation(conversation)}
+                  className={cn(
+                    'w-full text-left p-3 rounded-lg transition-colors hover:bg-gray-50',
+                    selectedConversation?.id === conversation.id && 'bg-blue-50'
                   )}
-                </div>
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Avatar */}
+                    <div className="flex-shrink-0">
+                      <Avatar className="w-12 h-12">
+                        <AvatarImage 
+                          src={conversation.participants?.[0]?.user?.avatar} 
+                          alt={getConversationTitle(conversation)} 
+                        />
+                        <AvatarFallback className={cn('font-semibold text-white', getAvatarColor(conversation))}>
+                          {getAvatarInitials(conversation)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
 
-                <p className="text-xs text-gray-600 truncate">
-                  {conversation.lastMessageText || 'Không có tin nhắn'}
-                </p>
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      {/* Title */}
+                      <h3 className="font-semibold text-sm text-gray-900 truncate mb-1">
+                        {getConversationTitle(conversation)}
+                      </h3>
 
-                {conversation.participants?.some((p) => p.unreadCount > 0) && (
-                  <Badge variant="default" className="w-fit text-xs">
-                    {conversation.participants.reduce(
-                      (sum, p) => sum + p.unreadCount,
-                      0
+                      {/* Last message and date */}
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <p className="text-xs text-gray-600 truncate flex-1">
+                          {conversation.lastMessageText || 'Không có tin nhắn'}
+                        </p>
+                        {conversation.lastMessageAt && (
+                          <span className="text-xs text-gray-500 flex-shrink-0">
+                            {formatDate(conversation.lastMessageAt)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Unread Badge */}
+                    {unreadCount > 0 && (
+                      <div className="flex-shrink-0">
+                        <Badge 
+                          variant="default" 
+                          className="w-6 h-6 flex items-center justify-center rounded-full p-0 text-xs font-semibold bg-blue-500 hover:bg-blue-600"
+                        >
+                          {unreadCount > 99 ? '99+' : unreadCount}
+                        </Badge>
+                      </div>
                     )}
-                  </Badge>
-                )}
-              </button>
-            ))
+                  </div>
+                </button>
+              );
+            })
           )}
         </div>
       </ScrollArea>
     </div>
   );
 };
-

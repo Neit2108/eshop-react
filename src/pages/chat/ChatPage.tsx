@@ -11,6 +11,7 @@ interface ChatPageProps {
   currentUserId: string;
   apiUrl?: string;
   onLogout?: () => void;
+  onBackHome?: () => void;
 }
 
 export const ChatPage: React.FC<ChatPageProps> = ({
@@ -18,6 +19,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   currentUserId,
   apiUrl = 'http://localhost:3000',
   onLogout,
+  onBackHome,
 }) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] =
@@ -85,6 +87,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
             onSelectConversation={handleSelectConversation}
             onCreateNew={handleCreateNew}
             onLogout={onLogout}
+            onBackHome={onBackHome}
           />
         </div>
       ) : null}

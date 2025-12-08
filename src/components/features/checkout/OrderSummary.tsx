@@ -4,7 +4,8 @@ import { Separator } from "@/components/ui/separator";
 import { OrderItem } from "./OrderItem";
 import { formatPrice } from "@/lib/utils";
 import type { CartItem } from "@/types/cart.types";
-import { VoucherModal, type Voucher } from "./VoucherModal";
+import { VoucherModal } from "./VoucherModal";
+import type { Voucher } from "@/types/voucher.types";
 import { useState } from "react";
 
 interface OrderSummaryProps {

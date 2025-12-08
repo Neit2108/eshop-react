@@ -16,6 +16,7 @@ import {
 
 const initialState: ProductState = {
   products: [],
+  productsByShop: [],
   totalProducts: 0,
   page: 1,
   limit: 10,
@@ -41,7 +42,9 @@ export const fetchProducts = createAsyncThunk(
       const response = await apiService.get<PaginatedResponse<Product>>(
         `${API_ENDPOINTS.PRODUCTS.LIST}?${queryString}`,
       );
-      
+
+      console.log("response", response.data)
+
       return response.data;
     } catch (error: any) {
       const message =
@@ -62,12 +65,29 @@ export const fetchProductById = createAsyncThunk(
     try {
       const response = await apiService.get<Product>(
         API_ENDPOINTS.PRODUCTS.GET(productId),
-      );  
+      );
 
       console.log("Fetched Product by ID:", response.data);
       return response.data;
     } catch (error: any) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch products";
+      return rejectWithValue(message);
+    }
+  },
+);
 
+export const fetchProductByShopId = createAsyncThunk(
+  "products/fetchProductByShopId",
+  async (shopId: string, { rejectWithValue }) => {
+    try {
+      const response = await apiService.get<Product[]>(
+        API_ENDPOINTS.SHOPS.GET_PRODUCTS(shopId),
+      );
+      return response.data;
+    } catch (error: any) {
       const message =
         error.response?.data?.message ||
         error.message ||
@@ -160,6 +180,18 @@ const productSlice = createSlice({
         },
       )
       .addCase(fetchProductById.rejected, (state: ProductState, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      // Fetch Product by Shop ID
+      .addCase(fetchProductByShopId.pending, (state: ProductState) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchProductByShopId.fulfilled, (state: ProductState, action: PayloadAction<Product[]>) => {
+        state.isLoading = false;
+        state.productsByShop = action.payload;
+      })
+      .addCase(fetchProductByShopId.rejected, (state: ProductState, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       })

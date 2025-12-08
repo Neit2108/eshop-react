@@ -37,7 +37,9 @@ export function formatCurrency(
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency,
-  }).format(amount);
+  }).format(amount)
+  .replace("₫", "")
+  .trim();
 }
 
 export function formatNumber(value: number): string {
@@ -69,5 +71,22 @@ export function getStatusColor(status: OrderStatus): string {
       return "bg-red-200 text-red-900"
     default:
       return "bg-gray-200 text-gray-900"
+  }
+}
+
+export function productStatusMap(status: string): string {
+  switch (status) {
+    case "DRAFT":
+      return "Nháp"
+    case "PUBLISHED":
+      return "Đang bán"
+    case "ARCHIVED":
+      return "Đã khóa"
+    case "OUT_OF_STOCK":
+      return "Hết hàng trong kho"
+    case "DISCONTINUED":
+      return "Ngừng bán"
+    default:
+      return status
   }
 }

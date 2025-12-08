@@ -27,7 +27,9 @@ export const API_ENDPOINTS = {
     DELETE: (id: string, itemId: string) => `/cart/${id}/items/${itemId}`,
   },
   ORDERS: {
+    ALL: '/orders/all',
     MY_ORDERS: '/orders',
+    BY_SHOP: (shopId: string) => `/orders/shop/${shopId}`,
     CREATE: '/orders',
     GET: (id: string) => `/orders/${id}`,
     UPDATE: (id: string) => `/orders/${id}`,
@@ -42,5 +44,20 @@ export const API_ENDPOINTS = {
     RESOLVE: (id: string) => `/chat/conversations/${id}/resolve`,
     SHOP_CONVERSATIONS: (shopId: string) => `/chat/shop/${shopId}/conversations`,
     MESSAGE: (id: string) => `/chat/messages/${id}`,
+  },
+  SHOPS: {
+    LIST: '/shops',
+    GET_BY_USER_ID: '/shops/user',
+    GET: (id: string) => `/shops/${id}`,
+    GET_PRODUCTS: (id: string) => `/shops/${id}/products`,
+    CREATE: '/shops',
+    UPDATE: (id: string) => `/shops/${id}`,
+    DELETE: (id: string) => `/shops/${id}`,
+  },
+  VOUCHERS: {
+    GET: (id: string) => `/vouchers/${id}`,
+    GET_BY_CODE: (code: string) => `/vouchers/code/${code}`,
+    PUBLIC: '/vouchers/customer/public',
+    SHOP: (shopId: string) => `/vouchers/shop/${shopId}`,
   },
 } as const

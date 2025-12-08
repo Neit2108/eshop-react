@@ -1,3 +1,5 @@
+import type { PaginationParams } from ".";
+
 export type CreateOrderInput = {
   shippingMethod: 'STANDARD';
   shippingAddress: string;
@@ -93,6 +95,8 @@ export type PaymentMethod = Order["paymentMethod"]
 export type ShippingMethod = Order["shippingMethod"]
 
 export type OrderState = {
+  allOrders: Order[];
+  shopOrders: Order[];
   orders: Order[];
   currentOrder: Order | null;
   isLoading: boolean;
@@ -107,3 +111,16 @@ export type OrderState = {
     hasPrev: boolean;
   };
 };
+
+
+export interface OrderFilters {
+  status?: OrderStatus;
+  paymentStatus?: string;
+  minTotalAmount?: number;
+  maxTotalAmount?: number;
+  shopId?: string;
+}
+
+export interface OrderQuery extends PaginationParams {
+  filters?: OrderFilters;
+}

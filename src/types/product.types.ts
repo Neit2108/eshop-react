@@ -11,6 +11,8 @@ export interface Product {
   imageUrl: string;
   price: number;
   discountPercentage?: number; // không có trong response, nên để optional
+  totalStock?: number;
+  soldCount?: number;
   shop: Shop;
   images: ProductImage[];
   variants: ProductVariant[];
@@ -63,11 +65,6 @@ export interface ProductCategory {
   parentCategoryId?: string;
 }
 
-export interface Shop {
-  id: string;
-  name: string;
-}
-
 export interface ProductOption {
   id: string;
   name: string;
@@ -77,8 +74,8 @@ export interface ProductOption {
   }[];
 }
 
-
 export interface ProductFilters {
+  shopId?: string;
   status?: "DRAFT" | "PUBLISHED" | "ARCHIVED" | "OUT_OF_STOCK" | "DISCONTINUED";
   categoryId?: string;
   searchTerm?: string;
@@ -91,6 +88,7 @@ export interface ProductFilters {
 
 export interface ProductState {
   products: Product[];
+  productsByShop: Product[];
   totalProducts: number;
   page: number;
   limit: number;
@@ -104,7 +102,6 @@ export interface ProductState {
 export interface ProductQuery extends PaginationParams {
   filters?: ProductFilters;
 }
-
 
 // add product
 // Product creation wizard types
@@ -158,15 +155,14 @@ export interface AddProductImagesInput {
 }
 
 export interface UpdateProductStatusInput {
-  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED' | 'OUT_OF_STOCK' | 'DISCONTINUED';
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED" | "OUT_OF_STOCK" | "DISCONTINUED";
 }
 
 export interface ProductStatusResponse {
   id: string;
-  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED' | 'OUT_OF_STOCK' | 'DISCONTINUED';
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED" | "OUT_OF_STOCK" | "DISCONTINUED";
   updatedAt: Date;
 }
-
 
 // response types for each step
 export interface DraftProductResponse {
@@ -233,7 +229,6 @@ export interface ProductStatusResponse {
   updatedAt: Date;
 }
 
-
 export interface ProductWizardState {
   productId: string | null;
   step: number;
@@ -242,12 +237,12 @@ export interface ProductWizardState {
   options: AddProductOptionsInput;
   variants: AddProductVariantsInput;
   images: AddProductImagesInput;
-  status: 'draft' | 'published' | 'archived';
+  status: "draft" | "published" | "archived";
   loading: boolean;
   error: string | null;
 }
 
-export interface ProductCreationState{
+export interface ProductCreationState {
   productId: string | null;
   currentStep: number;
   isLoading: boolean;
@@ -263,6 +258,29 @@ export interface ProductCreationState{
 export interface Shop {
   id: string;
   name: string;
+  logoUrl?: string;
+  rating?: number;
+  reviewCount?: number;
+  totalRevenue?: number;
+  totalProducts?: number;
+  totalCategories?: number;
+  totalUsers?: number;
+  totalReviews?: number;
+  totalOrders?: number;
+  createdAt?: string;
+  address?: string;
+}
+
+export interface ShopState {
+  shops: Shop[];
+  shop: Shop | null;
+  products: Product[];
+  totalProducts: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  isLoading: boolean;
+  error: string | null;
 }
 
 // catory

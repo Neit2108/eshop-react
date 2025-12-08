@@ -5,29 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
-
-export interface Voucher {
-  id: string
-  code: string
-  name: string
-  description: string
-  type: "FIXED_AMOUNT" | "PERCENTAGE" | "FREE_SHIPPING"
-  discountValue: string
-  maxDiscount: string
-  minOrderValue: string
-  scope: string
-  shopId: string | null
-  totalLimit: number
-  usedCount: number
-  limitPerUser: number
-  startDate: string
-  endDate: string
-  status: "ACTIVE" | "INACTIVE"
-  isPublic: boolean
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
-}
+import type { Voucher } from "@/types/voucher.types"
 
 interface VoucherModalProps {
   open: boolean

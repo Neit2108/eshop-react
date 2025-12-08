@@ -1,14 +1,17 @@
 import { API_ENDPOINTS } from "@/lib/api";
 import { apiService } from "@/services/apiService";
-import type { CreateOrderInput, Order, OrderState } from "@/types/order.types";
+import type { CreateOrderInput, Order, OrderFilters, OrderQuery, OrderState } from "@/types/order.types";
 import type { PaginatedResponse } from '../../types/index';
 import {
   createAsyncThunk,
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
+import { buildOrderQueryString } from "@/lib/helpers/queryBuilder";
 
 const initialState: OrderState = {
+  allOrders: [],
+  shopOrders: [],
   orders: [],
   currentOrder: null,
   isLoading: false,
@@ -24,6 +27,55 @@ const initialState: OrderState = {
   },
 };
 
+
+/**
+ * Lấy tất cả đơn hàng
+ */
+export const fetchAllOrders = createAsyncThunk(
+  "order/fetchAllOrders",
+  async (query: OrderQuery, { rejectWithValue }) => {
+    try {
+      const queryString = buildOrderQueryString(
+        { page: query.page, limit: query.limit },
+        query.filters as OrderFilters,
+      );
+      console.log("queryString", queryString)
+      const response = await apiService.get<PaginatedResponse<Order>>(
+        `${API_ENDPOINTS.ORDERS.ALL}?${queryString}`,
+      );
+      return response.data;
+    }
+    catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Lỗi khi lấy tất cả đơn hàng",
+      );
+    }
+  },
+);
+
+/**
+ * Lấy đơn hàng theo cửa hàng
+ */
+export const fetchOrdersByShop = createAsyncThunk(
+  "order/fetchOrdersByShop",
+  async (shopId: string, { rejectWithValue }) => {
+    try {
+      const response = await apiService.get<PaginatedResponse<Order>>(
+        API_ENDPOINTS.ORDERS.BY_SHOP(shopId),
+      );
+      return response.data;
+    }
+    catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Lỗi khi lấy đơn hàng theo cửa hàng",
+      );
+    }
+  },
+);
 /**
  * Lấy danh sách đơn hàng của người dùng hiện tại
  */
@@ -153,6 +205,36 @@ const orderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // All Orders
+      .addCase(fetchAllOrders.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.successMessage = null;
+      })
+      .addCase(fetchAllOrders.fulfilled, (state, action: PayloadAction<PaginatedResponse<Order>>) => {
+        state.isLoading = false;
+        state.allOrders = action.payload.data;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(fetchAllOrders.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      // Orders by Shop
+      .addCase(fetchOrdersByShop.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.successMessage = null;
+      })
+      .addCase(fetchOrdersByShop.fulfilled, (state, action: PayloadAction<PaginatedResponse<Order>>) => {
+        state.isLoading = false;
+        state.shopOrders = action.payload.data;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(fetchOrdersByShop.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
       // My Orders
       .addCase(myOrders.pending, (state) => {
         state.isLoading = true;

@@ -58,11 +58,18 @@ class SocketService {
         return;
       }
 
+      if (!this.socket.connected) {
+        reject(new Error("Socket is not connected. Please try again."));
+        return;
+      }
+
       this.socket.emit(event, data, (response: any) => {
-        if (response.success) {
+        if (response && response.success) {
           resolve(response.data);
+        } else if (response && response.error) {
+          reject(new Error(response.error));
         } else {
-          reject(new Error(response.error || "Unknown error"));
+          reject(new Error("Unknown error"));
         }
       });
     });
@@ -84,6 +91,14 @@ class SocketService {
 
   getSocket() {
     return this.socket;
+  }
+
+  isConnected(): boolean {
+    return this.socket?.connected ?? false;
+  }
+
+  isInitialized(): boolean {
+    return this.socket !== null;
   }
 }
 
