@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
+import { useCategory } from "@/hooks/useCategory";
 import SidebarFilter from "../../components/features/products/SidebarFilter";
 import SortBar from "../../components/features/products/Sortbar";
 import ProductGrid from "@/components/features/products/ProductGrid";
@@ -24,18 +25,28 @@ export default function ProductListPage() {
     clearFilters,
   } = useProducts();
 
+  const { categories, fetchAllCategories } = useCategory();
+
   const [sortBy, setSortBy] = useState("name-asc");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Fetch categories on component mount
+  useEffect(() => {
+    fetchAllCategories();
+  }, [fetchAllCategories]);
+
+  // Fetch products when filters or page changes
   useEffect(() => {
     const searchTerm = searchParams.get("searchTerm") || "";
-    fetchProducts(searchTerm);
-  }, [page, filters]);
+    fetchProducts(searchTerm, page);
+  }, [page, filters, searchParams, fetchProducts]);
 
   const handleCategoryChange = (categoryId: string) => {
+    // Toggle category selection
+    const newCategoryId = filters.categoryId === categoryId ? undefined : categoryId;
     setFilters({
       ...filters,
-      categoryId: filters.categoryId === categoryId ? undefined : categoryId,
+      categoryId: newCategoryId,
     });
     setPage(1);
   };
@@ -111,6 +122,7 @@ export default function ProductListPage() {
         >
           <SidebarFilter
             filters={filters}
+            categories={categories}
             onCategoryChange={handleCategoryChange}
             onPriceChange={handlePriceChange}
             onClearFilters={handleClearFilters}

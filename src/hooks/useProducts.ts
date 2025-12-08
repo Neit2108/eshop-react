@@ -30,13 +30,13 @@ export function useProducts(){
         error,
         filters,
         selectedProduct,
-        fetchProducts: useCallback((searchTerm?: string, currentPage?: number, currentLimit?: number, shopId?: string) => {
+        fetchProducts: useCallback((searchTerm?: string, currentPage?: number, currentLimit?: number) => {
             dispatch(fetchProducts({ 
                 page: currentPage ?? page, 
                 limit: currentLimit ?? limit, 
-                filters: {...filters, searchTerm, ...(shopId && { shopId })} 
+                filters: {...filters, ...(searchTerm && { searchTerm })} 
             }));
-        }, [dispatch]),
+        }, [dispatch, page, limit, filters]),
         fetchProductById: (id: string) => dispatch(fetchProductById(id)),
         fetchProductByShopId: (shopId: string) => dispatch(fetchProductByShopId(shopId)),
         createProduct: (data: Omit<Product, 'id' | 'createdAt'>) => dispatch(createProduct(data)),

@@ -1,5 +1,6 @@
-import { fetchCategories } from "@/store/slices/categorySlice";
+import { fetchAllCategories } from "@/store/slices/categorySlice";
 import { type AppDispatch, type RootState } from "@/store/store"
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux"
 
 export const useCategory = () => {
@@ -15,8 +16,8 @@ export const useCategory = () => {
         categories,
         isLoading,
         error,
-        fetchCategories: (name: string) => {
-            dispatch(fetchCategories(name));
-        }
+        fetchAllCategories: useCallback(() => {
+            dispatch(fetchAllCategories());
+        }, [dispatch]),
     }
 }

@@ -58,10 +58,10 @@ export function OrderTable({ orders, selectedIds, onSelectOrder, onViewDetails, 
                 />
               </th>
               <th className="p-4 text-left font-semibold">Mã đơn hàng</th>
-              <th className="p-4 text-left font-semibold">Người nhận</th>
+              <th className="p-4 text-left font-semibold">Sản phẩm</th>
               <th className="p-4 text-left font-semibold">Ngày tạo</th>
+              <th className="p-4 text-left font-semibold">Trạng thái giao hàng</th>
               <th className="p-4 text-left font-semibold">Trạng thái thanh toán</th>
-              <th className="p-4 text-left font-semibold">Trạng thái đơn hàng</th>
               <th className="p-4 text-left font-semibold">Tổng cộng</th>
               <th className="p-4 text-left font-semibold">Hành động</th>
             </tr>

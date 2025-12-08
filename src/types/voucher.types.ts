@@ -1,3 +1,5 @@
+import type { PaginationParams } from ".";
+
 // Enum cho loại voucher
 export type VoucherType = 'PERCENTAGE' | 'FIXED_AMOUNT' | 'FREE_SHIPPING';
 
@@ -52,5 +54,24 @@ export interface VoucherState {
   isLoading: boolean;
   error: string | null;
   successMessage: string | null;
+  pagination: {
+    total: number;
+    totalPages: number;
+    currentPage: number;
+    limit: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
 }
 
+export interface VoucherFilters {
+  code?: string;
+  name?: string;
+  status?: VoucherStatus;
+  scope?: VoucherScope;
+  shopId?: string;
+}
+
+export interface VoucherQuery extends PaginationParams {
+  filters?: VoucherFilters;
+}

@@ -27,7 +27,7 @@ export default function ReviewsTab({ productId }: ReviewsTabProps) {
 
   return (
     <div className="py-6">
-      <h3 className="text-xl font-bold text-foreground mb-6">Customer questions & answers</h3>
+      <h3 className="text-xl font-bold text-foreground mb-6">Câu hỏi và câu trả lời</h3>
 
       {/* Reviews List */}
       <div className="space-y-6 mb-8">

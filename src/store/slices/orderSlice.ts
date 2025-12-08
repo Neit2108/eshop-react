@@ -17,6 +17,14 @@ const initialState: OrderState = {
   isLoading: false,
   error: null,
   successMessage: null,
+  userPagination: {
+    total: 0,
+    totalPages: 0,
+    currentPage: 0,
+    limit: 10,
+    hasNext: false,
+    hasPrev: false,
+  },
   pagination: {
     total: 0,
     totalPages: 0,
@@ -81,10 +89,14 @@ export const fetchOrdersByShop = createAsyncThunk(
  */
 export const myOrders = createAsyncThunk(
   "order/myOrders",
-  async (_, { rejectWithValue }) => {
+  async (query: OrderQuery, { rejectWithValue }) => {
     try {
+      const queryString = buildOrderQueryString(
+        { page: query.page, limit: query.limit },
+        query.filters as OrderFilters,
+      );
       const response = await apiService.get<PaginatedResponse<Order>>(
-        API_ENDPOINTS.ORDERS.MY_ORDERS,
+        `${API_ENDPOINTS.ORDERS.MY_ORDERS}?${queryString}`,
       );
       console.log("Fetched orders in myOrders:", response.data);
       return response.data;
@@ -245,7 +257,7 @@ const orderSlice = createSlice({
         state.isLoading = false;
         console.log("Fetched orders:", action.payload);
         state.orders = action.payload.data;
-        state.pagination = action.payload.pagination;
+        state.userPagination = action.payload.pagination;
       })
       .addCase(myOrders.rejected, (state, action) => {
         state.isLoading = false;

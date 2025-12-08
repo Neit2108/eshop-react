@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Edit2 } from "lucide-react"
+import { Edit2, Trash2 } from "lucide-react"
 
 interface AddressCardProps {
   id: string
@@ -10,9 +10,19 @@ interface AddressCardProps {
   isSelected?: boolean
   onEdit: (id: string) => void
   onSelect?: (id: string) => void
+  onDelete?: (id: string) => void
 }
 
-export function AddressCard({ id, name, phone, address, isSelected, onEdit, onSelect }: AddressCardProps) {
+export function AddressCard({
+  id,
+  name,
+  phone,
+  address,
+  isSelected,
+  onEdit,
+  onSelect,
+  onDelete,
+}: AddressCardProps) {
   return (
     <Card
       className={`p-4 cursor-pointer transition-all ${
@@ -26,17 +36,33 @@ export function AddressCard({ id, name, phone, address, isSelected, onEdit, onSe
           <p className="text-sm text-muted-foreground">{phone}</p>
           <p className="mt-2 text-sm text-foreground">{address}</p>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation()
-            onEdit(id)
-          }}
-          className="flex-shrink-0"
-        >
-          <Edit2 className="h-4 w-4" />
-        </Button>
+        <div className="flex gap-2 flex-shrink-0">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation()
+              onEdit(id)
+            }}
+            title="Sửa"
+          >
+            <Edit2 className="h-4 w-4" />
+          </Button>
+          {onDelete && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                onDelete(id)
+              }}
+              title="Xóa"
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
     </Card>
   )

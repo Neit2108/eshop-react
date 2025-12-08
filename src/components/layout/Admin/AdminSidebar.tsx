@@ -3,7 +3,6 @@
 import * as React from "react"
 import {
   AudioWaveform,
-  BookOpen,
   Bot,
   Command,
   Frame,
@@ -15,7 +14,6 @@ import {
   PieChart,
   Settings2,
   ShoppingCart,
-  SquareTerminal,
 } from "lucide-react"
 
 import {
@@ -102,11 +100,11 @@ const data = {
       items: [
         {
           title: "Danh sách khuyến mãi",
-          url: "#",
+          url: "/admin/promotions/list",
         },
         {
           title: "Tạo khuyến mãi",
-          url: "#",
+          url: "/admin/promotions/create",
         },
         {
           title: "Chi tiết khuyến mãi",

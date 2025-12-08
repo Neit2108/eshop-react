@@ -9,7 +9,7 @@ export function useAuth() {
   const hasRoles = (roles: string | string[]) => {
     if (!user?.roles) return false
     const requiredRoles = Array.isArray(roles) ? roles : [roles]
-    return requiredRoles.every(role => user.roles?.includes(role))
+    return requiredRoles.some(role => user.roles?.includes(role))
   }
 
   return {

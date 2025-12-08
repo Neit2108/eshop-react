@@ -7,6 +7,7 @@ import {
   clearError,
   clearSuccessMessage,
   clearShopVouchers,
+  fetchAllVouchers,
 } from "@/store/slices/voucherSlice";
 import type { AppDispatch, RootState } from "@/store/store";
 import { useCallback } from "react";
@@ -22,6 +23,7 @@ export function useVoucher() {
     isLoading,
     error,
     successMessage,
+    pagination,
   } = useSelector((state: RootState) => state.voucher);
 
   return {
@@ -33,8 +35,16 @@ export function useVoucher() {
     isLoading,
     error,
     successMessage,
-
+    pagination,
     // Actions
+
+    getAllVouchers: useCallback((page?: number, limit?: number, shopId?: string) => {
+      dispatch(fetchAllVouchers({ 
+        page: page ?? 1, 
+        limit: limit ?? 10,
+        filters: shopId ? { shopId } : {}
+      }));
+    }, [dispatch]),
     fetchVoucherById: useCallback(
       (voucherId: string) => dispatch(fetchVoucherById(voucherId)),
       [dispatch]

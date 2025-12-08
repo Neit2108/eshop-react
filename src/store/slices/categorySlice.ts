@@ -8,11 +8,11 @@ const initialState: CategoryState = {
   error: null,
 };
 
-export const fetchCategories = createAsyncThunk(
-  "categories/fetchCategories",
-  async (name: string, { rejectWithValue }) => {
+export const fetchAllCategories = createAsyncThunk(
+  "categories/fetchAllCategories",
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await apiService.get<Category[]>("/categories?name=" + name);
+      const response = await apiService.get<Category[]>("/categories");
       return response.data;
     } catch (error) {
       return rejectWithValue(error);
@@ -26,15 +26,15 @@ const categorySlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchCategories.pending, (state) => {
+            .addCase(fetchAllCategories.pending, (state) => {
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(fetchCategories.fulfilled, (state, action) => {
+            .addCase(fetchAllCategories.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.categories = action.payload;
             })
-            .addCase(fetchCategories.rejected, (state, action) => {
+            .addCase(fetchAllCategories.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload as string;
             });

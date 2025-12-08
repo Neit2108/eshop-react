@@ -1,6 +1,7 @@
 import type { PaginationParams } from "@/types";
 import type { OrderFilters } from "@/types/order.types";
 import type { ProductFilters } from "@/types/product.types";
+import type { VoucherFilters } from "@/types/voucher.types";
 
 export function buildQueryString(
   pagination: PaginationParams,
@@ -61,6 +62,37 @@ export function buildOrderQueryString(
     }
     if (filters.shopId) {
       params.append("shopId", filters.shopId);
+    }
+  }
+
+  return params.toString();
+}
+
+export function buildVoucherQueryString(
+  pagination: PaginationParams,
+  filters?: VoucherFilters,
+): string {
+  const params = new URLSearchParams();
+
+  params.append("page", String(pagination.page ?? 1));
+  params.append("limit", String(pagination.limit ?? 10));
+
+  if (filters) {
+    if (filters.code) {
+      params.append("code", filters.code);
+    }
+
+    if (filters.shopId) {
+      params.append("shopId", filters.shopId);
+    }
+    if (filters.status) {
+      params.append("status", filters.status);
+    }
+    if (filters.scope) {
+      params.append("scope", filters.scope);
+    }
+    if (filters.name) {
+      params.append("name", filters.name);
     }
   }
 

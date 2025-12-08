@@ -1,11 +1,13 @@
 import { API_ENDPOINTS } from "@/lib/api";
 import { apiService } from "@/services/apiService";
-import type { Voucher, VoucherState } from "@/types/voucher.types";
+import type { Voucher, VoucherFilters, VoucherQuery, VoucherState } from "@/types/voucher.types";
+import type { PaginatedResponse } from "@/types";
 import {
   createAsyncThunk,
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
+import { buildVoucherQueryString } from "@/lib/helpers/queryBuilder";
 
 const initialState: VoucherState = {
   vouchers: [],
@@ -15,7 +17,40 @@ const initialState: VoucherState = {
   isLoading: false,
   error: null,
   successMessage: null,
+  pagination: {
+    total: 0,
+    totalPages: 0,
+    currentPage: 0,
+    limit: 10,
+    hasNext: false,
+    hasPrev: false,
+  },
 };
+
+/**
+ * Lấy tất cả voucher
+ */
+export const fetchAllVouchers = createAsyncThunk(
+  "voucher/fetchAllVouchers",
+  async (query: VoucherQuery, { rejectWithValue }) => {
+    try {
+      const queryString = buildVoucherQueryString(
+        { page: query.page, limit: query.limit },
+        query.filters as VoucherFilters,
+      );
+      const response = await apiService.get<PaginatedResponse<Voucher>>(
+        `${API_ENDPOINTS.VOUCHERS.ALL}?${queryString}`,
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Lỗi khi lấy tất cả voucher",
+      );
+    }
+  },
+);
 
 /**
  * Lấy voucher theo ID
@@ -120,6 +155,30 @@ const voucherSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Fetch All Vouchers
+      .addCase(fetchAllVouchers.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.successMessage = null;
+        state.vouchers = [];
+        state.pagination = {
+          total: 0,
+          totalPages: 0,
+          currentPage: 0,
+          limit: 10,
+          hasNext: false,
+          hasPrev: false,
+        };
+      })
+      .addCase(fetchAllVouchers.fulfilled, (state, action: PayloadAction<PaginatedResponse<Voucher>>) => {
+        state.isLoading = false;
+        state.vouchers = action.payload.data;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(fetchAllVouchers.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
       // Fetch Voucher by ID
       .addCase(fetchVoucherById.pending, (state) => {
         state.isLoading = true;

@@ -55,6 +55,7 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/shops/${id}`,
   },
   VOUCHERS: {
+    ALL: '/vouchers',
     GET: (id: string) => `/vouchers/${id}`,
     GET_BY_CODE: (code: string) => `/vouchers/code/${code}`,
     PUBLIC: '/vouchers/customer/public',

@@ -22,7 +22,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          Description
+          Mô tả
         </button>
         <button
           onClick={() => setActiveTab("reviews")}
@@ -32,7 +32,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          Reviews ({product.reviewCount})
+          Đánh giá ({product.reviewCount})
         </button>
       </div>
 

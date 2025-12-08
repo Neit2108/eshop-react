@@ -20,6 +20,8 @@ import HomePage from "./pages/home/Home";
 import { StoreDetailPage } from "./pages/shop/StoreDetailPage";
 import { ProductManagement } from "./pages/product/ProductManagement";
 import { OrderManagement } from "./pages/order/OrderManagement";
+import { CreatePromotionForm } from "./pages/voucher/CreatePromotionPage";
+import { VoucherManagement } from "./pages/voucher/VoucherManagement";
 
 const router = createBrowserRouter([
   {
@@ -91,7 +93,7 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: (
-      <ProtectedRoute roles={["SYSTEM_ADMIN"]}>
+      <ProtectedRoute roles={["SYSTEM_ADMIN", "SELLER"]}>
         <AdminApp />
       </ProtectedRoute>
     ),
@@ -101,6 +103,8 @@ const router = createBrowserRouter([
       { path: "products/2", element: <CreateProductPage2 /> },
       { path: "products/list", element: <ProductManagement /> },
       { path: "orders/list", element: <OrderManagement /> },
+      { path: "promotions/list", element: <VoucherManagement /> },
+      { path: "promotions/create", element: <CreatePromotionForm /> },
     ],
   },
   {

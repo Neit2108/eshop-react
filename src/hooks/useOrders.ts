@@ -11,13 +11,13 @@ import {
   fetchAllOrders,
 } from "@/store/slices/orderSlice";
 import type { AppDispatch, RootState } from "@/store/store";
-import type { CreateOrderInput, Order } from "@/types/order.types";
+import type { CreateOrderInput, Order, OrderFilters, OrderStatus } from "@/types/order.types";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export function useOrders() {
   const dispatch = useDispatch<AppDispatch>();
-  const { allOrders, shopOrders, orders, currentOrder, isLoading, error, successMessage, pagination } =
+  const { allOrders, shopOrders, orders, currentOrder, isLoading, error, successMessage, pagination, userPagination } =
     useSelector((state: RootState) => state.order);
 
   return {
@@ -29,8 +29,18 @@ export function useOrders() {
     error,
     successMessage,
     pagination,
-    getMyOrders: useCallback(() => {
-      dispatch(myOrders());
+    userPagination,
+    getMyOrders: useCallback((page?: number, limit?: number, status?: OrderStatus, paymentStatus?: string, minTotalAmount?: number, maxTotalAmount?: number) => {
+      dispatch(myOrders({
+        page: page ?? 1,
+        limit: limit ?? 10,
+        filters: {
+          status: status ?? undefined,
+          paymentStatus: paymentStatus ?? undefined,
+          minTotalAmount: minTotalAmount ?? undefined,
+          maxTotalAmount: maxTotalAmount ?? undefined,
+        },
+      }));
     }, [dispatch]),
     getAllOrders: useCallback((page?: number, limit?: number, shopId?: string) => {
       dispatch(fetchAllOrders({ 

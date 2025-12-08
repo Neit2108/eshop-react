@@ -10,8 +10,11 @@ import { PaymentMethodModal } from "@/components/features/orders/PaymentMethodMo
 import { apiService } from "@/services/apiService";
 import type { Voucher } from "@/types/voucher.types";
 import { useVoucher } from "@/hooks/useVoucher";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/lib/constants";
 
 export default function CheckoutPage() {
+  const navigate = useNavigate();
   const { publicVouchers, fetchPublicVouchers } = useVoucher();
   const [selectedAddress, setSelectedAddress] = useState<any>(null);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
@@ -51,7 +54,12 @@ export default function CheckoutPage() {
 
   const handlePlaceOrder = async () => {
     if (!selectedAddress) {
-      alert("Please select a delivery address");
+      toast.error("Vui lòng chọn địa chỉ giao hàng");
+      return;
+    }
+
+    if (!selectedAddress.phone || !selectedAddress.address) {
+      toast.error("Vui lòng cập nhật đầy đủ thông tin địa chỉ giao hàng");
       return;
     }
 
@@ -103,6 +111,7 @@ export default function CheckoutPage() {
         }, 1000);
       } else if (orderRes.paymentMethod === "COD") {
         toast.success("Đơn hàng đã được tạo thành công!");
+        navigate(ROUTES.ORDERS);
       }
     } catch (err) {
       console.error("Failed to create order:", err);

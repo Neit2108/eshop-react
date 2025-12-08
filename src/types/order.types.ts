@@ -102,6 +102,14 @@ export type OrderState = {
   isLoading: boolean;
   error: string | null;
   successMessage: string | null;
+  userPagination: {
+    total: number;
+    totalPages: number;
+    currentPage: number;
+    limit: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
   pagination: {
     total: number;
     totalPages: number;

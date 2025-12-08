@@ -181,14 +181,14 @@ export default function ProductInfo({
           className="text-foreground flex items-center gap-2 transition-colors hover:text-[#FF6B6B]"
         >
           <Heart size={20} />
-          <span>Add to Wishlist</span>
+          <span>Thêm vào yêu thích</span>
         </button>
         <button
           onClick={handleAddToCompare}
           className="text-foreground flex items-center gap-2 transition-colors hover:text-[#FF6B6B]"
         >
           <ArrowRightLeft size={20} />
-          <span>Add to Compare</span>
+          <span>So sánh</span>
         </button>
       </div>
     </div>

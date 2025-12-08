@@ -11,7 +11,7 @@ export default function DescriptionTab({ categories, productOption, status }: De
     <div className="py-6 space-y-6">
       {/* Status */}
       <div>
-        <h4 className="text-sm font-semibold text-foreground mb-2">Status:</h4>
+        <h4 className="text-sm font-semibold text-foreground mb-2">Trạng thái:</h4>
         <p className="text-muted-foreground">
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${
             status === "PUBLISHED" ? "bg-green-100 text-green-800" :
@@ -19,7 +19,7 @@ export default function DescriptionTab({ categories, productOption, status }: De
             status === "OUT_OF_STOCK" ? "bg-red-100 text-red-800" :
             "bg-gray-100 text-gray-800"
           }`}>
-            {status}
+            {status === "PUBLISHED" ? "Đang bán" : status === "DRAFT" ? "Bản nháp" : status === "OUT_OF_STOCK" ? "Hết hàng" : "Không xác định"}
           </span>
         </p>
       </div>
@@ -27,7 +27,7 @@ export default function DescriptionTab({ categories, productOption, status }: De
       {/* Categories */}
       {categories && categories.length > 0 && (
         <div>
-          <h4 className="text-sm font-semibold text-foreground mb-2">Categories:</h4>
+          <h4 className="text-sm font-semibold text-foreground mb-2">Danh mục:</h4>
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
               <span
@@ -44,7 +44,7 @@ export default function DescriptionTab({ categories, productOption, status }: De
       {/* Product Options */}
       {productOption && productOption.length > 0 && (
         <div>
-          <h4 className="text-sm font-semibold text-foreground mb-3">Available Options:</h4>
+          <h4 className="text-sm font-semibold text-foreground mb-3">Các tùy chọn:</h4>
           <div className="space-y-3">
             {productOption.map((option) => (
               <div key={option.id}>

@@ -1,34 +1,30 @@
 import { useState } from "react"
-import { ChevronUp } from "lucide-react"
+import { ChevronUp, ChevronDown } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
-import type { ProductFilters } from "@/types/product.types"
+import type { Category, ProductFilters } from "@/types/product.types"
 import { Button } from "@/components/ui"
 
 interface SidebarFilterProps {
   filters: ProductFilters
+  categories: Category[]
   onCategoryChange: (categoryId: string) => void
   onPriceChange: (range: [number, number]) => void
   onClearFilters: () => void
 }
 
-const CATEGORIES = [
-  { id: "1", name: "Điện thoại" },
-  { id: "2", name: "Electronics" },
-  { id: "3", name: "Bags" },
-  { id: "4", name: "Footwear" },
-  { id: "5", name: "Groceries" },
-  { id: "6", name: "Beauty" },
-]
+const MAX_VISIBLE_CATEGORIES = 5
 
 export default function SidebarFilter({
   filters,
+  categories,
   onCategoryChange,
   onPriceChange,
   onClearFilters,
 }: SidebarFilterProps) {
   const [isCategoryOpen, setIsCategoryOpen] = useState(true)
   const [isPriceOpen, setIsPriceOpen] = useState(true)
+  const [showAllCategories, setShowAllCategories] = useState(false)
 
   const priceMin = filters.priceRange?.min ?? 0
   const priceMax = filters.priceRange?.max ?? 100000000
@@ -75,19 +71,43 @@ export default function SidebarFilter({
         </button>
         {isCategoryOpen && (
           <div className="space-y-2 sm:space-y-3">
-            {CATEGORIES.map((category) => (
-              <label
-                key={category.id}
-                className="flex items-center gap-2 sm:gap-3 cursor-pointer hover:text-red-500 transition-colors"
-              >
-                <Checkbox
-                  checked={selectedCategoryId === category.id}
-                  onCheckedChange={() => onCategoryChange(category.id)}
-                  className="border-gray-300"
-                />
-                <span className="text-xs sm:text-sm text-foreground">{category.name}</span>
-              </label>
-            ))}
+            {categories.length > 0 ? (
+              <>
+                {categories.slice(0, showAllCategories ? undefined : MAX_VISIBLE_CATEGORIES).map((category) => (
+                  <label
+                    key={category.id}
+                    className="flex items-center gap-2 sm:gap-3 cursor-pointer hover:text-red-500 transition-colors"
+                  >
+                    <Checkbox
+                      checked={selectedCategoryId === category.id}
+                      onCheckedChange={() => onCategoryChange(category.id)}
+                      className="border-gray-300"
+                    />
+                    <span className="text-xs sm:text-sm text-foreground">{category.name}</span>
+                  </label>
+                ))}
+                {categories.length > MAX_VISIBLE_CATEGORIES && (
+                  <button
+                    onClick={() => setShowAllCategories(!showAllCategories)}
+                    className="flex items-center gap-1 text-xs sm:text-sm text-red-500 hover:text-red-600 transition-colors mt-2 font-medium"
+                  >
+                    {showAllCategories ? (
+                      <>
+                        <ChevronUp size={14} />
+                        Ẩn bớt
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown size={14} />
+                        Xem thêm ({categories.length - MAX_VISIBLE_CATEGORIES})
+                      </>
+                    )}
+                  </button>
+                )}
+              </>
+            ) : (
+              <p className="text-xs sm:text-sm text-muted-foreground">Không có danh mục nào</p>
+            )}
           </div>
         )}
       </div>
@@ -121,7 +141,7 @@ export default function SidebarFilter({
 
       {/* Filter Info */}
       <div className="pt-2 border-t text-xs text-muted-foreground space-y-1">
-        {selectedCategoryId && <p>📁 Danh mục: {CATEGORIES.find(c => c.id === selectedCategoryId)?.name}</p>}
+        {selectedCategoryId && <p>📁 Danh mục: {categories.find(c => c.id === selectedCategoryId)?.name}</p>}
         {filters.priceRange && (
           <p>💰 Giá: {priceMin.toLocaleString()} - {priceMax.toLocaleString()} VNĐ</p>
         )}
