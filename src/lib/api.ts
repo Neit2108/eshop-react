@@ -35,6 +35,7 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `/orders/${id}`,
     DELETE: (id: string) => `/orders/${id}`,
     CONFIRM: (id: string) => `/orders/${id}/confirm`,
+    CANCEL: (id: string) => `/orders/${id}/cancel`,
   },
   CHAT: {
     CONVERSATIONS: '/chat/conversations',

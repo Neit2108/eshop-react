@@ -58,7 +58,7 @@ export function useOrders() {
     fetchOrderById: useCallback((orderId: string) => dispatch(fetchOrderById(orderId)), [dispatch]),
     updateOrder: (orderId: string, orderData: Partial<Order>) =>
       dispatch(updateOrder({ orderId, orderData })),
-    cancelOrder: (orderId: string) => dispatch(cancelOrder(orderId)),
+    cancelOrder: (orderId: string, reason?: string) => dispatch(cancelOrder({ orderId, reason })),
     confirmOrder: useCallback((orderId: string) => dispatch(confirmOrder(orderId)), [dispatch]),
     clearCurrentOrder: () => dispatch(clearCurrentOrder()),
     clearError: () => dispatch(clearError()),

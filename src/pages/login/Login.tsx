@@ -2,7 +2,6 @@ import { GalleryVerticalEnd } from "lucide-react";
 
 import { LoginForm } from "@/components/features/login/login-form";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
-import reactSvg from "@/assets/react.svg";
 
 export default function LoginPage() {
   return (
@@ -26,7 +25,7 @@ export default function LoginPage() {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <img
-          src={reactSvg}
+          src="https://res.cloudinary.com/dbswzktwo/image/upload/v1765266307/Gemini_Generated_Image_aql2qxaql2qxaql2_zuzh43.png"
           alt="Image"
           className="absolute inset-0 h-full w-full object-fill dark:brightness-[0.2] dark:grayscale"
         />

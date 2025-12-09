@@ -7,9 +7,11 @@ import { Search, Eye, ChevronLeft, ChevronRight, ShoppingBag, Trash2 } from "luc
 import { useOrders } from "@/hooks/useOrders"
 import type { Order } from "@/types/order.types"
 import { OrderDetailDialog } from "@/components/features/orders/OrderDetailDialog"
+import { CancelOrderDialog } from "@/components/features/orders/CancelOrderDialog"
 import { formatDate, formatCurrency, getStatusColor } from "@/lib/utils"
 import { orderStatusMap, paymentStatusMap } from "@/types/order.types"
 import Loading from "@/components/common/Loading"
+import { toast } from "sonner"
 
 export function MyOrdersView() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -17,8 +19,11 @@ export function MyOrdersView() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [hasLoaded, setHasLoaded] = useState(false)
+  const [cancelOrderId, setCancelOrderId] = useState<string | null>(null)
+  const [cancelOrderNumber, setCancelOrderNumber] = useState<string>("")
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false)
 
-  const { orders, isLoading, userPagination, getMyOrders } = useOrders()
+  const { orders, isLoading, userPagination, getMyOrders, cancelOrder } = useOrders()
 
   // Fetch orders with current filters
   useEffect(() => {
@@ -37,8 +42,24 @@ export function MyOrdersView() {
     setIsModalOpen(true)
   }
 
-  const handleCancelOrder = (orderId: string) => {
-    alert(`Hủy đơn hàng ${orderId} - Tính năng này sẽ được implement sau`)
+  const handleCancelOrder = (order: Order) => {
+    // Check if order can be cancelled
+    if (order.status !== "PENDING") {
+      toast.error("Đơn hàng này hiện không thể hủy.")
+      return
+    }
+    
+    setCancelOrderId(order.id)
+    setCancelOrderNumber(order.orderNumber)
+    setIsCancelDialogOpen(true)
+  }
+
+  const handleConfirmCancelOrder = async (orderId: string, reason: string) => {
+    try {
+      await cancelOrder(orderId, reason)
+    } catch (error) {
+      console.error("Lỗi khi hủy đơn hàng:", error)
+    }
   }
 
   const handleConfirmOrder = (orderId: string) => {
@@ -183,8 +204,9 @@ export function MyOrdersView() {
                               variant="ghost"
                               size="sm"
                               className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                              onClick={() => handleCancelOrder(order.orderNumber)}
-                              title="Hủy đơn hàng"
+                              onClick={() => handleCancelOrder(order)}
+                              disabled={order.status !== "PENDING"}
+                              title={order.status !== "PENDING" ? "Đơn hàng này không thể hủy" : "Hủy đơn hàng"}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -245,6 +267,15 @@ export function MyOrdersView() {
         onOpenChange={setIsModalOpen}
         onConfirmOrder={handleConfirmOrder}
         showAdminActions={false}
+      />
+
+      {/* Cancel Order Dialog */}
+      <CancelOrderDialog
+        isOpen={isCancelDialogOpen}
+        orderId={cancelOrderId}
+        orderNumber={cancelOrderNumber}
+        onConfirm={handleConfirmCancelOrder}
+        onOpenChange={setIsCancelDialogOpen}
       />
     </>
   )

@@ -8,7 +8,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import React, { useState } from "react";
 import { type SignupFormData } from "@/types";
@@ -100,7 +100,7 @@ export function SignupForm({
           </FieldDescription>
         </Field>
         <Field>
-          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
           <Input
             id="password"
             name="password"
@@ -112,11 +112,11 @@ export function SignupForm({
             required
           />
           <FieldDescription>
-            Must be at least 8 characters long.
+            Mật khẩu phải có ít nhất 8 ký tự.
           </FieldDescription>
         </Field>
         <Field>
-          <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
+          <FieldLabel htmlFor="confirm-password">Xác nhận mật khẩu</FieldLabel>
           <Input
             id="confirm-password"
             name="confirmPassword"
@@ -127,12 +127,12 @@ export function SignupForm({
             disabled={isLoading}
             required
           />
-          <FieldDescription>Please confirm your password.</FieldDescription>
+          <FieldDescription>Vui lòng xác nhận mật khẩu.</FieldDescription>
         </Field>
 
         {error && (
           <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
-            {error}
+            Có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.
           </div>
         )}
 
@@ -154,7 +154,7 @@ export function SignupForm({
             Đăng ký với GitHub
           </Button>
           <FieldDescription className="px-6 text-center">
-            Bạn đã có tài khoản? <a href="#">Đăng nhập</a>
+            Bạn đã có tài khoản? <Link to="/login">Đăng nhập</Link>
           </FieldDescription>
         </Field>
       </FieldGroup>

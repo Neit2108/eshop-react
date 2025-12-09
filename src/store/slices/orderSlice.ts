@@ -185,10 +185,11 @@ export const updateOrder = createAsyncThunk(
  */
 export const cancelOrder = createAsyncThunk(
   "order/cancelOrder",
-  async (orderId: string, { rejectWithValue }) => {
+  async ({ orderId, reason }: { orderId: string; reason?: string }, { rejectWithValue }) => {
     try {
-      const response = await apiService.delete<Order>(
-        API_ENDPOINTS.ORDERS.DELETE(orderId),
+      const response = await apiService.post<Order>(
+        API_ENDPOINTS.ORDERS.CANCEL(orderId),
+        { reason },
       );
       return response.data;
     } catch (error: any) {
