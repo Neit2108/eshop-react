@@ -23,6 +23,7 @@ export const fetchShopByUserId = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiService.get<Shop>(API_ENDPOINTS.SHOPS.GET_BY_USER_ID);
+      console.log("response", response.data)
       return response.data;
     } catch (error: any) {
       return rejectWithValue(

@@ -33,6 +33,9 @@ export function buildQueryString(
     if (filters.sortBy) {
       params.append("sortBy", filters.sortBy);
     }
+    if (filters.shopId) {
+      params.append("shopId", filters.shopId);
+    }
   }
 
   return params.toString();

@@ -343,9 +343,11 @@ import { Step6Publish } from "@/components/features/products/steps/Step6Publish"
 import { motion, AnimatePresence } from "framer-motion";
 import { useProductCreation } from "@/hooks/useProductCreation";
 import { useCategory } from "@/hooks/useCategory";
+import { useAuth } from "@/hooks/useAuth";
+import { useShop } from "@/hooks/useShop";
 import { toast } from "sonner";
 
-const STEPS = ["Create Draft", "Categories", "Variants", "Images", "Publish"];
+const STEPS = ["Tạo nháp", "Thêm danh mục", "Thêm lựa chọn", "Thêm ảnh", "Đăng bán"];
 
 export default function CreateProductPage() {
   const {
@@ -366,15 +368,18 @@ export default function CreateProductPage() {
     addImages,
     publishProduct,
   } = useProductCreation();
-  const { categories, fetchCategories } = useCategory();
+  const { categories, fetchAllCategories } = useCategory();
+  const { hasRoles } = useAuth();
+  const { shops } = useShop();
 
   const [completed, setCompleted] = useState(false);
+  const [isAdmin] = useState(hasRoles('admin'));
 
-  // Load mock data
+  // Load data khi component mount
   useEffect(() => {
     const loadData = async () => {
       try {
-        await fetchCategories("");
+        fetchAllCategories();
       } catch {
         setError("Failed to load data");
       }
@@ -382,25 +387,32 @@ export default function CreateProductPage() {
     loadData();
   }, []);
 
+  // Lấy danh sách shop khi user là admin
+  useEffect(() => {
+    if (isAdmin) {
+      // TODO: Implement API call to fetch all shops for admin
+      // fetchAllShops();
+    }
+  }, [isAdmin]);
+
   const handleStep1Next = async (data: any) => {
-    await createDraftProduct(data);
+    createDraftProduct(data);
   };
 
   const handleStep2Next = async (data: any) => {
-    console.log("productId:", productId);
-    await addCategories(productId!, data);
+    addCategories(productId!, data);
   };
 
   const handleStep4Next = async (data: any) => {
-    await addVariants(productId!, data);
+    addVariants(productId!, data);
   };
 
   const handleStep5Next = async (data: any) => {
-    await addImages(productId!, data);
+    addImages(productId!, data);
   };
 
   const handleStep6Finish = async (status: any) => {
-    await publishProduct(productId!, { status });
+    publishProduct(productId!, { status });
     setCompleted(true);
   };
 
@@ -414,7 +426,7 @@ export default function CreateProductPage() {
         return (
           <Step1CreateDraft
             data={draft}
-            shops={[]}
+            shops={shops || []}
             loading={isLoading}
             onNext={handleStep1Next}
           />

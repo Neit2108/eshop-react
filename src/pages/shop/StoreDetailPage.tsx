@@ -2,6 +2,7 @@ import { StoreHeader } from "@/components/features/shop/StoreHeader";
 import { StoreInfo } from "@/components/features/shop/StoreInfo";
 import { StoreStats } from "@/components/features/shop/StoreStats";
 import { ProductsPreview } from "@/components/features/shop/ProductsPreview";
+import { ShopVoucherSlider } from "@/components/features/shop/ShopVoucherSlider";
 import { StoreReviews } from "@/components/features/shop/StoreReviews";
 import { Separator } from "@/components/ui/separator";
 import { useFetch } from "@/hooks/useFetch";
@@ -29,6 +30,8 @@ export function StoreDetailPage() {
         <StoreInfo shop={data} />
         <Separator />
         <StoreStats shop={data} />
+        <Separator />
+        <ShopVoucherSlider shopId={data.id} />
         <Separator />
         <ProductsPreview shopId={data.id} />
         <Separator />

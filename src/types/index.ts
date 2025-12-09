@@ -3,8 +3,12 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber?: string;
+  birthday?: string;
+  address?: string;
   walletAddress?: string;
   roles?: string[];
+  avatarUrl?: string;
 }
 
 export interface SignupFormData {

@@ -10,10 +10,10 @@ import {
   ChevronRight,
   LogOut,
   LucideMessagesSquare,
-  PackageCheck,
   Wallet,
   Copy,
   Check,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +43,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ROUTES } from "@/lib/constants";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { API_ENDPOINTS } from "@/lib/api";
 
 interface CategoryItem {
@@ -158,7 +158,11 @@ const Header: React.FC = () => {
           ],
         },
         { id: "2-2", name: "Máy tính xách tay", link: "/electronics/laptops" },
-        { id: "2-3", name: "Đồng hồ thông minh", link: "/electronics/smartwatch" },
+        {
+          id: "2-3",
+          name: "Đồng hồ thông minh",
+          link: "/electronics/smartwatch",
+        },
       ],
     },
     {
@@ -259,6 +263,11 @@ const Header: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full border-none bg-gray-100 pr-10 text-sm focus:ring-2 focus:ring-blue-500"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
               />
               <Button
                 size="icon"
@@ -406,17 +415,34 @@ const Header: React.FC = () => {
                     )}
                   </div>
 
-                  <DropdownMenuItem asChild>
-                    <a href="/profile" className="cursor-pointer text-sm">
-                      Hồ sơ
-                    </a>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <a href="/orders" className="cursor-pointer text-sm">
-                      <PackageCheck className="mr-2 h-4 w-4" />
-                      Đơn hàng
-                    </a>
-                  </DropdownMenuItem>
+                  {/** Nếu là customer thì chỉ hiện hồ sơ */}
+                  {user?.roles?.includes("CUSTOMER") ? (
+                    // Nếu là Customer → chỉ hiện Hồ sơ cá nhân
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile" className="cursor-pointer text-sm">
+                        <User className="mr-2 h-4 w-4" />
+                        Hồ sơ cá nhân
+                      </Link>
+                    </DropdownMenuItem>
+                  ) : (
+                    // Nếu KHÔNG phải Customer → hiện Quản lý
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin" className="cursor-pointer text-sm">
+                          <ShieldCheck className="mr-2 h-4 w-4" />
+                          Quản lý
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild>
+                        <Link to="/profile" className="cursor-pointer text-sm">
+                          <User className="mr-2 h-4 w-4" />
+                          Hồ sơ cá nhân
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+
                   <DropdownMenuItem
                     onClick={() => logout()}
                     className="cursor-pointer text-sm text-red-600"

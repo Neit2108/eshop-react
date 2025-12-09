@@ -30,11 +30,11 @@ export function useProducts(){
         error,
         filters,
         selectedProduct,
-        fetchProducts: useCallback((searchTerm?: string, currentPage?: number, currentLimit?: number) => {
+        fetchProducts: useCallback((searchTerm?: string, currentPage?: number, currentLimit?: number, shopId?: string) => {
             dispatch(fetchProducts({ 
                 page: currentPage ?? page, 
                 limit: currentLimit ?? limit, 
-                filters: {...filters, ...(searchTerm && { searchTerm })} 
+                filters: {...filters, ...(searchTerm && { searchTerm }), ...(shopId && { shopId })} 
             }));
         }, [dispatch, page, limit, filters]),
         fetchProductById: (id: string) => dispatch(fetchProductById(id)),

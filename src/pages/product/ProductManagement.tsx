@@ -52,6 +52,8 @@ export function ProductManagement() {
     if (isSeller) {
       // For sellers, fetch their shop first
       fetchShopByUserId()
+      console.log("shop", shop)
+      console.log("isSeller", isSeller)
     }
   }, [isSeller, fetchShopByUserId])
 

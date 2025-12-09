@@ -22,6 +22,7 @@ import { ProductManagement } from "./pages/product/ProductManagement";
 import { OrderManagement } from "./pages/order/OrderManagement";
 import { CreatePromotionForm } from "./pages/voucher/CreatePromotionPage";
 import { VoucherManagement } from "./pages/voucher/VoucherManagement";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -39,7 +40,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: < HomePage/>,
+        element: <HomePage />,
       },
       {
         path: ROUTES.PRODUCT_LIST,
@@ -80,15 +81,25 @@ const router = createBrowserRouter([
       },
       {
         path: "/shop/:id",
-        element: <ProtectedRoute>
-          <StoreDetailPage />
-        </ProtectedRoute>
+        element: (
+          <ProtectedRoute>
+            <StoreDetailPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "*",
         element: <NotFound />,
       },
     ],
+  },
+  {
+    path: "/profile",
+    element: (
+      <ProtectedRoute>
+        <ProfilePage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/admin",

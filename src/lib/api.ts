@@ -46,8 +46,9 @@ export const API_ENDPOINTS = {
     MESSAGE: (id: string) => `/chat/messages/${id}`,
   },
   SHOPS: {
+    TOP_RATED: '/shops/top-rated/list',
     LIST: '/shops',
-    GET_BY_USER_ID: '/shops/user',
+    GET_BY_USER_ID: '/shops/owner/me',
     GET: (id: string) => `/shops/${id}`,
     GET_PRODUCTS: (id: string) => `/shops/${id}/products`,
     CREATE: '/shops',

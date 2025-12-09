@@ -3,93 +3,56 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useProducts } from "@/hooks/useProducts";
 import { useEffect } from "react";
-
-const products = [
-  {
-    id: 1,
-    image: "/premium-electronics-product.jpg",
-    name: "Premium Wireless Headphones",
-    price: 129.99,
-    originalPrice: 199.99,
-    rating: 5,
-    reviews: 324,
-    badge: "Sale",
-    badgeVariant: "destructive" as const,
-  },
-  {
-    id: 2,
-    image: "/luxury-handbag-fashion.jpg",
-    name: "Luxury Designer Handbag",
-    price: 249.99,
-    originalPrice: 349.99,
-    rating: 4,
-    reviews: 215,
-    badge: "New",
-    badgeVariant: "secondary" as const,
-  },
-  {
-    id: 3,
-    image: "/smart-watch-technology.jpg",
-    name: "Smart Watch Pro",
-    price: 199.99,
-    originalPrice: 299.99,
-    rating: 5,
-    reviews: 487,
-    badge: "Popular",
-  },
-  {
-    id: 4,
-    image: "/wireless-earbuds-audio.jpg",
-    name: "True Wireless Earbuds",
-    price: 79.99,
-    rating: 4,
-    reviews: 156,
-  },
-  {
-    id: 5,
-    image: "/portable-speaker-bluetooth.jpg",
-    name: "Portable Bluetooth Speaker",
-    price: 89.99,
-    originalPrice: 129.99,
-    rating: 5,
-    reviews: 298,
-    badge: "Hot",
-    badgeVariant: "destructive" as const,
-  },
-  {
-    id: 6,
-    image: "/phone-case-protection.jpg",
-    name: "Premium Phone Case",
-    price: 34.99,
-    rating: 4,
-    reviews: 412,
-  },
-  {
-    id: 7,
-    image: "/camera-lens-professional.jpg",
-    name: "Professional Camera Lens",
-    price: 399.99,
-    rating: 5,
-    reviews: 89,
-  },
-  {
-    id: 8,
-    image: "/usb-type-c-cable-charger.jpg",
-    name: "Fast Charging Cable Set",
-    price: 24.99,
-    originalPrice: 39.99,
-    rating: 4,
-    reviews: 734,
-    badge: "Deal",
-    badgeVariant: "secondary" as const,
-  },
-]
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function ProductsPreview({ shopId }: { shopId: string }) {
-  const { fetchProductByShopId, productsByShop } = useProducts();
+  const { 
+    fetchProducts, 
+    products, 
+    isLoading, 
+    error,
+    page,
+    limit,
+    totalPages,
+    setPage,
+    clearFilters,
+  } = useProducts();
+
+  // Lấy sản phẩm của shop với filter theo shopId, page mặc định 1, limit 8
+  // Chỉ gọi khi shopId thay đổi
   useEffect(() => {
-    fetchProductByShopId(shopId);
+    if (shopId) {
+      clearFilters();
+      fetchProducts(undefined, 1, 8, shopId);
+    }
   }, [shopId]);
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      const newPage = page - 1;
+      setPage(newPage);
+      fetchProducts(undefined, newPage, limit, shopId);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (page < totalPages) {
+      const newPage = page + 1;
+      setPage(newPage);
+      fetchProducts(undefined, newPage, limit, shopId);
+    }
+  };
+
+  if (error) {
+    return (
+      <div className="py-12">
+        <div className="text-center text-red-500">
+          <p>Lỗi tải sản phẩm: {error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="py-12">
       <div className="mb-6 flex items-center justify-between">
@@ -102,17 +65,53 @@ export function ProductsPreview({ shopId }: { shopId: string }) {
 
       <Separator className="mb-6" />
 
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {productsByShop.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
+      {isLoading && products.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">Đang tải sản phẩm...</p>
+        </div>
+      ) : (
+        <>
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
 
-      <div className="mt-8 text-center">
-        <Button size="lg" variant="outline">
-          Xem thêm sản phẩm
-        </Button>
-      </div>
+          {products.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Không có sản phẩm nào</p>
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-4">
+              <Button 
+                variant="outline"
+                size="icon"
+                onClick={handlePreviousPage}
+                disabled={isLoading || page === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">
+                  Trang {page} / {totalPages}
+                </span>
+              </div>
+
+              <Button 
+                variant="outline"
+                size="icon"
+                onClick={handleNextPage}
+                disabled={isLoading || page === totalPages}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   )
 }
