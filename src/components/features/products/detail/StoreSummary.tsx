@@ -11,6 +11,7 @@ import { useQuickMessage } from "@/hooks/useQuickMessage"
 import { useAuth } from "@/hooks/useAuth"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Textarea } from "@/components/ui/textarea"
+import { toast } from "sonner"
 
 interface StoreSummaryProps {
   storeLogo?: string
@@ -41,13 +42,11 @@ export function StoreSummary({
 }: StoreSummaryProps) {
   const { user } = useAuth()
   const token = localStorage.getItem("accessToken")
-  const apiUrl = "http://localhost:5000"
   
   const [showQuickMessage, setShowQuickMessage] = useState(false)
   const [messageText, setMessageText] = useState("")
   const { loading, error, sendQuickMessage, clearError } = useQuickMessage({
     token: token || "",
-    apiUrl,
     shopId: storeId,
     productId,
   })
@@ -62,7 +61,7 @@ export function StoreSummary({
   const handleMessageClick = () => {
     if (!user) {
       // Redirect to login if not authenticated
-      alert("Please login to send messages")
+      toast.error("Vui lòng đăng nhập để gửi tin nhắn")
       return
     }
     setShowQuickMessage(!showQuickMessage)
@@ -76,15 +75,15 @@ export function StoreSummary({
       await sendQuickMessage(messageText)
       setMessageText("")
       setShowQuickMessage(false)
-      alert("Message sent successfully!")
+      toast.success("Tin nhắn đã được gửi thành công!")
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Failed to send message'
-      console.error("Error sending message:", err)
+      const errorMsg = err instanceof Error ? err.message : 'Lỗi khi gửi tin nhắn'
+      console.error("Lỗi khi gửi tin nhắn:", err)
       
       // Show retry hint if connection error
       if (errorMsg.includes('not connected')) {
-        const retryMsg = `${errorMsg} Please wait a moment and try again.`
-        alert(retryMsg)
+        const retryMsg = `${errorMsg} Vui lòng chờ một lát và thử lại.`
+        toast.error(retryMsg)
       }
     }
   }

@@ -1,21 +1,21 @@
 import { useState, useCallback } from 'react';
+import { apiService } from '@/services/apiService';
 
 interface UseQuickMessageOptions {
   token: string;
-  apiUrl?: string;
   shopId: string;
   productId?: string;
 }
 
 export const useQuickMessage = (options: UseQuickMessageOptions) => {
-  const { token, apiUrl = 'http://localhost:5000', shopId, productId } = options;
+  const { token, shopId, productId } = options;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const sendQuickMessage = useCallback(
     async (message: string) => {
       if (!message.trim()) {
-        setError('Message cannot be empty');
+        setError('Tin nhắn không được để trống');
         return;
       }
 
@@ -23,77 +23,49 @@ export const useQuickMessage = (options: UseQuickMessageOptions) => {
       setError(null);
 
       try {
-        // Step 1: Create conversation via REST API
-        console.log('Creating conversation with shop:', shopId);
-        const createConvResponse = await fetch(
-          `${apiUrl}/api/chat/conversations`,
+        // Step 1: Create conversation via apiService
+        console.log('Tạo cuộc hội thoại với cửa hàng:', shopId);
+        const createConvResponse = await apiService.post<{ id: string }>(
+          '/chat/conversations',
           {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              shopId,
-              subject: productId ? `About product ${productId}` : undefined,
-            }),
+            shopId,
+            subject: productId ? `Hỗ trợ sản phẩm` : undefined,
           }
         );
 
-        if (!createConvResponse.ok) {
-          throw new Error(
-            `Failed to create conversation: ${createConvResponse.status}`
-          );
-        }
-
-        const convData = await createConvResponse.json();
-        const conversationId = convData.data?.id || convData.id;
+        const conversationId = createConvResponse.data?.id;
 
         if (!conversationId) {
           throw new Error('Failed to get conversation ID');
         }
 
-        console.log('Conversation created:', conversationId);
+        console.log('Cuộc hội thoại đã được tạo:', conversationId);
 
-        // Step 2: Send message via REST API
-        const sendMessageResponse = await fetch(
-          `${apiUrl}/api/chat/conversations/${conversationId}/messages`,
+        // Step 2: Send message via apiService
+        const sendMessageResponse = await apiService.post(
+          `/chat/conversations/${conversationId}/messages`,
           {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              content: message.trim(),
-              type: 'TEXT',
-              productId,
-            }),
+            content: message.trim(),
+            type: 'TEXT',
+            productId,
           }
         );
 
-        if (!sendMessageResponse.ok) {
-          throw new Error(
-            `Failed to send message: ${sendMessageResponse.status}`
-          );
-        }
-
-        const messageData = await sendMessageResponse.json();
-        console.log('Message sent successfully:', messageData);
+        console.log('Tin nhắn đã được gửi thành công:', sendMessageResponse);
 
         setError(null);
         return conversationId;
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : 'Failed to send message';
+          err instanceof Error ? err.message : 'Lỗi khi gửi tin nhắn';
         setError(errorMessage);
-        console.error('Error sending quick message:', err);
+        console.error('Lỗi khi gửi tin nhắn:', err);
         throw err;
       } finally {
         setLoading(false);
       }
     },
-    [token, apiUrl, shopId, productId]
+    [token, shopId, productId]
   );
 
   const clearError = useCallback(() => {
