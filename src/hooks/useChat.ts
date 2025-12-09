@@ -1,11 +1,11 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { Message, Conversation, TypingUser } from "../types/chat.types";
 import { useSocket } from "./useSocket";
+import { apiService } from "@/services/apiService";
 
 interface UseChatOptions {
   token: string;
   conversationId?: string;
-  apiUrl?: string;
 }
 
 interface RetryConfig {
@@ -30,8 +30,8 @@ const DEFAULT_RETRY_CONFIG: RetryConfig = {
 };
 
 export const useChat = (options: UseChatOptions) => {
-  const { token, conversationId, apiUrl } = options;
-  const { isConnected, on, emit } = useSocket({ token, apiUrl });
+  const { token, conversationId } = options;
+  const { isConnected, on, emit } = useSocket({ token });
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversation] = useState<Conversation | null>(null);
@@ -53,25 +53,12 @@ export const useChat = (options: UseChatOptions) => {
     const fetchMessages = async (retryCount = 0) => {
       try {
         setLoading(true);
-        const response = await fetch(
-          `${apiUrl}/api/chat/conversations/${conversationId}/messages?skip=0&take=50&orderBy=asc`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
+        const response = await apiService.get<{ messages: Message[] }>(
+          `/chat/conversations/${conversationId}/messages?skip=0&take=50&orderBy=asc`
         );
 
-        if (!response.ok) {
-          if (response.status === 401) {
-            throw new Error("Unauthorized - please login again");
-          }
-          if (response.status === 404) {
-            throw new Error("Conversation not found");
-          }
-          throw new Error(`Failed to fetch messages: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setMessages(data.data?.messages || []);
+        console.log("response", response);
+        setMessages(response.data?.messages || []);
         setError(null);
       } catch (err) {
         const errorMessage =
@@ -92,7 +79,7 @@ export const useChat = (options: UseChatOptions) => {
     };
 
     fetchMessages();
-  }, [conversationId, token, apiUrl]);
+  }, [conversationId]);
 
   // Join conversation
   useEffect(() => {

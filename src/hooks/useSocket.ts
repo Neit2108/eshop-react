@@ -1,10 +1,10 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { Socket } from 'socket.io-client';
 import { initSocket, getSocket, disconnectSocket } from '@/lib/socketClient';
+import { API_BASE_URL } from '@/lib/constants';
 
 interface UseSocketOptions {
   token: string;
-  apiUrl?: string;
   onConnect?: () => void;
   onDisconnect?: () => void;
   onError?: (error: any) => void;
@@ -14,17 +14,19 @@ export const useSocket = (options: UseSocketOptions) => {
   const socketRef = useRef<Socket | null>(null);
   const {
     token,
-    apiUrl = 'http://localhost:5000',
     onConnect,
     onDisconnect,
     onError,
   } = options;
 
+  // Get socket URL from API_BASE_URL (remove /api suffix)
+  const socketUrl = API_BASE_URL.replace('/api', '') || 'http://localhost:5000';
+
   useEffect(() => {
     if (!token) return;
 
     try {
-      socketRef.current = initSocket(token, apiUrl);
+      socketRef.current = initSocket(token, socketUrl);
 
       socketRef.current.on('connect', () => {
         console.log('🔗 Connected');
@@ -54,7 +56,7 @@ export const useSocket = (options: UseSocketOptions) => {
       disconnectSocket();
       socketRef.current = null;
     };
-  }, [token, apiUrl, onConnect, onDisconnect, onError]);
+  }, [token, socketUrl, onConnect, onDisconnect, onError]);
 
   const on = useCallback((event: string, handler: (...args: any[]) => void) => {
     const socket = getSocket();
