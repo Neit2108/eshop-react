@@ -3,13 +3,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search, Eye, ChevronLeft, ChevronRight, ShoppingBag, Trash2 } from "lucide-react"
+import { Search, Eye, ChevronLeft, ChevronRight, ShoppingBag, Trash2, CreditCard } from "lucide-react"
 import { useOrders } from "@/hooks/useOrders"
 import type { Order } from "@/types/order.types"
 import { OrderDetailDialog } from "@/components/features/orders/OrderDetailDialog"
 import { CancelOrderDialog } from "@/components/features/orders/CancelOrderDialog"
+import { PaymentMethodModal } from "@/components/features/orders/PaymentMethodModal"
 import { formatDate, formatCurrency, getStatusColor } from "@/lib/utils"
 import { orderStatusMap, paymentStatusMap } from "@/types/order.types"
+import { apiService } from "@/services/apiService"
 import Loading from "@/components/common/Loading"
 import { toast } from "sonner"
 
@@ -22,6 +24,8 @@ export function MyOrdersView() {
   const [cancelOrderId, setCancelOrderId] = useState<string | null>(null)
   const [cancelOrderNumber, setCancelOrderNumber] = useState<string>("")
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false)
+  const [isPaymentMethodOpen, setIsPaymentMethodOpen] = useState(false)
+  const [selectedPaymentOrder, setSelectedPaymentOrder] = useState<Order | null>(null)
 
   const { orders, isLoading, userPagination, getMyOrders, cancelOrder } = useOrders()
 
@@ -65,6 +69,46 @@ export function MyOrdersView() {
   const handleConfirmOrder = (orderId: string) => {
     setIsModalOpen(false)
     console.log(`[MyOrdersView] Order ${orderId} confirmed`)
+  }
+
+  const handlePayment = (order: Order) => {
+    setSelectedPaymentOrder(order)
+    setIsPaymentMethodOpen(true)
+  }
+
+  const handlePaymentSelect = async (
+    method: "COD" | "BANK_TRANSFER" | "CREDIT_CARD" | "E_WALLET",
+  ) => {
+    if (!selectedPaymentOrder) return
+
+    try {
+      if (method === "COD") {
+        setIsPaymentMethodOpen(false)
+        toast.success("Đơn hàng sẽ được xử lý với phương thức thanh toán COD")
+      } else if (method === "BANK_TRANSFER" || method === "CREDIT_CARD") {
+        const createUrlResult = await apiService.post<string>(
+          `/payments/vnpay/create`,
+          {
+            orderId: selectedPaymentOrder.id,
+            amount: selectedPaymentOrder.totalAmount,
+            orderInfo: `Pay`,
+            locale: "vn",
+          },
+        )
+        toast.loading("Đang chuyển hướng đến cổng thanh toán...")
+
+        setTimeout(() => {
+          window.location.href = createUrlResult.data
+        }, 1000)
+      } else {
+        // E_WALLET not implemented yet
+        toast.error("Phương thức thanh toán E-Wallet chưa được hỗ trợ")
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Xử lý thanh toán thất bại"
+      toast.error(errorMessage)
+    }
   }
 
   const handlePrevPage = useCallback(() => {
@@ -190,7 +234,7 @@ export function MyOrdersView() {
                           {formatCurrency(order.totalAmount, order.currency)}
                         </td>
                         <td className="px-4 py-3">
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 items-center flex-wrap">
                             <Button
                               variant="ghost"
                               size="sm"
@@ -200,6 +244,16 @@ export function MyOrdersView() {
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
+                            {order.paymentStatus != "PAID" && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                                onClick={() => handlePayment(order)}
+                              >
+                                <CreditCard className="h-4 w-4" />
+                              </Button>
+                            )}
                             <Button
                               variant="ghost"
                               size="sm"
@@ -276,6 +330,13 @@ export function MyOrdersView() {
         orderNumber={cancelOrderNumber}
         onConfirm={handleConfirmCancelOrder}
         onOpenChange={setIsCancelDialogOpen}
+      />
+
+      {/* Payment Method Modal */}
+      <PaymentMethodModal
+        open={isPaymentMethodOpen}
+        onOpenChange={setIsPaymentMethodOpen}
+        onSelect={handlePaymentSelect}
       />
     </>
   )
