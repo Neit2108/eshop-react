@@ -34,6 +34,7 @@ export const API_ENDPOINTS = {
     GET: (id: string) => `/orders/${id}`,
     UPDATE: (id: string) => `/orders/${id}`,
     DELETE: (id: string) => `/orders/${id}`,
+    CONFIRM: (id: string) => `/orders/${id}/confirm`,
   },
   CHAT: {
     CONVERSATIONS: '/chat/conversations',
@@ -61,5 +62,18 @@ export const API_ENDPOINTS = {
     GET_BY_CODE: (code: string) => `/vouchers/code/${code}`,
     PUBLIC: '/vouchers/customer/public',
     SHOP: (shopId: string) => `/vouchers/shop/${shopId}`,
+    CREATE: '/vouchers',
+  },
+  ANALYTICS: {
+    REVENUE: '/analytics/revenue',
+    REVENUE_TREND: '/analytics/revenue-trend',
+    ORDERS: '/analytics/orders',
+    ORDERS_TREND: '/analytics/orders-trend',
+    COMPREHENSIVE: '/analytics/comprehensive',
+    REAL_TIME: '/analytics/real-time',
+    PAYMENT: '/analytics/payment',
+    PRODUCTS: '/analytics/products',
+    TOP_SHOPS: '/analytics/top-shops',
+    SHOP_ANALYTICS: (shopId: string) => `/shops/${shopId}/analytics`,
   },
 } as const

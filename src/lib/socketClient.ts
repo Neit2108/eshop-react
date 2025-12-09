@@ -8,17 +8,9 @@ let isInitializing = false;
 const MAX_CONNECTION_ATTEMPTS = 5;
 const CONNECTION_TIMEOUT = 10000; // 10 seconds
 
-interface ConnectionConfig {
-  token: string;
-  apiUrl: string;
-  onConnect?: () => void;
-  onDisconnect?: () => void;
-  onError?: (error: Error) => void;
-}
-
 export const initSocket = (
   token: string,
-  apiUrl: string = 'http://localhost:3000',
+  apiUrl: string = 'http://localhost:5000',
   callbacks?: { onConnect?: () => void; onDisconnect?: () => void; onError?: (error: Error) => void }
 ): Socket => {
   // Return existing connected socket
@@ -40,9 +32,7 @@ export const initSocket = (
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
       reconnectionAttempts: MAX_CONNECTION_ATTEMPTS,
-      reconnectionDelayDelta: 500,
       transports: ['websocket', 'polling'],
-      connectTimeout: CONNECTION_TIMEOUT,
       autoConnect: true,
       forceNew: false, // Reuse connection if possible
     });

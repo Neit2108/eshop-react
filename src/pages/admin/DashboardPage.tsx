@@ -1,6 +1,7 @@
 import { motion } from "framer-motion"
 import { StatsCards } from "@/components/features/admin/dashboard/StatsCards"
 import { RevenueChart } from "@/components/features/admin/dashboard/RevenueChart"
+import { OrdersTrendChart } from "@/components/features/admin/dashboard/OrdersTrendChart"
 import { OrdersTable } from "@/components/features/admin/dashboard/OrdersTable"
 
 export function DashboardPage() {
@@ -25,18 +26,23 @@ export function DashboardPage() {
   }
 
   return (
-    <motion.div className=" space-y-6" variants={containerVariants} initial="hidden" animate="visible">
-      {/* Stats Cards */}
+    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
+      {/* Stats Cards - Hiển thị số liệu tổng quan */}
       <motion.div variants={itemVariants}>
         <StatsCards />
       </motion.div>
 
-      {/* Revenue Chart */}
+      {/* Revenue Chart - Xu hướng doanh thu */}
       <motion.div variants={itemVariants}>
         <RevenueChart />
       </motion.div>
 
-      {/* Orders Table */}
+      {/* Orders Trend Chart - Xu hướng đơn hàng */}
+      <motion.div variants={itemVariants}>
+        <OrdersTrendChart period="THIS_MONTH" />
+      </motion.div>
+
+      {/* Recent Orders Table - Danh sách đơn hàng gần đây */}
       <motion.div variants={itemVariants}>
         <OrdersTable />
       </motion.div>

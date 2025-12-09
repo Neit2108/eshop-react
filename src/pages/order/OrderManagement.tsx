@@ -7,14 +7,14 @@ import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { cn, formatCurrency, formatPrice } from "@/lib/utils"
+import { cn, formatCurrency } from "@/lib/utils"
 import { OrderDetailDialog } from "@/components/features/orders/OrderDetailDialog"
 import { useOrders } from "@/hooks/useOrders"
 import { useShop } from "@/hooks/useShop"
 import { useAuth } from "@/hooks/useAuth"
-import type { Order } from "@/types/order.types"
 import { orderStatusMap, paymentStatusMap } from "@/types/order.types"
 import Loading from "@/components/common/Loading"
+import { toast } from "sonner"
 
 export function OrderManagement() {
   const { hasRoles } = useAuth()
@@ -23,13 +23,14 @@ export function OrderManagement() {
     isLoading, 
     error, 
     getAllOrders,
+    confirmOrder,
     pagination,
   } = useOrders()
   const { shop, fetchShopByUserId } = useShop()
 
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string | null>(null)
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
 
   // Determine if user is a seller
@@ -66,19 +67,30 @@ export function OrderManagement() {
 
   const handleConfirmOrder = (orderId: string) => {
     setIsDetailDialogOpen(false)
-    console.log(`[Order Management] Order ${orderId} confirmed`)
+    confirmOrder(orderId)
+
+    // kiểm tra lỗi 
+    if (error) {
+      toast.error(error)
+      return;
+    }
+    // hiển thị thông báo thành công
+    toast.success("Xác nhận đơn hàng thành công!")
+
+    // refresh orders
+    getAllOrders(1, pagination.limit)
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "DELIVERED":
+      case "CONFIRMED":
         return "bg-green-100 text-green-800"
       case "SHIPPING":
         return "bg-blue-100 text-blue-800"
       case "PROCESSING":
         return "bg-yellow-100 text-yellow-800"
       case "PENDING":
-      case "CONFIRMED":
         return "bg-slate-100 text-slate-800"
       case "CANCELLED":
       case "REFUNDED":
@@ -275,7 +287,7 @@ export function OrderManagement() {
                               <DropdownMenuContent align="end" className="bg-white border-slate-200">
                                 <DropdownMenuItem
                                   onClick={() => {
-                                    setSelectedOrder(order)
+                                    setSelectedOrderId(order.id)
                                     setIsDetailDialogOpen(true)
                                   }}
                                   className="cursor-pointer"
@@ -340,10 +352,11 @@ export function OrderManagement() {
 
       {/* Order Detail Dialog */}
       <OrderDetailDialog
-        order={selectedOrder}
+        orderId={selectedOrderId}
         open={isDetailDialogOpen}
         onOpenChange={setIsDetailDialogOpen}
         onConfirmOrder={handleConfirmOrder}
+        showAdminActions={isSeller || hasRoles("SYSTEM_ADMIN")}
       />
     </div>
   )

@@ -404,6 +404,23 @@ export default function CreateProductPage() {
   };
 
   const handleStep4Next = async (data: any) => {
+    // validate data
+    if(data.variants.some((variant: any) => variant.stock < 0)){
+      toast.error("Số lượng không được nhỏ hơn 0");
+      return;
+    }
+    if(data.variants.some((variant: any) => variant.price < 0)){
+      toast.error("Giá không được nhỏ hơn 0");
+      return;
+    }
+    if(data.variants.some((variant: any) => variant.name.trim() === "")){
+      toast.error("Tên lựa chọn không được để trống");
+      return;
+    }
+    if(data.variants.some((variant: any) => variant.value.trim() === "")){
+      toast.error("Giá trị lựa chọn không được để trống");
+      return;
+    }
     addVariants(productId!, data);
   };
 

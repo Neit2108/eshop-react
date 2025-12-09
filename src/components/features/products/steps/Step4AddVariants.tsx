@@ -22,6 +22,7 @@ export function Step4AddVariants({ data, options, loading, onBack, onNext }: Ste
     name: '',
     value: '',
     price: 0,
+    stock: 0,
     currency: 'VNĐ',
     description: '',
     optionCombination: {},
@@ -74,6 +75,7 @@ export function Step4AddVariants({ data, options, loading, onBack, onNext }: Ste
         name: '',
         value: '',
         price: 0,
+        stock: 0,
         currency: 'VNĐ',
         description: '',
         optionCombination: {},
@@ -135,6 +137,18 @@ export function Step4AddVariants({ data, options, loading, onBack, onNext }: Ste
                 placeholder="0.00"
                 value={newVariant.price}
                 onChange={(e) => setNewVariant({ ...newVariant, price: parseFloat(e.target.value) || 0 })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="variant-stock" className="text-sm">
+                Số lượng
+              </Label>
+              <Input
+                id="variant-stock"
+                type="number"
+                placeholder="0"
+                value={newVariant.stock}
+                onChange={(e) => setNewVariant({ ...newVariant, stock: parseInt(e.target.value) || 0 })}
               />
             </div>
           </div>
@@ -224,6 +238,12 @@ export function Step4AddVariants({ data, options, loading, onBack, onNext }: Ste
                   <span className="text-muted-foreground">Giá:</span>
                   <p className="font-semibold">
                     {formatCurrency(variant.price)}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Số lượng:</span>
+                  <p className="font-semibold">
+                    {variant.stock}
                   </p>
                 </div>
                 {variant.description && (

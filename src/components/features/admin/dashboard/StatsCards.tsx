@@ -2,20 +2,77 @@ import { motion } from "framer-motion"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown} from "lucide-react"
-import { useAdmin } from "@/hooks/useAdmin"
-import { useEffect } from "react"
+import { useAnalytics } from "@/hooks/useAnalytics"
+import { useMemo } from "react"
 import Loading from "@/components/common/Loading"
 import { formatNumber } from "@/lib/utils"
 
+interface StatCard {
+  title: string;
+  value: string | number;
+  change: number;
+  description: string;
+  trend: string;
+}
+
 export function StatsCards() {
-  const { summaryStats, loading, fetchSummaryStats } = useAdmin();
+  const { comprehensiveData, loading, error } = useAnalytics({
+    enableComprehensive: true,
+  });
 
-  useEffect(() => {
-    fetchSummaryStats();
-  }, []);
+  console.log('📊 StatsCards - Loading:', loading, 'Data:', comprehensiveData, 'Error:', error);
 
-  if (loading) {
+  const statCards = useMemo<StatCard[]>(() => {
+    if (!comprehensiveData) {
+      return [];
+    }
+
+    const { revenueStats, orderStats } = comprehensiveData;
+
+    return [
+      {
+        title: "Doanh Thu",
+        value: `${formatNumber(revenueStats.totalRevenue / 1000000)}M`,
+        change: revenueStats.revenueChange,
+        description: `Đã thanh toán: ${formatNumber(revenueStats.paidRevenue / 1000000)}M`,
+        trend: `Chờ: ${formatNumber(revenueStats.pendingRevenue / 1000000)}M`,
+      },
+      {
+        title: "Tổng Đơn Hàng",
+        value: formatNumber(orderStats.totalOrders),
+        change: orderStats.orderChange,
+        description: `Hoàn thành: ${formatNumber(orderStats.completedOrders)}`,
+        trend: `Tỉ lệ: ${formatNumber(orderStats.completionRate)}%`,
+      },
+      {
+        title: "Đơn Hàng Đang Xử Lý",
+        value: formatNumber(orderStats.pendingOrders + orderStats.shippingOrders),
+        change: 0,
+        description: `Chờ xử lý: ${formatNumber(orderStats.pendingOrders)}`,
+        trend: `Đang giao: ${formatNumber(orderStats.shippingOrders)}`,
+      },
+      {
+        title: "Giá Trị Trung Bình",
+        value: `${formatNumber(orderStats.averageOrderValue / 1000000)}M`,
+        change: 0,
+        description: `Hoàn tiền: ${formatNumber(revenueStats.refundedAmount / 1000000)}M`,
+        trend: `Hủy: ${formatNumber(orderStats.cancelledOrders)}`,
+      },
+    ];
+  }, [comprehensiveData]);
+
+  if (loading && !comprehensiveData) {
     return <Loading />;
+  }
+
+  if (!comprehensiveData) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="h-32 bg-muted rounded-lg animate-pulse" />
+        ))}
+      </div>
+    );
   }
 
   const containerVariants = {
@@ -44,7 +101,7 @@ export function StatsCards() {
       initial="hidden"
       animate="visible"
     >
-      {summaryStats.map((stat, index) => (
+      {statCards.map((stat, index) => (
         <motion.div key={index} variants={itemVariants}>
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -59,8 +116,7 @@ export function StatsCards() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-3xl font-bold text-foreground">{formatNumber(stat.value)}</div>
-                {/* <div className="text-muted-foreground opacity-50">{stat.icon}</div> */}
+                <div className="text-3xl font-bold text-foreground">{stat.value}</div>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col items-start gap-1 pt-2">

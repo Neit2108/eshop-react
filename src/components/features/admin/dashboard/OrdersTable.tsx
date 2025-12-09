@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -7,100 +7,77 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ChevronLeft, ChevronRight, Search } from "lucide-react"
+import { apiService } from "@/services/apiService"
+import { API_ENDPOINTS } from "@/lib/api"
+import {type Order } from "@/types/order.types"
+import Loading from "@/components/common/Loading"
+import type { PaginatedResponse } from "@/types"
 
-interface Order {
-  id: string
-  customer: string
-  date: string
-  status: "completed" | "pending" | "processing" | "cancelled"
-  amount: string
+const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  PENDING: { label: "Chờ xử lý", variant: "outline" },
+  CONFIRMED: { label: "Đã xác nhận", variant: "secondary" },
+  PROCESSING: { label: "Đang xử lý", variant: "secondary" },
+  SHIPPING: { label: "Đang giao", variant: "secondary" },
+  DELIVERED: { label: "Đã giao", variant: "default" },
+  COMPLETED: { label: "Hoàn thành", variant: "default" },
+  CANCELLED: { label: "Đã hủy", variant: "destructive" },
+  REFUNDED: { label: "Đã hoàn tiền", variant: "destructive" },
 }
 
-const orders: Order[] = [
-  {
-    id: "ORD-001",
-    customer: "John Doe",
-    date: "2024-01-15",
-    status: "completed",
-    amount: "$1,250.00",
-  },
-  {
-    id: "ORD-002",
-    customer: "Jane Smith",
-    date: "2024-01-14",
-    status: "processing",
-    amount: "$890.50",
-  },
-  {
-    id: "ORD-003",
-    customer: "Mike Johnson",
-    date: "2024-01-13",
-    status: "completed",
-    amount: "$2,150.00",
-  },
-  {
-    id: "ORD-004",
-    customer: "Sarah Williams",
-    date: "2024-01-12",
-    status: "pending",
-    amount: "$450.25",
-  },
-  {
-    id: "ORD-005",
-    customer: "Tom Brown",
-    date: "2024-01-11",
-    status: "completed",
-    amount: "$3,200.00",
-  },
-  {
-    id: "ORD-006",
-    customer: "Emily Davis",
-    date: "2024-01-10",
-    status: "cancelled",
-    amount: "$750.00",
-  },
-  {
-    id: "ORD-007",
-    customer: "Chris Wilson",
-    date: "2024-01-09",
-    status: "completed",
-    amount: "$1,800.00",
-  },
-  {
-    id: "ORD-008",
-    customer: "Lisa Anderson",
-    date: "2024-01-08",
-    status: "processing",
-    amount: "$920.75",
-  },
-]
-
-const statusConfig = {
-  completed: { label: "Completed", variant: "default" as const },
-  processing: { label: "Processing", variant: "secondary" as const },
-  pending: { label: "Pending", variant: "outline" as const },
-  cancelled: { label: "Cancelled", variant: "destructive" as const },
+const paymentStatusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  PENDING: { label: "Chưa thanh toán", variant: "outline" },
+  PAID: { label: "Đã thanh toán", variant: "default" },
+  FAILED: { label: "Thất bại", variant: "destructive" },
+  REFUNDED: { label: "Đã hoàn", variant: "destructive" },
 }
 
 export function OrdersTable() {
+  const [orders, setOrders] = useState<Order[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const itemsPerPage = 5
+  const [totalPages, setTotalPages] = useState(1)
 
-  const filteredOrders = useMemo(() => {
-    return orders.filter((order) => {
-      const matchesSearch =
-        order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.customer.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesStatus = statusFilter === "all" || order.status === statusFilter
-      return matchesSearch && matchesStatus
-    })
-  }, [searchTerm, statusFilter])
+  // Fetch orders from API
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const params = new URLSearchParams()
+        params.append('page', currentPage.toString())
+        params.append('limit', itemsPerPage.toString())
+        
+        if (statusFilter !== 'all') {
+          params.append('status', statusFilter)
+        }
+        
+        if (searchTerm) {
+          params.append('search', searchTerm)
+        }
 
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage)
+        const response = await apiService.get<PaginatedResponse<Order>>(
+          `${API_ENDPOINTS.ORDERS.ALL}?${params.toString()}`
+        )
+
+        if (response.success && response.data) {
+          setOrders(response.data.data)
+          setTotalPages(response.data.pagination.totalPages || 1)
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to fetch orders'
+        setError(message)
+        console.error('❌ Error fetching orders:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchOrders()
+  }, [currentPage, statusFilter, searchTerm])
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1))
@@ -110,11 +87,27 @@ export function OrdersTable() {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
   }
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      maximumFractionDigits: 0,
+    }).format(amount)
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('vi-VN')
+  }
+
+  if (loading && orders.length === 0) {
+    return <Loading />
+  }
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Orders</CardTitle>
-        <CardDescription>Manage and track your orders</CardDescription>
+        <CardTitle>Đơn Hàng Gần Đây</CardTitle>
+        <CardDescription>Quản lý và theo dõi đơn hàng của bạn</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Filters */}
@@ -122,7 +115,7 @@ export function OrdersTable() {
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search by Order ID or Customer..."
+              placeholder="Tìm kiếm theo Order ID..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value)
@@ -139,33 +132,43 @@ export function OrdersTable() {
             }}
           >
             <SelectTrigger className="w-full sm:w-40">
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder="Lọc theo trạng thái" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="processing">Processing</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
+              <SelectItem value="all">Tất cả trạng thái</SelectItem>
+              <SelectItem value="PENDING">Chờ xử lý</SelectItem>
+              <SelectItem value="CONFIRMED">Đã xác nhận</SelectItem>
+              <SelectItem value="PROCESSING">Đang xử lý</SelectItem>
+              <SelectItem value="SHIPPING">Đang giao</SelectItem>
+              <SelectItem value="DELIVERED">Đã giao</SelectItem>
+              <SelectItem value="COMPLETED">Hoàn thành</SelectItem>
+              <SelectItem value="CANCELLED">Đã hủy</SelectItem>
             </SelectContent>
           </Select>
         </div>
+
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+            ❌ {error}
+          </div>
+        )}
 
         {/* Table */}
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Order ID</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Order Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Total Amount</TableHead>
+                <TableHead>Mã Đơn</TableHead>
+                <TableHead>Khách Hàng</TableHead>
+                <TableHead>Ngày Đặt</TableHead>
+                <TableHead>Trạng Thái</TableHead>
+                <TableHead>Thanh Toán</TableHead>
+                <TableHead className="text-right">Tổng Tiền</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedOrders.length > 0 ? (
-                paginatedOrders.map((order, index) => (
+              {orders.length > 0 ? (
+                orders.map((order, index) => (
                   <motion.tr
                     key={order.id}
                     initial={{ opacity: 0, y: 10 }}
@@ -173,19 +176,33 @@ export function OrdersTable() {
                     transition={{ delay: index * 0.05 }}
                     className="hover:bg-muted/50 transition-colors"
                   >
-                    <TableCell className="font-medium">{order.id}</TableCell>
-                    <TableCell>{order.customer}</TableCell>
-                    <TableCell>{order.date}</TableCell>
+                    <TableCell className="font-medium">{order.orderNumber}</TableCell>
                     <TableCell>
-                      <Badge variant={statusConfig[order.status].variant}>{statusConfig[order.status].label}</Badge>
+                      <div>
+                        <p className="font-medium">{order.recipientName}</p>
+                        <p className="text-sm text-muted-foreground">{order.recipientPhone}</p>
+                      </div>
                     </TableCell>
-                    <TableCell className="text-right font-semibold">{order.amount}</TableCell>
+                    <TableCell>{formatDate(order.createdAt)}</TableCell>
+                    <TableCell>
+                      <Badge variant={statusConfig[order.status]?.variant || "outline"}>
+                        {statusConfig[order.status]?.label || order.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={paymentStatusConfig[order.paymentStatus]?.variant || "outline"}>
+                        {paymentStatusConfig[order.paymentStatus]?.label || order.paymentStatus}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right font-semibold">
+                      {formatCurrency(order.totalAmount)}
+                    </TableCell>
                   </motion.tr>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                    No orders found
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    Không tìm thấy đơn hàng
                   </TableCell>
                 </TableRow>
               )}
@@ -196,21 +213,25 @@ export function OrdersTable() {
         {/* Pagination */}
         <div className="flex items-center justify-between pt-4">
           <p className="text-sm text-muted-foreground">
-            Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredOrders.length)} of{" "}
-            {filteredOrders.length} orders
+            Hiển thị trang {currentPage} / {totalPages || 1}
           </p>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handlePreviousPage} disabled={currentPage === 1}>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handlePreviousPage} 
+              disabled={currentPage === 1 || loading}
+            >
               <ChevronLeft className="w-4 h-4" />
             </Button>
             <span className="text-sm font-medium">
-              Page {currentPage} of {totalPages || 1}
+              Trang {currentPage} của {totalPages || 1}
             </span>
             <Button
               variant="outline"
               size="sm"
               onClick={handleNextPage}
-              disabled={currentPage === totalPages || totalPages === 0}
+              disabled={currentPage === totalPages || totalPages === 0 || loading}
             >
               <ChevronRight className="w-4 h-4" />
             </Button>

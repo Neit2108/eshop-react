@@ -1,4 +1,5 @@
 import { CheckCircle, Package, Truck, MapPin } from "lucide-react";
+import { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,15 +11,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import type { Order } from "@/types/order.types";
+import { cn, formatCurrency } from "@/lib/utils";
 import { orderStatusMap, paymentStatusMap } from "@/types/order.types";
+import { useOrders } from "@/hooks/useOrders";
 
 interface OrderDetailDialogProps {
-  order: Order | null;
+  orderId: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirmOrder?: (orderId: string) => void;
+  showAdminActions?: boolean;
 }
 
 const getStatusColor = (status: string) => {
@@ -55,13 +57,24 @@ const getPaymentStatusColor = (status: string) => {
 };
 
 export function OrderDetailDialog({
-  order,
+  orderId,
   open,
   onOpenChange,
   onConfirmOrder,
+  showAdminActions = false,
 }: OrderDetailDialogProps) {
-  if (!order) return null;
+  const { currentOrder, fetchOrderById } = useOrders();
 
+  // Fetch order data khi orderId thay đổi và dialog mở
+  useEffect(() => {
+    if (open && orderId) {
+      fetchOrderById(orderId);
+    }
+  }, [open, orderId, fetchOrderById]);
+
+  if (!currentOrder) return null;
+
+  const order = currentOrder;
   const isUnconfirmed = order.status === "PENDING";
 
   const handleConfirm = () => {
@@ -80,16 +93,16 @@ export function OrderDetailDialog({
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div>
-              <DialogTitle>Order Details</DialogTitle>
+              <DialogTitle>Chi tiết đơn hàng</DialogTitle>
               <DialogDescription>{order.orderNumber}</DialogDescription>
             </div>
-            {isUnconfirmed && (
+            {isUnconfirmed && showAdminActions && (
               <Button
                 onClick={handleConfirm}
                 className="flex items-center gap-2 bg-green-600 text-white hover:bg-green-700"
               >
                 <CheckCircle className="h-4 w-4" />
-                Confirm Order
+                Xác nhận
               </Button>
             )}
           </div>
@@ -116,7 +129,7 @@ export function OrderDetailDialog({
               >
                 <Package className="h-5 w-5 text-blue-600" />
               </div>
-              <p className="text-center text-xs font-medium">Order Placed</p>
+              <p className="text-center text-xs font-medium">Đơn hàng đã đặt</p>
             </div>
             <div
               className={cn(
@@ -136,13 +149,13 @@ export function OrderDetailDialog({
               >
                 <CheckCircle className="h-5 w-5 text-yellow-600" />
               </div>
-              <p className="text-center text-xs font-medium">Processing</p>
+              <p className="text-center text-xs font-medium">Đang xử lý</p>
             </div>
             <div
               className={cn(
                 "flex flex-col items-center",
                 !["SHIPPING", "DELIVERED"].includes(order.status) &&
-                  "opacity-50",
+                "opacity-50",
               )}
             >
               <div
@@ -155,7 +168,7 @@ export function OrderDetailDialog({
               >
                 <Truck className="h-5 w-5 text-blue-600" />
               </div>
-              <p className="text-center text-xs font-medium">Shipped</p>
+              <p className="text-center text-xs font-medium">Đang giao hàng</p>
             </div>
             <div
               className={cn(
@@ -173,7 +186,7 @@ export function OrderDetailDialog({
               >
                 <CheckCircle className="h-5 w-5 text-green-600" />
               </div>
-              <p className="text-center text-xs font-medium">Delivered</p>
+              <p className="text-center text-xs font-medium">Đã giao</p>
             </div>
           </div>
 
@@ -183,7 +196,7 @@ export function OrderDetailDialog({
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
               <h3 className="mb-4 text-sm font-semibold text-slate-900">
-                Customer Information
+                Thông tin khách hàng
               </h3>
               <div className="flex items-start gap-3">
                 <div>
@@ -199,7 +212,7 @@ export function OrderDetailDialog({
 
             <div>
               <h3 className="mb-4 text-sm font-semibold text-slate-900">
-                Shipping Address
+                Địa chỉ giao hàng
               </h3>
               <div className="flex gap-2 text-sm text-slate-700">
                 <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-600" />
@@ -218,7 +231,7 @@ export function OrderDetailDialog({
             <Card className="border-slate-200">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-slate-600">
-                  Order Status
+                  Trạng thái đơn hàng
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -230,7 +243,7 @@ export function OrderDetailDialog({
             <Card className="border-slate-200">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-slate-600">
-                  Payment Status
+                  Trạng thái thanh toán
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -247,7 +260,7 @@ export function OrderDetailDialog({
           {/* Order Items */}
           <div>
             <h3 className="mb-3 text-sm font-semibold text-slate-900">
-              Order Items
+              Sản phẩm đơn hàng
             </h3>
             <div className="space-y-3">
               {order.items?.map((item) => (
@@ -263,20 +276,32 @@ export function OrderDetailDialog({
                         className="w-12 h-12 rounded object-cover"
                       />
                     )}
+
                     <div>
+                      {/* Product name */}
                       <p className="text-sm font-medium text-slate-900">
-                        {item.productName} - {item.variantName}
+                        {item.productName}
                       </p>
-                      <p className="text-xs text-slate-600">
-                        Qty: {item.quantity} × ${item.unitPrice.toFixed(2)}
+
+                      {/* Variant + quantity */}
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        {item.variantName} &nbsp; x{item.quantity}
+                      </p>
+
+                      {/* Unit price */}
+                      <p className="text-xs text-slate-500">
+                        {formatCurrency(item.unitPrice, order.currency)}
                       </p>
                     </div>
                   </div>
+
+                  {/* Total */}
                   <p className="font-semibold text-slate-900">
-                    ${item.totalPrice.toFixed(2)}
+                    {formatCurrency(item.totalPrice, order.currency)}
                   </p>
                 </div>
               ))}
+
             </div>
           </div>
 
@@ -285,22 +310,22 @@ export function OrderDetailDialog({
             <CardContent className="pt-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Subtotal</span>
-                  <span className="text-slate-900">${order.subtotal.toFixed(2)}</span>
+                  <span className="text-slate-600">Tạm tính</span>
+                  <span className="text-slate-900">{formatCurrency(order.subtotal, order.currency)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Shipping</span>
-                  <span className="text-slate-900">${order.shippingFee.toFixed(2)}</span>
+                  <span className="text-slate-600">Phí vận chuyển</span>
+                  <span className="text-slate-900">{formatCurrency(order.shippingFee, order.currency)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Discount</span>
-                  <span className="text-slate-900">-${order.discount.toFixed(2)}</span>
+                  <span className="text-slate-600">Giảm giá</span>
+                  <span className="text-slate-900">-{formatCurrency(order.discount, order.currency)}</span>
                 </div>
                 <Separator className="my-2" />
                 <div className="flex justify-between">
-                  <span className="font-semibold text-slate-900">Total</span>
+                  <span className="font-semibold text-slate-900">Tổng cộng</span>
                   <span className="text-lg font-bold text-slate-900">
-                    ${order.totalAmount.toFixed(2)}
+                    {formatCurrency(order.totalAmount, order.currency)}
                   </span>
                 </div>
               </div>
@@ -314,17 +339,17 @@ export function OrderDetailDialog({
               onClick={() => onOpenChange(false)}
               className="border-slate-200"
             >
-              Close
+              Đóng
             </Button>
             <Button
               variant="outline"
               className="border-slate-200 bg-transparent"
             >
-              Print Invoice
+              In hóa đơn
             </Button>
-            {!isUnconfirmed && (
+            {!isUnconfirmed && showAdminActions && (
               <Button className="bg-blue-600 hover:bg-blue-700">
-                Ship Order
+                Gửi đơn hàng
               </Button>
             )}
           </div>

@@ -1,4 +1,4 @@
-import { useState } from "react"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -75,7 +75,6 @@ const reviews: Review[] = [
 ]
 
 export function StoreReviews() {
-  const [expandedReview, setExpandedReview] = useState<number | null>(null)
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)

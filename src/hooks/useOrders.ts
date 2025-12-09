@@ -9,9 +9,10 @@ import {
   myOrders,
   fetchOrdersByShop,
   fetchAllOrders,
+  confirmOrder,
 } from "@/store/slices/orderSlice";
 import type { AppDispatch, RootState } from "@/store/store";
-import type { CreateOrderInput, Order, OrderFilters, OrderStatus } from "@/types/order.types";
+import type { CreateOrderInput, Order, OrderStatus } from "@/types/order.types";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -54,10 +55,11 @@ export function useOrders() {
     }, [dispatch]),
     createOrder: (orderData: CreateOrderInput) =>
       dispatch(createOrder(orderData)),
-    fetchOrderById: (orderId: string) => dispatch(fetchOrderById(orderId)),
+    fetchOrderById: useCallback((orderId: string) => dispatch(fetchOrderById(orderId)), [dispatch]),
     updateOrder: (orderId: string, orderData: Partial<Order>) =>
       dispatch(updateOrder({ orderId, orderData })),
     cancelOrder: (orderId: string) => dispatch(cancelOrder(orderId)),
+    confirmOrder: useCallback((orderId: string) => dispatch(confirmOrder(orderId)), [dispatch]),
     clearCurrentOrder: () => dispatch(clearCurrentOrder()),
     clearError: () => dispatch(clearError()),
     clearSuccessMessage: () => dispatch(clearSuccessMessage()),

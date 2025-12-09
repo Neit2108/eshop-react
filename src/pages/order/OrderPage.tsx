@@ -13,7 +13,7 @@ import { Card } from "@/components/ui/card";
 
 export default function OrdersPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedOrderStatus, setSelectedOrderStatus] = useState<string | undefined>();
@@ -31,7 +31,7 @@ export default function OrdersPage() {
   }, []);
 
   const handleViewDetails = (order: Order) => {
-    setSelectedOrder(order);
+    setSelectedOrderId(order.id);
     setIsModalOpen(true);
   };
 
@@ -227,7 +227,7 @@ export default function OrdersPage() {
 
       {/* Details Modal */}
       <OrderDetailsModal
-        order={selectedOrder}
+        orderId={selectedOrderId}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />

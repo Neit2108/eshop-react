@@ -28,8 +28,6 @@ export function VoucherManagement() {
   const { hasRoles } = useAuth()
   const {
     vouchers,
-    shopVouchers,
-    publicVouchers,
     isLoading,
     error,
     getAllVouchers,

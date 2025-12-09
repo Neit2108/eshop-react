@@ -17,6 +17,7 @@ export const ROUTES = {
   CHECKOUT: '/checkout',
   ORDERS: '/orders',
   CHAT: '/chat',
+  PROFILE: '/profile',
 } as const
 
 export const ROLE_PERMISSIONS = {

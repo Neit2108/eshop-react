@@ -111,7 +111,7 @@ export default function CheckoutPage() {
         }, 1000);
       } else if (orderRes.paymentMethod === "COD") {
         toast.success("Đơn hàng đã được tạo thành công!");
-        navigate(ROUTES.ORDERS);
+        navigate(ROUTES.PROFILE);
       }
     } catch (err) {
       console.error("Failed to create order:", err);

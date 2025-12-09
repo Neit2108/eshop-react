@@ -1,5 +1,4 @@
 import { AspectRatio } from "@/components/ui/aspect-ratio"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Heart, ShoppingCart } from "lucide-react"
@@ -10,12 +9,10 @@ import { useNavigate } from "react-router-dom"
 
 interface ProductCardProps {
   product: Product
-  badgeVariant?: "default" | "secondary" | "destructive" | "outline"
 }
 
 export function ProductCard({
   product,  
-  badgeVariant = "default",
 }: ProductCardProps) {
   const navigate = useNavigate();
   return (
@@ -27,11 +24,6 @@ export function ProductCard({
             alt={product.name || "Product Image"}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          {/* {badge && (
-            <Badge className="absolute right-2 top-2" variant={badgeVariant}>
-              {badge}
-            </Badge>
-          )} */}
         </AspectRatio>
       </CardContent>
 

@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Package, TrendingUp, Star } from "lucide-react"
 import type { Shop } from "@/types/product.types"
+import { formatNumber } from "@/lib/utils"
 
 interface StatCard {
   label: string
@@ -9,28 +10,27 @@ interface StatCard {
   description: string
 }
 
-const stats: StatCard[] = [
-  {
-    label: "Sản phẩm",
-    value: "1,250+",
-    icon: Package,
-    description: "Danh sách sản phẩm",
-  },
-  {
-    label: "Tổng sản phẩm đã bán",
-    value: "48.5K",
-    icon: TrendingUp,
-    description: "Sản phẩm đã bán",
-  },
-  {
-    label: "Đánh giá",
-    value: "2,510",
-    icon: Star,
-    description: "Đánh giá khách hàng",
-  },
-]
-
 export function StoreStats({ shop }: { shop: Shop }) {
+  const stats: StatCard[] = [
+    {
+      label: "Sản phẩm",
+      value: formatNumber(shop.totalProducts || 0),
+      icon: Package,
+      description: "Danh sách sản phẩm",
+    },
+    {
+      label: "Tổng sản phẩm đã bán",
+      value: formatNumber(shop.totalOrders || 0),
+      icon: TrendingUp,
+      description: "Sản phẩm đã bán",
+    },
+    {
+      label: "Đánh giá",
+      value: formatNumber(shop.totalReviews || 0),
+      icon: Star,
+      description: "Đánh giá khách hàng",
+    },
+  ]
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">Thống kê cửa hàng</h2>

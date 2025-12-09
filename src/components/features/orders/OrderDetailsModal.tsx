@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,20 +12,20 @@ import {
   orderStatusMap,
   paymentStatusMap,
   shippingMethodMap,
-  type Order,
 } from "@/types/order.types";
 import { formatDate, formatCurrency, getStatusColor } from "@/lib/utils";
 import { PaymentMethodModal } from "./PaymentMethodModal";
 import { apiService } from "@/services/apiService";
+import { useOrders } from "@/hooks/useOrders";
 
 interface OrderDetailsModalProps {
-  order: Order | null;
+  orderId: string | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export function OrderDetailsModal({
-  order,
+  orderId,
   isOpen,
   onClose,
 }: OrderDetailsModalProps) {
@@ -37,7 +37,18 @@ export function OrderDetailsModal({
     text: string;
   } | null>(null);
 
-  if (!order) return null;
+  const { currentOrder, fetchOrderById } = useOrders();
+
+  // Fetch order data khi orderId thay đổi và modal mở
+  useEffect(() => {
+    if (isOpen && orderId) {
+      fetchOrderById(orderId);
+    }
+  }, [isOpen, orderId, fetchOrderById]);
+
+  if (!currentOrder) return null;
+
+  const order = currentOrder;
 
   const timeline = [
     { label: "Tạo mới", date: order.createdAt, completed: true },
@@ -227,11 +238,15 @@ export function OrderDetailsModal({
                     className="flex items-center justify-between border-b py-2 text-sm last:border-0"
                   >
                     <div>
+                      {/* Product Name */}
                       <p className="font-medium">{item.productName}</p>
-                      <p className="text-muted-foreground text-xs">
-                        Số lượng: {item.quantity}
+
+                      {/* Variant name + quantity */}
+                      <p className="text-muted-foreground text-xs mt-0.5">
+                        {item.variantName} &nbsp; x{item.quantity}
                       </p>
                     </div>
+
                     <p className="font-semibold">
                       {formatCurrency(item.totalPrice, order.currency)}
                     </p>

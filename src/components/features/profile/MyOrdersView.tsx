@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Search, Eye, ChevronLeft, ChevronRight, ShoppingBag, Trash2 } from "lucide-react"
 import { useOrders } from "@/hooks/useOrders"
 import type { Order } from "@/types/order.types"
-import { OrderDetailsModal } from "@/components/features/orders/OrderDetailsModal"
+import { OrderDetailDialog } from "@/components/features/orders/OrderDetailDialog"
 import { formatDate, formatCurrency, getStatusColor } from "@/lib/utils"
 import { orderStatusMap, paymentStatusMap } from "@/types/order.types"
 import Loading from "@/components/common/Loading"
@@ -14,7 +14,7 @@ import Loading from "@/components/common/Loading"
 export function MyOrdersView() {
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [hasLoaded, setHasLoaded] = useState(false)
 
@@ -33,12 +33,17 @@ export function MyOrdersView() {
   }, [isLoading, hasLoaded])
 
   const handleViewDetails = (order: Order) => {
-    setSelectedOrder(order)
+    setSelectedOrderId(order.id)
     setIsModalOpen(true)
   }
 
   const handleCancelOrder = (orderId: string) => {
     alert(`Hủy đơn hàng ${orderId} - Tính năng này sẽ được implement sau`)
+  }
+
+  const handleConfirmOrder = (orderId: string) => {
+    setIsModalOpen(false)
+    console.log(`[MyOrdersView] Order ${orderId} confirmed`)
   }
 
   const handlePrevPage = useCallback(() => {
@@ -234,10 +239,12 @@ export function MyOrdersView() {
       </Card>
 
       {/* Order Details Modal */}
-      <OrderDetailsModal
-        order={selectedOrder}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+      <OrderDetailDialog
+        orderId={selectedOrderId}
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onConfirmOrder={handleConfirmOrder}
+        showAdminActions={false}
       />
     </>
   )

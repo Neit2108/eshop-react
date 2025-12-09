@@ -201,6 +201,28 @@ export const cancelOrder = createAsyncThunk(
   },
 );
 
+/**
+ * Xác nhận đơn hàng
+ */
+export const confirmOrder = createAsyncThunk(
+  "order/confirmOrder",
+  async (orderId: string, { rejectWithValue }) => {
+    try {
+      const response = await apiService.post<Order>(
+        API_ENDPOINTS.ORDERS.CONFIRM(orderId),
+      );
+      return response.data;
+    }
+    catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Lỗi khi xác nhận đơn hàng",
+      );
+    }
+  },
+);
+
 const orderSlice = createSlice({
   name: "order",
   initialState,
@@ -345,6 +367,20 @@ const orderSlice = createSlice({
         state.successMessage = "Hủy đơn hàng thành công!";
       })
       .addCase(cancelOrder.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      // Confirm Order
+      .addCase(confirmOrder.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(confirmOrder.fulfilled, (state, action: PayloadAction<Order>) => {
+        state.isLoading = false;
+        state.currentOrder = action.payload;
+        state.successMessage = "Xác nhận đơn hàng thành công!";
+      })
+      .addCase(confirmOrder.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });
