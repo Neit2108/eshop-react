@@ -5,11 +5,11 @@ import { ChatWindow } from '../../components/features/chat/ChatWindow';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import Loading from '@/components/common/Loading';
 import { toast } from 'sonner';
+import { apiService } from '@/services/apiService';
 
 interface ChatPageProps {
   token: string;
   currentUserId: string;
-  apiUrl?: string;
   onLogout?: () => void;
   onBackHome?: () => void;
 }
@@ -17,7 +17,6 @@ interface ChatPageProps {
 export const ChatPage: React.FC<ChatPageProps> = ({
   token,
   currentUserId,
-  apiUrl = 'http://localhost:3000',
   onLogout,
   onBackHome,
 }) => {
@@ -28,25 +27,20 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   const [error, setError] = useState<string | null>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  // Fetch conversations
+  // Fetch conversations using apiService
   const fetchConversations = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${apiUrl}/api/chat/conversations`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!response.ok) throw new Error('Failed to fetch conversations');
-
-      const data = await response.json();
-      setConversations(data.data || []);
+      const response = await apiService.get<Conversation[]>('/chat/conversations');
+      setConversations(response.data || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      setError(errorMessage);
       console.error('Error fetching conversations:', err);
     } finally {
       setLoading(false);
     }
-  }, [token, apiUrl]);
+  }, []);
 
   useEffect(() => {
     fetchConversations();
@@ -99,7 +93,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
             conversation={selectedConversation}
             currentUserId={currentUserId}
             token={token}
-            apiUrl={apiUrl}
             onClose={handleClose}
           />
         </div>

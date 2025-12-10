@@ -8,10 +8,11 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { isStrongPassword, isValidEmail } from "@/lib/helpers/validation";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
@@ -45,7 +46,7 @@ export function LoginForm({
 
     if(!isStrongPassword(formData.password)){
       setValidationError("Mật khẩu không đủ mạnh. Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
-      alert(validationError);
+      toast.error(validationError);
       return;
     }
 
@@ -108,7 +109,7 @@ export function LoginForm({
 
         {(validationError || error) && (
           <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
-                {validationError || error}
+                Có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.
               </div>
         )}
 
@@ -128,9 +129,9 @@ export function LoginForm({
           </Button>
           <FieldDescription className="text-center">
             Bạn chưa có tài khoản?{" "}
-            <a href="#" className="underline underline-offset-4">
+            <Link to="/signup" className="underline underline-offset-4">
               Đăng ký ngay
-            </a>
+            </Link>
           </FieldDescription>
         </Field>
       </FieldGroup>

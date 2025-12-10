@@ -23,7 +23,7 @@ export default function SignupPage() {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <img
-          src="/placeholder.svg"
+          src="https://res.cloudinary.com/dbswzktwo/image/upload/v1765266307/Gemini_Generated_Image_aql2qxaql2qxaql2_zuzh43.png"
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />

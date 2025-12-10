@@ -10,12 +10,12 @@ import { ProductInfoDisplay } from "./ProductInfoDisplay";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { apiService } from "@/services/apiService";
 
 interface ChatWindowProps {
   conversation: Conversation | null;
   currentUserId: string;
   token: string;
-  apiUrl?: string;
   onClose?: () => void;
 }
 
@@ -25,7 +25,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   conversation,
   currentUserId,
   token,
-  apiUrl = "http://localhost:3000",
   onClose,
 }) => {
   const [allMessages, setAllMessages] = useState<any[]>([]);
@@ -47,7 +46,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   } = useChat({
     token,
     conversationId: conversation?.id,
-    apiUrl,
   });
 
   const { fetchProductById, selectedProduct } = useProducts();
@@ -109,17 +107,13 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
     setIsLoadingMore(true);
     try {
-      const response = await fetch(
-        `${apiUrl}/api/chat/conversations/${conversation.id}/messages?skip=${skip + MESSAGES_PER_PAGE}&take=${MESSAGES_PER_PAGE}&orderBy=asc`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+      const response = await apiService.get<{ messages: any[] }>(
+        `/chat/conversations/${conversation.id}/messages?skip=${skip + MESSAGES_PER_PAGE}&take=${MESSAGES_PER_PAGE}&orderBy=asc`
       );
 
-      if (!response.ok) throw new Error("Failed to load more messages");
+      console.log("response trong loadMoreMessages", response);
 
-      const data = await response.json();
-      const newMessages = data.data?.messages || [];
+      const newMessages = response.data?.messages || [];
 
       if (newMessages.length === 0) {
         setHasMoreMessages(false);
@@ -139,7 +133,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     } finally {
       setIsLoadingMore(false);
     }
-  }, [conversation?.id, skip, isLoadingMore, hasMoreMessages, apiUrl, token]);
+  }, [conversation?.id, skip, isLoadingMore, hasMoreMessages]);
 
   const handleSendMessage = useCallback(
     (content: string) => {
