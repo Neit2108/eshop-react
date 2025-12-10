@@ -12,6 +12,7 @@ import type { Voucher } from "@/types/voucher.types";
 import { useVoucher } from "@/hooks/useVoucher";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/lib/constants";
+import { isValidPhone } from "@/lib/helpers/validation";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -60,6 +61,12 @@ export default function CheckoutPage() {
 
     if (!selectedAddress.phone || !selectedAddress.address) {
       toast.error("Vui lòng cập nhật đầy đủ thông tin địa chỉ giao hàng");
+      return;
+    }
+
+    // nếu số điện thoại không phải là số điện thoại Việt Nam thì thông báo lỗi
+    if (!isValidPhone(selectedAddress.phone)) {
+      toast.error("Số điện thoại không hợp lệ");
       return;
     }
 

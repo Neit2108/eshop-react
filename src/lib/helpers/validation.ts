@@ -9,7 +9,7 @@ export function isValidEmail(email: string): boolean {
  * Kiểm tra số điện thoại Việt Nam
  */
 export function isValidPhone(phone: string): boolean {
-  return /^(0|\+84)(\d{9})$/.test(phone.replace(/\s+/g, ""))
+  return /^[\+]?[1-9][\d]{0,15}$/.test(phone.replace(/\s+/g, ""))
 }
 
 /**
