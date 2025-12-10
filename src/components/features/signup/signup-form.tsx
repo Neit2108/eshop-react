@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import React, { useState } from "react";
 import { type SignupFormData } from "@/types";
 import { toast } from "sonner";
+import { isValidEmail, isStrongPassword, isMatch } from "@/lib/helpers/validation";
 
 export function SignupForm({
   className,
@@ -27,6 +28,44 @@ export function SignupForm({
     lastName: "",
     confirmPassword: "",
   });
+  const [fieldErrors, setFieldErrors] = useState<{
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    password?: string;
+    confirmPassword?: string;
+  }>({});
+  const [validationError, setValidationError] = useState("");
+
+  const validateField = (name: string, value: string): string => {
+    switch (name) {
+      case "firstName":
+        if (!value) return "Tên không được để trống";
+        if (value.trim().length < 2) return "Tên phải có ít nhất 2 ký tự";
+        return "";
+      case "lastName":
+        if (!value) return "Họ và tên đệm không được để trống";
+        if (value.trim().length < 2) return "Họ và tên đệm phải có ít nhất 2 ký tự";
+        return "";
+      case "email":
+        if (!value) return "Email không được để trống";
+        if (!isValidEmail(value)) return "Email không hợp lệ";
+        return "";
+      case "password":
+        if (!value) return "Mật khẩu không được để trống";
+        if (value.length < 8) return "Mật khẩu phải có ít nhất 8 ký tự";
+        if (!isStrongPassword(value))
+          return "Mật khẩu phải chứa chữ hoa, chữ thường, số và ký tự đặc biệt";
+        return "";
+      case "confirmPassword":
+        if (!value) return "Vui lòng xác nhận mật khẩu";
+        if (!isMatch(value, formData.password))
+          return "Mật khẩu xác nhận không trùng khớp";
+        return "";
+      default:
+        return "";
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,10 +73,35 @@ export function SignupForm({
       ...prevState,
       [name]: value,
     }));
+    setValidationError("");
+
+    // Validate field in real-time
+    const error = validateField(name, value);
+    setFieldErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate all fields
+    const errors = {
+      firstName: validateField("firstName", formData.firstName),
+      lastName: validateField("lastName", formData.lastName),
+      email: validateField("email", formData.email),
+      password: validateField("password", formData.password),
+      confirmPassword: validateField("confirmPassword", formData.confirmPassword),
+    };
+
+    setFieldErrors(errors);
+
+    // If any error exists, stop submission
+    if (Object.values(errors).some((error) => error)) {
+      setValidationError("Vui lòng sửa lỗi trước khi tiếp tục");
+      return;
+    }
 
     try {
       const res = await signup(formData);
@@ -69,7 +133,13 @@ export function SignupForm({
             onChange={handleChange}
             disabled={isLoading}
             required
+            className={fieldErrors.lastName ? "border-red-500 focus-visible:ring-red-500" : ""}
           />
+          {fieldErrors.lastName && (
+            <FieldDescription className="text-red-600 text-sm mt-1">
+              {fieldErrors.lastName}
+            </FieldDescription>
+          )}
         </Field>
         <Field>
           <FieldLabel htmlFor="name">Tên</FieldLabel>
@@ -82,7 +152,13 @@ export function SignupForm({
             onChange={handleChange}
             disabled={isLoading}
             required
+            className={fieldErrors.firstName ? "border-red-500 focus-visible:ring-red-500" : ""}
           />
+          {fieldErrors.firstName && (
+            <FieldDescription className="text-red-600 text-sm mt-1">
+              {fieldErrors.firstName}
+            </FieldDescription>
+          )}
         </Field>
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -95,10 +171,16 @@ export function SignupForm({
             onChange={handleChange}
             disabled={isLoading}
             required
+            className={fieldErrors.email ? "border-red-500 focus-visible:ring-red-500" : ""}
           />
           <FieldDescription>
             Chúng tôi sẽ không bao giờ chia sẻ email của bạn với người khác.
           </FieldDescription>
+          {fieldErrors.email && (
+            <FieldDescription className="text-red-600 text-sm mt-1">
+              {fieldErrors.email}
+            </FieldDescription>
+          )}
         </Field>
         <Field>
           <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
@@ -111,10 +193,16 @@ export function SignupForm({
             onChange={handleChange}
             disabled={isLoading}
             required
+            className={fieldErrors.password ? "border-red-500 focus-visible:ring-red-500" : ""}
           />
           <FieldDescription>
-            Mật khẩu phải có ít nhất 8 ký tự.
+            Mật khẩu phải có ít nhất 8 ký tự, chứa chữ hoa, chữ thường, số và ký tự đặc biệt.
           </FieldDescription>
+          {fieldErrors.password && (
+            <FieldDescription className="text-red-600 text-sm mt-1">
+              {fieldErrors.password}
+            </FieldDescription>
+          )}
         </Field>
         <Field>
           <FieldLabel htmlFor="confirm-password">Xác nhận mật khẩu</FieldLabel>
@@ -127,18 +215,28 @@ export function SignupForm({
             onChange={handleChange}
             disabled={isLoading}
             required
+            className={fieldErrors.confirmPassword ? "border-red-500 focus-visible:ring-red-500" : ""}
           />
           <FieldDescription>Vui lòng xác nhận mật khẩu.</FieldDescription>
+          {fieldErrors.confirmPassword && (
+            <FieldDescription className="text-red-600 text-sm mt-1">
+              {fieldErrors.confirmPassword}
+            </FieldDescription>
+          )}
         </Field>
 
-        {error && (
+        {(error || validationError) && (
           <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
-            Có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.
+            {validationError || "Có lỗi xảy ra. Vui lòng kiểm tra lại thông tin."}
           </div>
         )}
 
         <Field>
-          <Button type="submit" disabled={isLoading}>
+          <Button 
+            type="submit" 
+            disabled={isLoading || Object.values(fieldErrors).some(error => error)}
+            className={Object.values(fieldErrors).some(error => error) ? "opacity-75 cursor-not-allowed" : ""}
+          >
             {isLoading ? "Đang đăng ký..." : "Đăng ký"}
           </Button>
         </Field>

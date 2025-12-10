@@ -105,8 +105,25 @@ export const login = createAsyncThunk(
       localStorage.setItem('user', JSON.stringify(user));
 
       return user;
-    } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Đăng nhập thất bại')
+    } catch (error: any) {
+      // ✅ Xử lý AxiosError đúng cách
+      let errorMessage = 'Đăng nhập thất bại';
+      
+      // Nếu là AxiosError có response từ server
+      if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error?.response?.status === 401) {
+        errorMessage = 'Email hoặc mật khẩu không chính xác';
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      console.error('Login error:', { status: error?.response?.status, errorMessage });
+      return rejectWithValue(errorMessage);
     }
   }
 )

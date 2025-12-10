@@ -10,58 +10,93 @@ import {
 } from "@/components/ui";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { isStrongPassword, isValidEmail } from "@/lib/helpers/validation";
-import { toast } from "sonner";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
   const navigate = useNavigate();
-  const { login, isLoading, error } = useAuth();
+  const { login, isLoading, error, isAuthenticated } = useAuth();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [validationError, setValidationError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<{
+    email?: string;
+    password?: string;
+  }>({});
+
+  const validateField = (name: string, value: string): string => {
+    switch (name) {
+      case "email":
+        if (!value) return "Email không được để trống";
+        if (!isValidEmail(value)) return "Email không hợp lệ";
+        return "";
+      case "password":
+        if (!value) return "Mật khẩu không được để trống";
+        if (value.length < 8) return "Mật khẩu phải có ít nhất 8 ký tự";
+        if (!isStrongPassword(value))
+          return "Mật khẩu phải chứa chữ hoa, chữ thường, số và ký tự đặc biệt";
+        return "";
+      default:
+        return "";
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setValidationError("");
+    
+    // Validate field in real-time
+    const error = validateField(name, value);
+    setFieldErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.password) {
-      setValidationError("Vui lòng điền đầy đủ thông tin");
+    // ✅ Clear previous errors khi submit mới
+    setValidationError("");
+
+    // Validate all fields
+    const emailError = validateField("email", formData.email);
+    const passwordError = validateField("password", formData.password);
+
+    setFieldErrors({
+      email: emailError,
+      password: passwordError,
+    });
+
+    // If any error exists, stop submission
+    if (emailError || passwordError) {
+      setValidationError("Vui lòng sửa lỗi trước khi tiếp tục");
       return;
     }
 
-    if(!isValidEmail(formData.email)){
-      setValidationError("Email không hợp lệ");
-      return;
-    }
-
-    if(!isStrongPassword(formData.password)){
-      setValidationError("Mật khẩu không đủ mạnh. Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
-      toast.error(validationError);
-      return;
-    }
-
-    try {
-      const res = await login(formData.email, formData.password);
-
-      if (res.payload) {
-        navigate(from, { replace: true });
-      }
-    } catch {
-      setValidationError(
-        "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.",
-      );
-    }
+    // Dispatch login action
+    login(formData.email, formData.password);
   };
+
+  // Listen to error and isAuthenticated changes from Redux state
+  useEffect(() => {
+    // ✅ Nếu login thành công, navigate ngay
+    if (isAuthenticated && !error) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, error, navigate, from]);
+
+  // ✅ Riêng logic hiển thị error
+  useEffect(() => {
+    if (error && !isLoading) {
+      setValidationError(error);
+    }
+  }, [error, isLoading]);
 
   return (
     <form className={cn("flex flex-col gap-6", className)} onSubmit={handleSubmit} {...props}>
@@ -83,7 +118,13 @@ export function LoginForm({
             value={formData.email}
             onChange={handleChange}
             disabled={isLoading}
+            className={fieldErrors.email ? "border-red-500 focus-visible:ring-red-500" : ""}
           />
+          {fieldErrors.email && (
+            <FieldDescription className="text-red-600 text-sm mt-1">
+              {fieldErrors.email}
+            </FieldDescription>
+          )}
         </Field>
         <Field>
           <div className="flex items-center">
@@ -104,17 +145,29 @@ export function LoginForm({
             onChange={handleChange}
             disabled={isLoading}
             placeholder="********"
+            className={fieldErrors.password ? "border-red-500 focus-visible:ring-red-500" : ""}
           />
+          {fieldErrors.password && (
+            <FieldDescription className="text-red-600 text-sm mt-1">
+              {fieldErrors.password}
+            </FieldDescription>
+          )}
         </Field>
 
         {(validationError || error) && (
           <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
-                Có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.
-              </div>
+            {validationError || error}
+          </div>
         )}
 
         <Field>
-          <Button type="submit" disabled={isLoading}>{isLoading ? "Đang đăng nhập..." : "Đăng nhập"}</Button>
+          <Button 
+            type="submit" 
+            disabled={isLoading || Object.values(fieldErrors).some(error => error)}
+            className={Object.values(fieldErrors).some(error => error) ? "opacity-75 cursor-not-allowed" : ""}
+          >
+            {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
+          </Button>
         </Field>
         <FieldSeparator>Hoặc tiếp tục với</FieldSeparator>
         <Field>
@@ -138,3 +191,4 @@ export function LoginForm({
     </form>
   );
 }
+
