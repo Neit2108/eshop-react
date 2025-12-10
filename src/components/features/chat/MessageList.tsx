@@ -9,6 +9,7 @@ interface MessageListProps {
   isLoading: boolean;
   typingUsers: any[];
   onMarkAsRead?: (messageIds: string[]) => void;
+  searchQuery?: string;
 }
 
 export const MessageList: React.FC<MessageListProps> = ({
@@ -17,6 +18,7 @@ export const MessageList: React.FC<MessageListProps> = ({
   isLoading,
   typingUsers,
   onMarkAsRead,
+  searchQuery = "",
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const intersectionObserverRef = useRef<IntersectionObserver | null>(null);
@@ -96,6 +98,7 @@ export const MessageList: React.FC<MessageListProps> = ({
             message={message}
             isOwn={message.senderId === currentUserId}
             previousMessage={index > 0 ? messages[index - 1] : undefined}
+            searchQuery={searchQuery}
           />
         </div>
       ))}

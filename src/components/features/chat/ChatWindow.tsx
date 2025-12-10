@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiService } from "@/services/apiService";
+import { useNavigate } from "react-router-dom";
 
 interface ChatWindowProps {
   conversation: Conversation | null;
@@ -33,6 +34,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [displayProduct, setDisplayProduct] = useState<Product | null>(null);
   const [isLoadingProduct, setIsLoadingProduct] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const {
     messages,
@@ -49,7 +51,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   });
 
   const { fetchProductById, selectedProduct } = useProducts();
-
+  const navigate = useNavigate();
   // Sync new messages from useChat
   useEffect(() => {
     setAllMessages(messages);
@@ -162,6 +164,23 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     [messages, currentUserId, markMessagesAsRead],
   );
 
+  const handleViewShop = useCallback(() => {
+    if (displayProduct) {
+      navigate(`/shop/${displayProduct.shopId}`);
+    }
+  }, [displayProduct]);
+
+  const handleSearchMessage = useCallback((query: string) => {
+    // Lưu search query để highlight tin nhắn
+    setSearchQuery(query);
+  }, []);
+
+  const handleViewProductDetail = useCallback(() => {
+    if (displayProduct) {
+      navigate(`/products/${displayProduct.id}`);
+    }
+  }, [displayProduct]);
+
   if (!conversation) {
     return (
       <div className="flex h-full items-center justify-center bg-gray-50 text-gray-500">
@@ -176,11 +195,14 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         conversation={conversation}
         isConnected={isConnected}
         onClose={onClose}
+        onViewShop={handleViewShop}
+        onSearch={handleSearchMessage}
       />
 
       <ProductInfoDisplay
         product={displayProduct}
         isLoading={isLoadingProduct}
+        onDetail={handleViewProductDetail}
       />
 
       {error && (
@@ -218,6 +240,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           isLoading={loading}
           typingUsers={typingUsers}
           onMarkAsRead={handleMarkAsRead}
+          searchQuery={searchQuery}
         />
       </div>
 

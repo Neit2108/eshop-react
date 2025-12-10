@@ -63,3 +63,18 @@ export interface PaginatedResponse<T> {
     hasPrev: boolean;
   };
 }
+
+export interface UpdateUserInput {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  address?: string;
+  birthday?: string;
+  avatarUrl?: string;
+}
+
+export interface ChangePasswordInput {
+  currentPassword: string;
+  newPassword: string;
+}

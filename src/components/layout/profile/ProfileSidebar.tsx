@@ -9,6 +9,7 @@ interface ProfileSidebarProps {
   activeTab: string
   user: UserType
   onTabChange: (tab: any) => void
+  onLogout: () => void
 }
 
 const menuItems = [
@@ -49,7 +50,7 @@ const menuItems = [
   },
 ]
 
-export function ProfileSidebar({ activeTab, user, onTabChange }: ProfileSidebarProps) {
+export function ProfileSidebar({ activeTab, user, onTabChange, onLogout }: ProfileSidebarProps) {
   return (
     <div className="flex flex-col h-full">
       <div className="p-6">
@@ -92,7 +93,7 @@ export function ProfileSidebar({ activeTab, user, onTabChange }: ProfileSidebarP
       <Separator />
 
       <div className="p-4">
-        <Button variant="outline" className="w-full bg-transparent">
+        <Button variant="outline" className="w-full bg-transparent" onClick={onLogout}>
           Đăng xuất
         </Button>
       </div>

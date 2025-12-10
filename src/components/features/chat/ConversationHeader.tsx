@@ -22,6 +22,7 @@ interface ConversationHeaderProps {
   isConnected: boolean;
   onClose?: () => void;
   onSearch?: (query: string) => void;
+  onViewShop?: () => void;
 }
 
 export const ConversationHeader: React.FC<ConversationHeaderProps> = ({
@@ -29,6 +30,7 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({
   isConnected,
   onClose,
   onSearch,
+  onViewShop,
 }) => {
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -107,7 +109,7 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({
                 <Info className="w-4 h-4 mr-2" />
                 Thông tin cuộc hội thoại
               </DropdownMenuItem>
-              <DropdownMenuItem>Xem cửa hàng</DropdownMenuItem>
+              <DropdownMenuItem onClick={onViewShop}>Xem cửa hàng</DropdownMenuItem>
               <DropdownMenuItem>Báo cáo</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

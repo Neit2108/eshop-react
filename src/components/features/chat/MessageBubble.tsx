@@ -7,12 +7,14 @@ interface MessageBubbleProps {
   message: Message;
   isOwn: boolean;
   previousMessage?: Message;
+  searchQuery?: string;
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
   message,
   isOwn,
   previousMessage,
+  searchQuery = "",
 }) => {
   const showAvatar =
     !previousMessage || previousMessage.senderId !== message.senderId;
@@ -35,6 +37,54 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         return <Check className="w-4 h-4 text-gray-400" />;
       default:
         return null;
+    }
+  };
+
+  // Hàm render content với highlight
+  const renderMessageContent = () => {
+    if (message.type === 'TEXT') {
+      // Nếu có searchQuery và tin nhắn chứa searchQuery
+      if (searchQuery && message.content.toLowerCase().includes(searchQuery.toLowerCase())) {
+        const parts = message.content.split(new RegExp(`(${searchQuery})`, 'gi'));
+        return (
+          <p className="text-sm leading-relaxed">
+            {parts.map((part, index) => {
+              if (part.toLowerCase() === searchQuery.toLowerCase()) {
+                return (
+                  <span key={index} className="bg-yellow-300 font-semibold text-black">
+                    {part}
+                  </span>
+                );
+              }
+              return <span key={index}>{part}</span>;
+            })}
+          </p>
+        );
+      }
+      return <p className="text-sm leading-relaxed">{message.content}</p>;
+    }
+
+    if (message.type === 'IMAGE') {
+      return (
+        <img
+          src={message.content}
+          alt="Message"
+          className="max-w-xs rounded-md"
+        />
+      );
+    }
+
+    if (message.type === 'FILE') {
+      return (
+        <a
+          href={message.content}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm underline flex items-center gap-2"
+        >
+          📎 {message.metadata?.fileName || 'File'}
+        </a>
+      );
     }
   };
 
@@ -71,28 +121,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               : 'bg-gray-200 text-gray-900 rounded-bl-none'
           )}
         >
-          {message.type === 'TEXT' && (
-            <p className="text-sm leading-relaxed">{message.content}</p>
-          )}
-
-          {message.type === 'IMAGE' && (
-            <img
-              src={message.content}
-              alt="Message"
-              className="max-w-xs rounded-md"
-            />
-          )}
-
-          {message.type === 'FILE' && (
-            <a
-              href={message.content}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm underline flex items-center gap-2"
-            >
-              📎 {message.metadata?.fileName || 'File'}
-            </a>
-          )}
+          {renderMessageContent()}
         </div>
 
         {isOwn && (
@@ -110,4 +139,3 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     </div>
   );
 };
-

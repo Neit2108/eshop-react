@@ -61,8 +61,8 @@ export function RecipientSection({ onAddressSelect }: RecipientSectionProps) {
       const defaultAddress: Address = {
         id: "default",
         name: `${user.firstName} ${user.lastName}`.trim(),
-        phone: "", // User chưa có số điện thoại, cần nhập
-        address: "", // User chưa có địa chỉ, cần nhập
+        phone: user.phoneNumber || "", // User chưa có số điện thoại, cần nhập
+        address: user.address || "", // User chưa có địa chỉ, cần nhập
       }
       initialAddresses = [defaultAddress]
     }

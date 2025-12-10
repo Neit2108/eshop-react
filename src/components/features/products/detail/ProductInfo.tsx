@@ -111,7 +111,9 @@ export default function ProductInfo({
               <button
                 key={variant.id}
                 onClick={() => handleVariantChange(variant.id)}
-                className={`rounded-lg border-2 px-4 py-1.5 text-sm font-medium transition-colors cursor-pointer ${
+                className={`rounded-lg border-2 px-4 py-1.5 text-sm font-medium transition-colors ${
+                  variant.stock === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                } ${
                   selectedVariant === variant.id
                     ? "border-[#FF6B6B] bg-[#FF6B6B] text-white"
                     : "border-border text-foreground hover:border-[#FF6B6B]"

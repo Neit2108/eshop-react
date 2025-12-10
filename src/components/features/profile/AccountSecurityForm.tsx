@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
+import { apiService } from "@/services/apiService"
+import type { ChangePasswordInput } from "@/types"
+import { toast } from "sonner"
 
 export function AccountSecurityForm() {
   const [passwordData, setPasswordData] = useState({
@@ -15,6 +18,8 @@ export function AccountSecurityForm() {
   })
 
   const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -22,13 +27,49 @@ export function AccountSecurityForm() {
       ...prev,
       [name]: value,
     }))
+    setError(null)
+    setSuccessMessage(null)
   }
 
   const handleSavePassword = async () => {
-    setIsSaving(true)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" })
-    setIsSaving(false)
+    try {
+      // Validation
+      if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+        setError("Vui lòng điền đầy đủ tất cả các trường")
+        return
+      }
+
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        setError("Mật khẩu mới và xác nhận mật khẩu không khớp")
+        return
+      }
+
+      if (passwordData.newPassword.length < 6) {
+        setError("Mật khẩu mới phải có ít nhất 6 ký tự")
+        return
+      }
+
+      setIsSaving(true)
+
+      const payload: ChangePasswordInput = {
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      }
+
+      const response = await apiService.post("/auth/change-password", payload)
+
+      if (response.success) {
+        toast.success(successMessage)
+      } else {
+        toast.error(error)
+      }
+      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" })
+    } catch (err: any) {
+      const errorMessage = err?.response?.data?.message || "Có lỗi xảy ra khi cập nhật mật khẩu"
+      toast.error(errorMessage)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -36,8 +77,8 @@ export function AccountSecurityForm() {
       {/* Change Password */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Change Password</CardTitle>
-          <CardDescription>Update your password to keep your account secure</CardDescription>
+          <CardTitle className="text-base">Cập nhật mật khẩu</CardTitle>
+          <CardDescription>Cập nhật mật khẩu của bạn để giữ cho tài khoản của bạn an toàn</CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-6">
@@ -49,7 +90,7 @@ export function AccountSecurityForm() {
                 type="password"
                 value={passwordData.currentPassword}
                 onChange={handleChange}
-                placeholder="Enter current password"
+                placeholder="Nhập mật khẩu hiện tại"
                 className="border-border"
               />
             </div>
@@ -62,7 +103,7 @@ export function AccountSecurityForm() {
                 type="password"
                 value={passwordData.newPassword}
                 onChange={handleChange}
-                placeholder="Enter new password"
+                placeholder="Nhập mật khẩu mới"
                 className="border-border"
               />
             </div>
@@ -75,13 +116,13 @@ export function AccountSecurityForm() {
                 type="password"
                 value={passwordData.confirmPassword}
                 onChange={handleChange}
-                placeholder="Confirm new password"
+                placeholder="Xác nhận mật khẩu mới"
                 className="border-border"
               />
             </div>
 
             <Button onClick={handleSavePassword} disabled={isSaving} className="w-full">
-              {isSaving ? "Updating..." : "Update Password"}
+              {isSaving ? "Đang cập nhật..." : "Cập nhật mật khẩu"}
             </Button>
           </form>
         </CardContent>
@@ -93,15 +134,15 @@ export function AccountSecurityForm() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Two-Factor Authentication</CardTitle>
-          <CardDescription>Add an extra layer of security to your account</CardDescription>
+          <CardDescription>Thêm một lớp bảo mật thêm vào tài khoản của bạn</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Two-factor authentication is currently <span className="font-medium text-foreground">disabled</span>
+              Xác thực hai yếu tố hiện tại <span className="font-medium text-foreground">đã bị vô hiệu hóa</span>
             </p>
             <Button variant="outline" className="w-full bg-transparent">
-              Enable 2FA
+              Kích hoạt Xác thực hai yếu tố
             </Button>
           </div>
         </CardContent>

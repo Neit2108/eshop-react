@@ -9,13 +9,31 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { Upload } from "lucide-react"
 import type { User } from "@/types"
+import { useAuth } from "@/hooks/useAuth"
+import { toast } from "sonner"
 
 // props
 interface PersonalInformationFormProps {
   user: User
 }
 
+// Helper function to convert ISO date to YYYY-MM-DD format for date input
+function formatDateForInput(dateString: string | undefined): string {
+  if (!dateString) return ""
+  try {
+    const date = new Date(dateString)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, "0")
+    const day = String(date.getDate()).padStart(2, "0")
+    return `${year}-${month}-${day}`
+  } catch {
+    return ""
+  }
+}
+
 export function PersonalInformationForm({ user }: PersonalInformationFormProps) {
+
+  const { updateUser } = useAuth()
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -34,7 +52,7 @@ export function PersonalInformationForm({ user }: PersonalInformationFormProps) 
         lastName: user.lastName || "",
         email: user.email || "",
         phoneNumber: user.phoneNumber || "",
-        birthday: user.birthday || "",
+        birthday: formatDateForInput(user.birthday),
         address: user.address || "",
       })
     }
@@ -52,9 +70,28 @@ export function PersonalInformationForm({ user }: PersonalInformationFormProps) 
 
   const handleSave = async () => {
     setIsSaving(true)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setIsSaving(false)
+    
+    try {
+      const result = await updateUser({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        birthday: formData.birthday,
+        address: formData.address,
+      })
+      
+      // Check if the action was rejected
+      if (result.payload && typeof result.payload === 'string') {
+        toast.error('Lỗi khi cập nhật. Vui lòng kiểm tra lại thông tin.')
+      } else {
+        toast.success('Thông tin đã được cập nhật thành công')
+      }
+    } catch (error) {
+      toast.error('Lỗi khi cập nhật. Vui lòng kiểm tra lại thông tin.')
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const handleChangePicture = () => {

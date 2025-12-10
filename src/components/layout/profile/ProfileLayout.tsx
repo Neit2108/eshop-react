@@ -18,7 +18,7 @@ type ActiveTab = "personal-info" | "address" | "account-security" | "my-orders" 
 
 export function ProfileLayout() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const [activeTab, setActiveTab] = useState<ActiveTab>("personal-info")
   const isMobile = useIsMobile()
   if (!user) return null;
@@ -49,6 +49,10 @@ export function ProfileLayout() {
     setActiveTab(tab)
   }
 
+  const handleLogout = () => {
+    logout()
+  }
+
   if (isMobile) {
     return (
       <div className="flex h-screen flex-col bg-background">
@@ -60,7 +64,7 @@ export function ProfileLayout() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-64">
-              <ProfileSidebar activeTab={activeTab} user={user} onTabChange={handleTabChange} />
+              <ProfileSidebar activeTab={activeTab} user={user} onTabChange={handleTabChange} onLogout={handleLogout} />
             </SheetContent>
           </Sheet>
         </div>
@@ -74,7 +78,7 @@ export function ProfileLayout() {
       {/* Sidebar */}
       <aside className="w-64 border-r border-border">
         <div className="sticky top-0 h-screen overflow-auto">
-          <ProfileSidebar activeTab={activeTab} user={user} onTabChange={handleTabChange} />
+          <ProfileSidebar activeTab={activeTab} user={user} onTabChange={handleTabChange} onLogout={handleLogout} />
         </div>
       </aside>
 

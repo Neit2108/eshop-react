@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { login, logout, clearError, signup } from '@/store/slices/authSlice'
+import { login, logout, clearError, signup, updateUser } from '@/store/slices/authSlice'
 import type { RootState, AppDispatch } from '@/store/store'
-import type { SignupFormData } from '@/types'
+import type { SignupFormData, UpdateUserInput } from '@/types'
 
 export function useAuth() {
   const dispatch = useDispatch<AppDispatch>()
@@ -22,6 +22,7 @@ export function useAuth() {
     login: (email: string, password: string) =>
       dispatch(login({ email, password })),
     logout: () => dispatch(logout()),
+    updateUser: (data: UpdateUserInput) => dispatch(updateUser(data)),
     hasRoles,
     clearError: () => dispatch(clearError()),
   }

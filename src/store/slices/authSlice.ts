@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
 import { apiService } from "@/services/apiService";
 import { API_ENDPOINTS } from "@/lib/api";
-import type { AuthResponse, SignupFormData, User } from "@/types";
+import type { AuthResponse, SignupFormData, User, UpdateUserInput } from "@/types";
 
 /**
  * Trạng thái xác thực người dùng
@@ -129,6 +129,33 @@ export const logout = createAsyncThunk(
   }
 )
 
+export const updateUser = createAsyncThunk(
+  'auth/updateUser',
+  async (data: UpdateUserInput, { rejectWithValue }) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}')
+      const userId = user?.id
+      
+      if (!userId) {
+        return rejectWithValue('Không tìm thấy ID người dùng')
+      }
+
+      const response = await apiService.put<User>(
+        API_ENDPOINTS.USERS.UPDATE_PROFILE,
+        data
+      )
+
+      const updatedUser = response.data
+      localStorage.setItem('user', JSON.stringify(updatedUser))
+
+      return updatedUser
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Cập nhật thông tin thất bại')
+    }
+  }
+)
+
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -197,6 +224,20 @@ const authSlice = createSlice({
         state.user = null
         state.isAuthenticated = false
         state.error = null
+      })
+      // Update User
+      .addCase(updateUser.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(updateUser.fulfilled, (state, action: PayloadAction<User>) => {
+        state.isLoading = false
+        state.user = action.payload
+        state.error = null
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload as string
       })
   },
 })

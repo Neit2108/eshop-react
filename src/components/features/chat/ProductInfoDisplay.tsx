@@ -5,11 +5,13 @@ import { AlertCircle } from 'lucide-react';
 interface ProductInfoDisplayProps {
   product: Product | null;
   isLoading?: boolean;
+  onDetail?: () => void;
 }
 
 export const ProductInfoDisplay: React.FC<ProductInfoDisplayProps> = ({
   product,
   isLoading = false,
+  onDetail,
 }) => {
   if (!product && !isLoading) return null;
 
@@ -37,7 +39,7 @@ export const ProductInfoDisplay: React.FC<ProductInfoDisplayProps> = ({
 
   return (
     <div className="border-b bg-gradient-to-r from-blue-50 to-indigo-50 p-4 hover:bg-gradient-to-r hover:from-blue-100 hover:to-indigo-100 transition-colors">
-      <div className="flex items-start gap-3 cursor-pointer group">
+      <div className="flex items-start gap-3 cursor-pointer group" onClick={onDetail}>
         {/* Product Image */}
         <div className="flex-shrink-0">
           {imageUrl ? (
