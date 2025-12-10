@@ -17,10 +17,9 @@ export function StoreDetailPage() {
     API_ENDPOINTS.SHOPS.GET(id || "")
   );
 
-  if (!data) return <div>Không tìm thấy cửa hàng</div>;
-
   if (loading) return <Loading />;
   if (error) return <div>Error</div>;
+  if (!data) return <div>Không tìm thấy cửa hàng</div>;
 
   return (
     <main className="bg-background min-h-screen">
