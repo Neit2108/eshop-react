@@ -305,7 +305,7 @@ const Header: React.FC = () => {
                 </a>
                 <span className="text-gray-400">|</span>
                 <a
-                  href="/register"
+                  href="/signup"
                   className="text-sm font-medium transition hover:text-blue-600 md:text-base"
                 >
                   Đăng ký

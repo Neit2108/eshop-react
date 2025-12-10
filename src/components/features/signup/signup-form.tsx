@@ -12,6 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import React, { useState } from "react";
 import { type SignupFormData } from "@/types";
+import { toast } from "sonner";
 
 export function SignupForm({
   className,
@@ -41,10 +42,10 @@ export function SignupForm({
     try {
       const res = await signup(formData);
       if (res.payload) {
-        navigate("/dashboard");
+        navigate("/login");
       }
     } catch (err) {
-      console.error("Đăng ký thất bại:", err);
+      toast.error("Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.");
     }
   };
 
